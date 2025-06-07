@@ -52,11 +52,11 @@ export default function MyPage() {
               <BookCard />
             </div>
             {/* 내 서재 에리어 */}
-            <div className="relative h-[301px] w-[589.71px] text-center">
+            {/* <div className="relative h-[301px] w-[589.71px] text-center">
               <span className="text-[20px]">내 서재</span>
               <button className={'more top-1'}>더보기</button>
               <BookCard />
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
