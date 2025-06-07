@@ -1,9 +1,9 @@
-import MyPage from './pages/MyPage';
+import Router from './routes';
 
 export default function App() {
   return (
     <>
-      <MyPage />
+      <Router />
     </>
   );
 }
