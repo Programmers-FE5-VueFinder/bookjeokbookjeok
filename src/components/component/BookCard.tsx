@@ -6,13 +6,18 @@ export default function BookCard() {
           <span>이미지 에리어</span>
         </div>
         <div className="mx-[7.99px] text-start">
-          <div className="mt-[10.1px] inline-block h-[20.9px] w-[50.34px] justify-center">
-            <span>닉네임</span>
+          <div className="flex">
+            <div className="mt-[10.1px] mr-1 align-top">
+              <span>닉네임</span>
+            </div>
+            <div className="mt-[15.1px] size-[15px] justify-center rounded-full border-1"></div>
           </div>
-          <div className="mt-[20px]">
-            <span>도서 제목</span>
+          <div className="mt-[15px] truncate">
+            <span>게시글 제목</span>
           </div>
-          <div className="mt-[20px]">컨텐츠</div>
+          <div className="mt-[15px] line-clamp-2">
+            세상이 사랑하지 않았고 세상이 존중하지 않았지만 그저 숨쉬고 살아있는
+          </div>
           <div className="absolute bottom-3 left-3 flex">
             <div className="mr-[8px]">
               <span className="text-[16px]">♥</span>
