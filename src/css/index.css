@@ -1,10 +1,1 @@
 @import './tailwind.css';
-
-@layer components {
-  .button {
-    @apply m-[4.5px] h-[140px] w-[140px] cursor-pointer rounded-2xl border-1 active:bg-gray-300;
-  }
-  .more {
-    @apply absolute right-0 cursor-pointer active:bg-gray-300;
-  }
-}
