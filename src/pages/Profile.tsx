@@ -45,8 +45,8 @@ export default function Profile() {
             <button className="button">북마크</button>
           </div>
         </div>
-        <div className="flex items-center justify-center">
-          <div className="mt-[100px] grid w-[1196px] gap-[28px] md:grid-cols-2 lg:grid-cols-4">
+        <div className="flex items-center justify-center bg-[#FAFAFA]">
+          <div className="grid gap-[28px] p-[100px] md:grid-cols-2 lg:grid-cols-4">
             <BookCard />
             <BookCard />
             <BookCard />
