@@ -1,20 +1,17 @@
 import BookCard from '../components/common/BookCard';
+import { LuPencil } from 'react-icons/lu';
 
 export default function Profile() {
   return (
     <>
       <div>
-        {/* 헤더 에리어 */}
-        <div className="h-[110px] text-center text-[50px]">
-          <h1>Header</h1>
-        </div>
         {/* 프로필 에리어 */}
         <div className="relative flex h-[350px] content-center justify-center shadow shadow-gray-200">
           <div className="mt-[52px] flex flex-col items-center text-center">
             {/* 프로필 이미지 */}
-            <div className="relative size-[100px] rounded-full border-1 bg-black">
-              <button className="absolute top-0 right-1 size-[25px] cursor-pointer rounded-full border-3 border-white bg-gray-100 text-center align-middle">
-                O
+            <div className="relative size-[100px] rounded-full bg-black">
+              <button className="absolute top-0 right-1 size-[25px] cursor-pointer items-center justify-center rounded-full border-3 border-white bg-gray-100">
+                <LuPencil fontSize="small" />
               </button>
             </div>
             <div className="mt-[14px] grid">
