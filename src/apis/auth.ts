@@ -23,10 +23,12 @@ export async function kakaoLogin() {
 
 /* 로그아웃 */
 export async function logout() {
-  const { error } = await supabase.auth.signOut();
-  if (error) {
-    console.log(`로그아웃 실패: ${error.message}`);
-  } else {
-    console.log('로그아웃 성공');
+  try {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      throw error;
+    }
+  } catch (e) {
+    console.error(e);
   }
 }
