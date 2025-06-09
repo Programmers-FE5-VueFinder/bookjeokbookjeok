@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouterProvider } from 'react-router';
 import Home from '../pages/Home';
-import Login from '../pages/Login';
+import SignUp from '../pages/SignUp';
+// import Login from '../pages/Login';
 import Profile from '../pages/Profile';
 import PostList from '../pages/PostList';
 import NotFound from '../pages/NotFound';
@@ -43,9 +44,13 @@ const router = createBrowserRouter([
         path: '/profile',
         Component: Profile,
       },
+      // {
+      //   path: '/login',
+      //   Component: Login,
+      // },
       {
-        path: '/login',
-        Component: Login,
+        path: '/signup',
+        Component: SignUp,
       },
       {
         path: '/notification',

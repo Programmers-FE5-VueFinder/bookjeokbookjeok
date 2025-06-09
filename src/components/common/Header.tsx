@@ -1,8 +1,9 @@
 import { Link } from "react-router";
-import { useAuthStore } from "../../store/authStore";
-import { useEffect, useRef, useState } from "react";
-
 import supabase from "../../utils/supabase";
+import LoginModal from "../../pages/LoginModal";
+import { useEffect, useRef, useState } from "react";
+import { useAuthStore } from "../../store/authStore";
+
 import SearchIcon from '@mui/icons-material/Search';
 import { MdOutlinePersonOutline } from "react-icons/md";
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
@@ -12,6 +13,7 @@ export default function Header () {
     const isLogin = useAuthStore((state) => state.isLogin);
     const setLogout = useAuthStore((state) => state.setLogout);
 
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement | null>(null);
 
@@ -79,7 +81,10 @@ export default function Header () {
                         )}
                     </div>
                 ) : (
-                    <Link to="/login">로그인</Link>
+                    <>
+                        <button onClick={() => setIsModalOpen(true)}>로그인</button>
+                        {isModalOpen && <LoginModal onClose={() => setIsModalOpen(false)} />}
+                    </>
                 )}
             </div>
         </header>
