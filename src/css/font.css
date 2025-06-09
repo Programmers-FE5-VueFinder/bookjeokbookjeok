@@ -1,0 +1,6 @@
+@import './tailwind.css';
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&family=Nanum+Pen+Script&family=Noto+Sans+KR:wght@100..900&family=Noto+Serif+KR:wght@200..900&display=swap');
+
+@theme {
+  --noto-sans-kr: 'Noto Sans KR', sans-serif;
+}
