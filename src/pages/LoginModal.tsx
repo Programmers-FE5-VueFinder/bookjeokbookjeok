@@ -1,4 +1,4 @@
-import Login from "./Login";
+import Login from './Login';
 
 interface LoginModalProps {
   onClose: () => void;
@@ -6,13 +6,13 @@ interface LoginModalProps {
 
 export default function LoginModal({ onClose }: LoginModalProps) {
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex justify-center items-center">
-      <div className="flex justify-center items-center px-[20px] py-[40px] bg-white rounded-lg relative w-[380px]">
-        <button 
-            onClick={onClose}
-            className="absolute top-2 right-3 text-gray-500 text-xl"
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div className="relative flex w-[380px] items-center justify-center rounded-lg bg-white px-[20px] py-[40px]">
+        <button
+          onClick={onClose}
+          className="absolute top-2 right-3 text-xl text-gray-500"
         >
-            &times;
+          &times;
         </button>
         <Login onClose={onClose} />
       </div>
