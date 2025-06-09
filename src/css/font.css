@@ -1,0 +1,7 @@
+@import './tailwind.css';
+
+@layer base {
+  body {
+    font-family: 'noto-sans-kr', sans-serif;
+  }
+}
