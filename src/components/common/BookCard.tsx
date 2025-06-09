@@ -1,10 +1,9 @@
-import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
-import FavoriteIcon from '@mui/icons-material/Favorite';
+import { FaRegComment, FaRegHeart } from 'react-icons/fa';
 
 export default function BookCard() {
   return (
     <>
-      <div className="relative h-[440px] w-[278px] flex-col justify-center rounded-2xl border-1 border-red-500 text-center font-[noto-sans-kr] text-[16px] shadow-xl">
+      <div className="relative h-[440px] w-[278px] flex-col justify-center rounded-2xl border-1 border-red-500 text-center text-[16px] shadow-xl">
         <div className="h-[247px] w-[278px] content-center justify-center overflow-hidden rounded-t-2xl border-1 text-center">
           <span>이미지 에리어</span>
         </div>
@@ -23,18 +22,18 @@ export default function BookCard() {
             세상이 사랑하지 않았고 세상이 존중하지 않았지만 그저 숨쉬고 살아있는
           </div>
           {/* 좋아요, 댓글 */}
-          <div className="align-end absolute bottom-3 left-3 flex">
-            <div className="mr-[8px]">
+          <div className="absolute bottom-3 left-3 flex">
+            <div className="mr-[8px] flex items-center space-x-1">
               <span>
-                <FavoriteIcon fontSize="small" />
+                <FaRegHeart fontSize="small" />
               </span>
-              <span> 34</span>
+              <span>34</span>
             </div>
-            <div>
+            <div className="flex items-center space-x-1">
               <span>
-                <ChatBubbleIcon fontSize="small" />
+                <FaRegComment fontSize="small" />
               </span>
-              <span> 6</span>
+              <span>6</span>
             </div>
           </div>
           <div>
