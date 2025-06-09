@@ -10,9 +10,10 @@ export default function Profile() {
           <div className="mt-[52px] flex flex-col items-center text-center">
             {/* 프로필 이미지 */}
             <div className="relative size-[100px] rounded-full bg-black">
-              <button className="absolute top-0 right-1 size-[25px] cursor-pointer items-center justify-center rounded-full border-3 border-white bg-gray-100">
+              <form className="absolute top-0 right-1 flex size-[25px] cursor-pointer items-center justify-center rounded-full border-3 border-white bg-gray-100">
                 <LuPencil fontSize="small" />
-              </button>
+                <button></button>
+              </form>
             </div>
             <div className="mt-[14px] grid">
               <span>닉네임</span>
@@ -37,8 +38,8 @@ export default function Profile() {
             <button className="button">북마크</button>
           </div>
         </div>
-        <div className="flex items-center justify-center">
-          <div className="mt-[100px] grid w-[1196px] grid-cols-4 gap-[28px]">
+        <div className="flex items-center justify-center bg-[#FAFAFA]">
+          <div className="grid w-[1196px] grid-cols-4 gap-[28px] p-[100px]">
             <BookCard />
           </div>
         </div>
