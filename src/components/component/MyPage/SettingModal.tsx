@@ -8,8 +8,10 @@ export default function SettingModal({
 }) {
   return (
     <>
+      {/* 모달 전체 영역 */}
       <div className="modal-overlay">
         <div className="relative flex h-[567px] w-[383px] flex-col items-center rounded-xl bg-white px-[20px] py-[18px] text-center">
+          {/* 중앙 모달 */}
           <div>
             <button
               className="absolute top-0 left-0 mx-[20px] my-[18px] cursor-pointer"
