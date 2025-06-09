@@ -26,7 +26,7 @@ export default function Header() {
 
   return (
     <header className="flex h-[100px] w-full items-center justify-center border-b-[1px] border-[#EBEBEB]">
-      <div className="flex content-center justify-between w-[1196px]">
+      <div className="flex w-[1196px] content-center justify-between">
         <div className="flex items-center space-x-4">
           <Link to="/" className="text-[20px] font-medium">
             북적북적
