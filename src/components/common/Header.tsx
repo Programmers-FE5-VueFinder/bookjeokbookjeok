@@ -1,4 +1,5 @@
 import { Link } from 'react-router';
+import { logout } from '../../apis/auth';
 import supabase from '../../utils/supabase';
 import LoginModal from '../../pages/LoginModal';
 import { useEffect, useRef, useState } from 'react';
@@ -11,6 +12,7 @@ import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined
 export default function Header() {
   // const session = useAuthStore((state) => state.session); 나중에 프로필 받아올 때 사용
   const isLogin = useAuthStore((state) => state.isLogin);
+  const setLogin = useAuthStore((state) => state.setLogin);
   const setLogout = useAuthStore((state) => state.setLogout);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,9 +20,22 @@ export default function Header() {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (!error) setLogout();
+    await logout();
+    setLogout();
   };
+
+  // 로그인 상태 관리는 zustand로 대체, logout만 auth.ts 사용
+  useEffect(() => {
+    const syncSession = async () => {
+        const { data: { session }} = await supabase.auth.getSession();
+        if (session) {
+            setLogin(session);
+        } else {
+            setLogout();
+        }
+    };
+    syncSession();
+  }, [setLogin, setLogout]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
