@@ -43,20 +43,6 @@ export default function Profile() {
         <div className="flex items-center justify-center">
           <div className="mt-[100px] grid w-[1196px] grid-cols-4 gap-[28px]">
             <BookCard />
-            <BookCard />
-            <BookCard />
-            <BookCard />
-            <BookCard />
-            <BookCard />
-            <BookCard />
-            <BookCard />
-            <BookCard />
-            <BookCard />
-            <BookCard />
-            <BookCard />
-            <BookCard />
-            <BookCard />
-            <BookCard />
           </div>
         </div>
       </div>
