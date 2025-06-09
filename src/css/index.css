@@ -12,6 +12,6 @@
     @apply fixed top-0 left-0 flex h-[100%] w-[100%] items-center justify-center bg-[#000000]/50;
   }
   .errorButton {
-    @apply w-[238px] h-[40px] text-[16px]
+    @apply h-[40px] w-[238px] text-[16px];
   }
 }
