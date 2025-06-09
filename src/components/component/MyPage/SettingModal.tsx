@@ -3,13 +3,18 @@ import { FaGear } from 'react-icons/fa6';
 
 export default function SettingModal({
   setOpenSetting,
+  onClose,
 }: {
   setOpenSetting: React.Dispatch<React.SetStateAction<boolean>>;
+  onClose: () => void;
 }) {
   return (
     <>
-      <div className="modal-overlay">
-        <div className="relative flex h-[567px] w-[383px] flex-col items-center rounded-xl bg-white px-[20px] py-[18px] text-center">
+      <div className="modal-overlay" onClick={onClose}>
+        <div
+          className="relative flex h-[567px] w-[383px] flex-col items-center rounded-xl bg-white px-[20px] py-[18px] text-center"
+          onClick={(e) => e.stopPropagation()}
+        >
           <div>
             <button
               className="absolute top-0 left-0 mx-[20px] my-[18px] cursor-pointer"
@@ -23,7 +28,7 @@ export default function SettingModal({
           </div>
           <div className="my-[20px]">
             <div className="relative size-[100px] rounded-full border-1 bg-black">
-              <button className="absolute top-0 right-1 size-[25px] cursor-pointer items-center justify-center rounded-full border-3 border-white bg-gray-100 text-center">
+              <button className="absolute top-0 right-1 flex size-[25px] cursor-pointer items-center justify-center rounded-full border-3 border-white bg-gray-100 text-center">
                 <FaGear />
               </button>
             </div>
