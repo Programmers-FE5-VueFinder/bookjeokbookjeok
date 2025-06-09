@@ -1,1 +1,8 @@
 @import './tailwind.css';
+@import './font.css';
+
+@layer {
+  .button {
+    @apply h-[40px] w-[300px] border-green-400 hover:bg-gray-100 active:border-b-4;
+  }
+}
