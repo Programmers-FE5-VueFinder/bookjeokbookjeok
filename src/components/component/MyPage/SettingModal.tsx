@@ -10,7 +10,9 @@ export default function SettingModal({
 }) {
   return (
     <>
+      {/* 모달 외부 클릭 시 닫힘 */}
       <div className="modal-overlay" onClick={onClose}>
+        {/* 모달 내부 클릭 시 닫힘 방지 */}
         <div
           className="relative flex h-[567px] w-[383px] flex-col items-center rounded-xl bg-white px-[20px] py-[18px] text-center"
           onClick={(e) => e.stopPropagation()}
