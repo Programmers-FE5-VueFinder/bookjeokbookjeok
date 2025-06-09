@@ -1,14 +1,15 @@
 import { createBrowserRouter, RouterProvider } from 'react-router';
-import RootLayout from './layouts/RootLayout';
 import Home from '../pages/Home';
 import Login from '../pages/Login';
-import CreatePost from '../pages/CreatePost';
-import ChannelLayout from './layouts/ChannelLayout';
-import PostList from '../pages/PostList';
-import PostDetail from '../pages/PostDetail';
 import Profile from '../pages/Profile';
-import SearchResult from '../pages/SearchResult';
+import PostList from '../pages/PostList';
 import NotFound from '../pages/NotFound';
+import PostDetail from '../pages/PostDetail';
+import CreatePost from '../pages/CreatePost';
+import RootLayout from './layouts/RootLayout';
+import Notification from '../pages/Notification';
+import SearchResult from '../pages/SearchResult';
+import ChannelLayout from './layouts/ChannelLayout';
 
 const router = createBrowserRouter([
   {
@@ -43,6 +44,10 @@ const router = createBrowserRouter([
       {
         path: '/login',
         Component: Login,
+      },
+      {
+        path: '/notification',
+        Component: Notification,
       },
       {
         path: '/search',
