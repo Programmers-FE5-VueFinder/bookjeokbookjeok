@@ -10,10 +10,12 @@ import RootLayout from './layouts/RootLayout';
 import Notification from '../pages/Notification';
 import SearchResult from '../pages/SearchResult';
 import ChannelLayout from './layouts/ChannelLayout';
+import { fetchUserData } from './loader/auth.loader';
 
 const router = createBrowserRouter([
   {
     Component: RootLayout,
+    loader: fetchUserData,
     children: [
       {
         path: '/',

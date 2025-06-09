@@ -2,14 +2,23 @@ import { Link } from "react-router";
 import { useAuthStore } from "../../store/authStore";
 import { useEffect, useRef, useState } from "react";
 
+import supabase from "../../utils/supabase";
 import SearchIcon from '@mui/icons-material/Search';
 import { MdOutlinePersonOutline } from "react-icons/md";
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 
 export default function Header () {
-    const { isLoggedIn, logout } = useAuthStore();
+    // const session = useAuthStore((state) => state.session); 나중에 프로필 받아올 때 사용
+    const isLogin = useAuthStore((state) => state.isLogin);
+    const setLogout = useAuthStore((state) => state.setLogout);
+
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement | null>(null);
+
+    const handleLogout = async () => {
+        const { error } = await supabase.auth.signOut();
+        if (!error) setLogout();
+      }
 
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
@@ -42,7 +51,7 @@ export default function Header () {
                     <NotificationsOutlinedIcon className="text-black" />
                 </Link>
 
-                {isLoggedIn ? (
+                {isLogin ? (
                     <div className="relative">
                         <button onClick={() => setIsDropdownOpen(prev => !prev)}>
                             <MdOutlinePersonOutline size={24} className="text-black" />
@@ -62,10 +71,7 @@ export default function Header () {
 
                                 <button
                                     className="flex justify-center items-center w-full px-4 py-2 text-black font-medium text-[16px] hover:bg-gray-100"
-                                    onClick={() => {
-                                        logout();
-                                        setIsDropdownOpen(false);
-                                    }}
+                                    onClick={handleLogout}
                                 >
                                     로그아웃
                                 </button>

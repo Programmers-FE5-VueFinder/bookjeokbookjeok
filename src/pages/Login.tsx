@@ -1,22 +1,37 @@
-import { useAuthStore } from "../store/authStore";
-import { useNavigate } from "react-router";
-
-// import { googleLogin } from "../apis/auth";
-
+import supabase from "../apis";
 
 export default function Login() {
-  const login = useAuthStore((state) => state.login);
-  const navigate = useNavigate();
-
-  const handleLogin = () => {
-    login();
-    navigate('/');
+  const handleLogin = async (method: "google" | "kakao") => {
+    await supabase.auth.signInWithOAuth({
+      provider: method,
+    });
   }
 
   return (
     <div>
-      <h2>Login Component</h2>
-      <button onClick={handleLogin} className="border solid 1px">로그인</button>
+      <button 
+        onClick={() => handleLogin("google")} 
+        className="flex border solid 1px"
+      >
+        <img
+          src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+          alt="Google"
+          className="w-5 h-5 mr-2"
+        />       
+        Google 로그인
+      </button>
+
+      <button 
+        onClick={() => handleLogin("kakao")} 
+        className="flex border solid 1px"
+      >
+        <img
+          src="https://cdn.simpleicons.org/kakaotalk/FFCD00"
+          alt="Kakao"
+          className="w-5 h-5 mr-2"
+        />       
+        카카오톡 로그인
+      </button>
     </div>
   );
 }
