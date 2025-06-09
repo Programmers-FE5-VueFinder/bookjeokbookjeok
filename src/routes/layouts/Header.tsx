@@ -3,8 +3,8 @@ import { useAuthStore } from "../../store/authStore";
 import { useEffect, useRef, useState } from "react";
 
 import SearchIcon from '@mui/icons-material/Search';
-import PersonIcon from '@mui/icons-material/Person';
-import NotificationsIcon from '@mui/icons-material/Notifications';
+import { MdOutlinePersonOutline } from "react-icons/md";
+import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 
 export default function Header () {
     const { isLoggedIn, logout } = useAuthStore();
@@ -39,13 +39,13 @@ export default function Header () {
                     <SearchIcon className="text-black" />
                 </Link>
                 <Link to={'/notification'}>
-                    <NotificationsIcon className="text-black" />
+                    <NotificationsOutlinedIcon className="text-black" />
                 </Link>
 
                 {isLoggedIn ? (
                     <div className="relative">
                         <button onClick={() => setIsDropdownOpen(prev => !prev)}>
-                            <PersonIcon fontSize="medium" className="text-black" />
+                            <MdOutlinePersonOutline size={24} className="text-black" />
                         </button>
 
                         {isDropdownOpen && (
