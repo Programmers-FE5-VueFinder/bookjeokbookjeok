@@ -1,7 +1,10 @@
 import BookCard from '../components/common/BookCard';
+import { useState } from 'react';
 import { LuPencil } from 'react-icons/lu';
+import SettingModal from '../components/component/MyPage/SettingModal';
 
 export default function Profile() {
+  const [openSetting, setOpenSetting] = useState<boolean>(false);
   return (
     <>
       <div>
@@ -10,7 +13,12 @@ export default function Profile() {
           <div className="mt-[52px] flex flex-col items-center text-center">
             {/* 프로필 이미지 */}
             <div className="relative size-[100px] rounded-full bg-black">
-              <button className="absolute top-0 right-1 size-[25px] cursor-pointer items-center justify-center rounded-full border-3 border-white bg-gray-100">
+              <button
+                className="absolute top-0 right-1 size-[25px] cursor-pointer items-center justify-center rounded-full border-3 border-white bg-gray-100"
+                onClick={() => {
+                  setOpenSetting(true);
+                }}
+              >
                 <LuPencil fontSize="small" />
               </button>
             </div>
@@ -38,11 +46,22 @@ export default function Profile() {
           </div>
         </div>
         <div className="flex items-center justify-center">
-          <div className="mt-[100px] grid w-[1196px] grid-cols-4 gap-[28px]">
+          <div className="mt-[100px] grid w-[1196px] gap-[28px] md:grid-cols-2 lg:grid-cols-4">
+            <BookCard />
+            <BookCard />
+            <BookCard />
+            <BookCard />
+            <BookCard />
+            <BookCard />
             <BookCard />
           </div>
         </div>
       </div>
+      {openSetting ? (
+        <div>
+          <SettingModal setOpenSetting={setOpenSetting} />
+        </div>
+      ) : null}
     </>
   );
 }
