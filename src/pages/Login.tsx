@@ -1,6 +1,7 @@
-import supabase from '../apis';
-import { useNavigate } from 'react-router';
 import { GoMail } from 'react-icons/go';
+import { useNavigate } from 'react-router';
+import { kakaoLogin } from '../apis/auth';
+import { googleLogin } from '../apis/auth';
 import kakaoLogo from '../assets/images/kakaoLogo.png';
 
 interface LoginProps {
@@ -13,12 +14,6 @@ export default function Login({ onClose }: LoginProps) {
   const goToSignUp = () => {
     onClose();
     navigate('/signup');
-  };
-
-  const handleLogin = async (method: 'google' | 'kakao') => {
-    await supabase.auth.signInWithOAuth({
-      provider: method,
-    });
   };
 
   return (
@@ -38,7 +33,7 @@ export default function Login({ onClose }: LoginProps) {
         </button>
 
         <button
-          onClick={() => handleLogin('google')}
+          onClick={googleLogin}
           className="relative h-[45px] w-[340px] cursor-pointer rounded-[5px] border border-[#EBEBEB] text-[14px]"
         >
           <img
@@ -52,7 +47,7 @@ export default function Login({ onClose }: LoginProps) {
         </button>
 
         <button
-          onClick={() => handleLogin('kakao')}
+          onClick={kakaoLogin}
           className="relative h-[45px] w-[340px] cursor-pointer rounded-[5px] bg-[#FEE500] text-[14px]"
         >
           <img
