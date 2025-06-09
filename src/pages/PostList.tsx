@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router';
 
 const sortOptionsMap: Record<string, string[]> = {
-  diary: ['인기글', '최신글', '팔로잉'],
-  'book-club': ['최신글', '모집중', '내 모임'],
+  'diary': ['인기글', '최신글', '팔로잉'],
+  'book-club': ['최신글', '인기글', '내 모임'],
   'free-board': ['인기글', '최신글', '팔로잉'],
 };
 
@@ -14,7 +14,7 @@ export default function PostList() {
 
   const channelNames: { [key: string]: string } = {
     diary: '다이어리',
-    'book-club': '북클럽',
+    'book-club': '독서모임',
     'free-board': '자유채널',
   };
 
@@ -32,7 +32,7 @@ export default function PostList() {
 
   return (
     <>
-      <div className="px-[362px]">
+      <div className="max-w-[1200px] w-full mx-auto px-4">
         <h1 className="my-[80px] text-[32px] font-bold">{channelName}</h1>
 
         <div className="flex gap-x-[10px]">
