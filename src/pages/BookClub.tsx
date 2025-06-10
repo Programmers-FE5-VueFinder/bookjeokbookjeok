@@ -70,7 +70,7 @@ export default function BookClub() {
                   <span>가입 신청</span>
                   <span>00명</span>
                 </div>
-                <span>sample</span>
+                <div>sample</div>
               </div>
             </div>
           </div>
