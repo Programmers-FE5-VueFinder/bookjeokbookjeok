@@ -27,12 +27,14 @@ export default function Header() {
   // 로그인 상태 관리는 zustand로 대체, logout만 auth.ts 사용
   useEffect(() => {
     const syncSession = async () => {
-        const { data: { session }} = await supabase.auth.getSession();
-        if (session) {
-            setLogin(session);
-        } else {
-            setLogout();
-        }
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (session) {
+        setLogin(session);
+      } else {
+        setLogout();
+      }
     };
     syncSession();
   }, [setLogin, setLogout]);
@@ -51,8 +53,8 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="flex h-[100px] w-full items-center justify-between border-b-[1px] border-[#EBEBEB]">
-      <div className='flex w-[1200px] content-center justify-between'>
+    <header className="flex h-[100px] w-full items-center justify-center border-b-[1px] border-[#EBEBEB]">
+      <div className="flex w-[1200px] content-center justify-between">
         <div className="flex items-center space-x-4">
           <Link to="/" className="text-[20px] font-medium">
             북적북적
