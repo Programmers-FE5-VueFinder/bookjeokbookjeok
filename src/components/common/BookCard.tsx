@@ -3,7 +3,7 @@ import { FaRegComment, FaRegHeart } from 'react-icons/fa';
 export default function BookCard() {
   return (
     <>
-      <div className="relative h-[440px] w-[278px] flex-col justify-center rounded-2xl border-1 border-red-500 text-center text-[16px] shadow-md shadow-gray-400">
+      <div className="relative h-[440px] w-[278px] flex-col justify-center rounded-2xl border-1 border-red-500 bg-white text-center text-[16px] shadow-md shadow-gray-400">
         <div className="h-[247px] w-[278px] content-center justify-center overflow-hidden rounded-t-2xl border-1 text-center">
           <span>이미지 에리어</span>
         </div>

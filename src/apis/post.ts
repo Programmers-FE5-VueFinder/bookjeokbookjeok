@@ -1,36 +1,110 @@
 import supabase from './index';
 
-/* 게시물 리스트 fetch */
+/* 전체 게시물 조회 */
 export async function fetchPosts(category: string = 'all') {
-  try {
-    switch (category) {
-      case 'all':
-        return await supabase.from('post').select('*');
-      case 'diary':
-        return await supabase.from('post').select('*').eq('category', 'diary');
-      case 'community':
-        return await supabase
-          .from('post')
-          .select('*')
-          .eq('category', 'community');
-      case 'book_club':
-        return await supabase
-          .from('post')
-          .select('*')
-          .eq('category', 'book_club');
+  switch (category) {
+    case 'all': {
+      const result = await supabase.from('post').select(
+        `id,
+      title,
+      body,
+      image,
+      profile(*),
+      category,
+      like(*),
+      comment(*),
+      vote(*),
+      created_at
+    `,
+      );
+
+      return result.data;
     }
-  } catch (e) {
-    console.error(e);
+    case 'diary': {
+      const result = await supabase
+        .from('post')
+        .select(
+          `id,
+      title,
+      body,
+      image,
+      profile(*),
+      category,
+      like(*),
+      comment(*),
+      vote(*),
+      created_at
+    `,
+        )
+        .eq('category', 'diary');
+
+      return result.data;
+    }
+    case 'community': {
+      const result = await supabase
+        .from('post')
+        .select(
+          `id,
+      title,
+      body,
+      image,
+      profile(*),
+      category,
+      like(*),
+      comment(*),
+      vote(*),
+      created_at
+    `,
+        )
+        .eq('category', 'community');
+
+      return result.data;
+    }
+    case 'book_club': {
+      const result = await supabase
+        .from('post')
+        .select(
+          `id,
+      title,
+      body,
+      image,
+      profile(*),
+      category,
+      like(*),
+      comment(*),
+      vote(*),
+      created_at
+    `,
+        )
+        .eq('category', 'book_club');
+
+      return result.data;
+    }
   }
 }
 
-/* 게시물 상세보기 */
+/* 게시물 상세 조회 */
 export async function fetchPostDetail(id: string) {
-  try {
-    return await supabase.from('post').select('*').eq('id', id);
-  } catch (e) {
-    console.error(e);
-  }
+  const post = await supabase
+    .from('post')
+    .select(
+      `
+      id,
+      title,
+      body,
+      image,
+      profile(*),
+      category,
+      like(*),
+      comment(*),
+      vote(*),
+      created_at
+    `,
+    )
+    .eq('id', id)
+    .single();
+
+  return post.data;
 }
 
 /* 게시물 생성 */
@@ -40,7 +114,7 @@ export async function createPost(
   image: string | null = null,
   category: string,
 ) {
-  return await supabase
+  await supabase
     .from('post')
     .insert([{ title: title, body: body, image: image, category: category }])
     .select();
