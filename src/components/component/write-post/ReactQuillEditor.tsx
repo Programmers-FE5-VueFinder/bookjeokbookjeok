@@ -128,13 +128,15 @@ export default function ReactQuillEditor() {
           </div>
         </div>
         {/* 선택된 도서 정보 */}
-        <div className="mx-auto mt-[60px] flex max-w-[600px] gap-[20px] bg-[#F6F6F6] p-[20px]">
-          <img src={selectedBook?.cover} alt={selectedBook?.title} />
-          <div className="text-[16px] font-medium">
-            <p>{selectedBook?.title}</p>
-            <p className="mt-[20px]">{selectedBook?.author.split(' (')[0]}</p>
+        {selectedBook && (
+          <div className="mx-auto mt-[60px] flex max-w-[600px] gap-[20px] bg-[#F6F6F6] p-[20px]">
+            <img src={selectedBook.cover} alt={selectedBook.title} />
+            <div className="text-[16px] font-medium">
+              <p>{selectedBook.title}</p>
+              <p className="mt-[20px]">{selectedBook.author.split(' (')[0]}</p>
+            </div>
           </div>
-        </div>
+        )}
         <ReactQuill
           ref={quillRef}
           value={value}
