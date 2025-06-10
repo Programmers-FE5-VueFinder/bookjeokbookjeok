@@ -1,0 +1,141 @@
+import supabase from './index';
+
+/* 전체 게시물 조회 */
+export async function fetchPosts(category: string = 'all') {
+  switch (category) {
+    case 'all': {
+      const result = await supabase.from('post').select(
+        `id,
+      title,
+      body,
+      image,
+      profile(*),
+      category,
+      like(*),
+      comment(*),
+      vote(*),
+      created_at
+    `,
+      );
+
+      return result.data;
+    }
+    case 'diary': {
+      const result = await supabase
+        .from('post')
+        .select(
+          `id,
+      title,
+      body,
+      image,
+      profile(*),
+      category,
+      like(*),
+      comment(*),
+      vote(*),
+      created_at
+    `,
+        )
+        .eq('category', 'diary');
+
+      return result.data;
+    }
+    case 'community': {
+      const result = await supabase
+        .from('post')
+        .select(
+          `id,
+      title,
+      body,
+      image,
+      profile(*),
+      category,
+      like(*),
+      comment(*),
+      vote(*),
+      created_at
+    `,
+        )
+        .eq('category', 'community');
+
+      return result.data;
+    }
+    case 'book_club': {
+      const result = await supabase
+        .from('post')
+        .select(
+          `id,
+      title,
+      body,
+      image,
+      profile(*),
+      category,
+      like(*),
+      comment(*),
+      vote(*),
+      created_at
+    `,
+        )
+        .eq('category', 'book_club');
+
+      return result.data;
+    }
+  }
+}
+
+/* 게시물 상세 조회 */
+export async function fetchPostDetail(id: string) {
+  const post = await supabase
+    .from('post')
+    .select(
+      `
+      id,
+      title,
+      body,
+      image,
+      profile(*),
+      category,
+      like(*),
+      comment(*),
+      vote(*),
+      created_at
+    `,
+    )
+    .eq('id', id)
+    .single();
+
+  return post.data;
+}
+
+/* 게시물 생성 */
+export async function createPost(
+  title: string,
+  body: string,
+  image: string | null = null,
+  category: string,
+) {
+  await supabase
+    .from('post')
+    .insert([{ title: title, body: body, image: image, category: category }])
+    .select();
+}
+
+/* 게시물 수정 */
+export async function editPost(
+  id: string,
+  title: string,
+  body: string,
+  image: string | null = null,
+  category: string,
+) {
+  return await supabase
+    .from('post')
+    .update({ title: title, body: body, image: image, category: category })
+    .eq('id', id)
+    .select();
+}
+
+/* 게시물 삭제 */
+export async function deletePost(id: string) {
+  await supabase.from('post').delete().eq('id', id);
+}

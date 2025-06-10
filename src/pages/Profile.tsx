@@ -1,20 +1,25 @@
 import BookCard from '../components/common/BookCard';
+import { useState } from 'react';
+import { LuPencil } from 'react-icons/lu';
+import SettingModal from '../components/component/MyPage/SettingModal';
 
 export default function Profile() {
+  const [openSetting, setOpenSetting] = useState<boolean>(false);
   return (
     <>
       <div>
-        {/* 헤더 에리어 */}
-        <div className="h-[110px] text-center text-[50px]">
-          <h1>Header</h1>
-        </div>
         {/* 프로필 에리어 */}
         <div className="relative flex h-[350px] content-center justify-center shadow shadow-gray-200">
           <div className="mt-[52px] flex flex-col items-center text-center">
             {/* 프로필 이미지 */}
-            <div className="relative size-[100px] rounded-full border-1 bg-black">
-              <button className="absolute top-0 right-1 size-[25px] cursor-pointer rounded-full border-3 border-white bg-gray-100 text-center align-middle">
-                O
+            <div className="relative size-[100px] rounded-full bg-black">
+              <button
+                className="absolute top-0 right-1 flex size-[25px] cursor-pointer items-center justify-center rounded-full border-3 border-white bg-gray-100"
+                onClick={() => {
+                  setOpenSetting(true);
+                }}
+              >
+                <LuPencil fontSize="small" />
               </button>
             </div>
             <div className="mt-[14px] grid">
@@ -40,12 +45,26 @@ export default function Profile() {
             <button className="button">북마크</button>
           </div>
         </div>
-        <div className="flex items-center justify-center">
-          <div className="mt-[100px] grid w-[1196px] grid-cols-4 gap-[28px]">
+        <div className="flex items-center justify-center bg-[#FAFAFA]">
+          <div className="grid gap-[28px] p-[100px] md:grid-cols-2 lg:grid-cols-4">
+            <BookCard />
+            <BookCard />
+            <BookCard />
+            <BookCard />
+            <BookCard />
+            <BookCard />
             <BookCard />
           </div>
         </div>
       </div>
+      {openSetting ? (
+        <div>
+          <SettingModal
+            setOpenSetting={setOpenSetting}
+            onClose={() => setOpenSetting(false)}
+          />
+        </div>
+      ) : null}
     </>
   );
 }
