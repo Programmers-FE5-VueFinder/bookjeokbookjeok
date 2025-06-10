@@ -1,46 +1,114 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { IoSearch } from 'react-icons/io5';
+import { searchBooks } from '../../apis/book-search';
+import type { BookDetail } from '../../types/book';
+import { MdCancel } from 'react-icons/md';
 
-interface BookSearchModal {
+interface BookSearchModalProps {
   showModal: boolean;
   onClose: () => void;
+  setSeletedBook: (book: BookDetail) => void;
 }
 
 export default function BookSearchModal({
   showModal,
   onClose,
-}: BookSearchModal) {
+  setSeletedBook,
+}: BookSearchModalProps) {
   const [query, setQuery] = useState('');
+  const [results, setResults] = useState<BookDetail[]>([]);
+  const searchRef = useRef<HTMLInputElement>(null);
+
+  const handleSearch = useCallback(async () => {
+    try {
+      const items = await searchBooks(query);
+      setResults(items);
+    } catch (error) {
+      console.error('도서 검색 오류:', error);
+    }
+  }, [query]);
+
+  useEffect(() => {
+    if (query.length === 0) {
+      setResults([]);
+    }
+
+    const delaySearch = setTimeout(() => {
+      if (query.trim()) {
+        handleSearch();
+      } else {
+        setResults([]);
+      }
+    }, 500);
+
+    return () => clearTimeout(delaySearch);
+  }, [query, handleSearch]);
 
   if (!showModal) return null;
 
   return (
-    <>
-      {showModal && (
-        <div
-          className={
-            'fixed inset-0 z-50 flex items-center justify-center bg-black/50'
-          }
-          onClick={onClose}
-        >
-          <div
-            className={`relative w-[628px] rounded-[5px] bg-[#FFFFFF] px-[30px]`}
-            onClick={(e) => e.stopPropagation()}
-          >
-            <p className="my-[12px] text-center text-[16px] font-medium">
-              도서 검색
-            </p>
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="도서를 검색 해주세요"
-              className="mb-[35px] h-[40px] w-full rounded border border-[#D6D6D6] px-[10px] placeholder:text-[16px] placeholder:text-[#B3B3B3]"
+    <div
+      className="fixed inset-0 z-50 flex justify-center bg-black/50 backdrop-blur-[3px]"
+      onClick={() => {
+        onClose();
+        setQuery('');
+      }}
+    >
+      <div
+        className={`relative mt-[20vh] w-[628px] justify-center rounded-[5px] bg-white px-[30px] py-[20px] transition-all duration-200 ${
+          results.length > 0 ? 'max-h-[550px]' : 'max-h-[130px]'
+        } overflow-hidden`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <p className="mb-[12px] text-center text-[16px] font-bold">도서 검색</p>
+
+        <div className="relative mb-[20px]">
+          <input
+            type="text"
+            value={query}
+            ref={searchRef}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="도서를 검색 해주세요"
+            className="h-[40px] w-full rounded border border-[#D6D6D6] px-[10px] placeholder:text-[16px] placeholder:text-[#B3B3B3]"
+          />
+          {query && (
+            <MdCancel
+              className="absolute top-1/2 right-[14px] h-[24px] w-[24px] -translate-y-1/2 cursor-pointer text-[#2F2F2F]"
+              onClick={() => {
+                setResults([]);
+                setQuery('');
+                searchRef.current?.focus();
+              }}
             />
-            <IoSearch className="absolute top-[68px] right-[44px] h-[24px] w-[24px] -translate-y-1/2" />
-          </div>
+          )}
+          {!query && (
+            <IoSearch className="absolute top-1/2 right-[14px] h-[24px] w-[24px] -translate-y-1/2 cursor-pointer text-[#2F2F2F]" />
+          )}
         </div>
-      )}
-    </>
+
+        {/* 검색 결과 리스트 */}
+        {results.length > 0 && (
+          <ul className="max-h-[410px] overflow-y-auto transition-opacity duration-200">
+            {results.map((book: BookDetail) => (
+              <li
+                key={book.isbn}
+                className="group flex cursor-pointer p-2 hover:bg-[#08C818]/20"
+                onClick={() => {
+                  setSeletedBook(book);
+                  onClose();
+                  setQuery('');
+                }}
+              >
+                <div>
+                  <p className="font-medium group-hover:font-semibold">
+                    {book.title}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    </div>
   );
 }
