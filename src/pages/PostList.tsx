@@ -5,9 +5,9 @@ import { fetchPosts } from '../apis/post';
 import BookCard from '../components/common/BookCard';
 
 const sortOptionsMap: Record<string, string[]> = {
-  'diary': ['인기글', '최신글', '팔로잉'],
+  'diary': ['최신글', '인기글', '팔로잉'],
   'book_club': ['최신글', '인기글', '내 모임'],
-  'community': ['인기글', '최신글', '팔로잉'],
+  'community': ['최신글', '인기글', '팔로잉'],
 };
 
 export default function PostList() {
@@ -23,9 +23,19 @@ export default function PostList() {
     'community': '자유채널',
   };
 
+  const sortedPosts = [...posts].sort((a, b) => {
+    if (selectedSort === '최신글') {
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    }
+    if (selectedSort === '인기글') {
+      // return b.likes - a.likes;
+    }
+    return 0;
+  })
+
   const channelName = channelId
     ? channelNames[channelId] || '알 수 없는 채널'
-    : '전체글';
+    : '최신글';
   const sortOptions = channelId ? sortOptionsMap[channelId] || [] : [];
   const [selectedSort, setSelectedSort] = useState<string>('');
 
@@ -37,22 +47,33 @@ export default function PostList() {
 
       const result = await fetchPosts(category);
 
+      
       if (!result) {
         console.error('게시글 응답 없음');
         setLoading(false);
         return;
       }
-
+      
       if (result.error) {
         console.error('게시글 불러오기 실패');
       } else if (result.data) {
         setPosts(result.data);
       }
-
+      
+      if (result.data) {
+        console.log('백엔드 응답 데이터:', result.data);
+      }
+      
       setLoading(false);
     };
 
     loadPosts();
+     
+    const options = sortOptionsMap[channelId ?? ''];
+    if (options && options.length > 0) {
+      setSelectedSort(options[0]);
+    }
+
   }, [channelId]);
 
   return (
@@ -85,7 +106,7 @@ export default function PostList() {
           ) : (
             // 카드 컴포
             <div className='w-fit space-y-4'>
-              {posts.map((post) => (
+              {sortedPosts.map((post) => (
                 <Link
                   key={post.id}
                   to={`/channel/${post.category}/post/${post.id}`}

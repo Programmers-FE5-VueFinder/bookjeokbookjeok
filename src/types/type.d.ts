@@ -5,7 +5,7 @@ type Post = {
     image: string | null;
     category: string;
     created_at: string;
-  }
+};
 
 type BookCardProps = {
     nickname: string;
@@ -16,4 +16,4 @@ type BookCardProps = {
     likes?: number;
     comments?: number;
     createdAt: string;
-  };
+};
