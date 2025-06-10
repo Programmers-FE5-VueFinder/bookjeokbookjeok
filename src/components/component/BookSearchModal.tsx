@@ -16,15 +16,19 @@ export default function BookSearchModal({
   setSeletedBook,
 }: BookSearchModalProps) {
   const [query, setQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [results, setResults] = useState<BookDetail[]>([]);
   const searchRef = useRef<HTMLInputElement>(null);
 
   const handleSearch = useCallback(async () => {
     try {
+      setIsLoading(true);
       const items = await searchBooks(query);
       setResults(items);
     } catch (error) {
       console.error('도서 검색 오류:', error);
+    } finally {
+      setIsLoading(false);
     }
   }, [query]);
 
@@ -56,7 +60,7 @@ export default function BookSearchModal({
     >
       <div
         className={`relative mt-[20vh] w-[628px] justify-center rounded-[5px] bg-white px-[30px] py-[20px] transition-all duration-200 ${
-          results.length > 0 ? 'max-h-[550px]' : 'max-h-[130px]'
+          results.length > 0 || isLoading ? 'max-h-[550px]' : 'max-h-[130px]'
         } overflow-hidden`}
         onClick={(e) => e.stopPropagation()}
       >
@@ -87,26 +91,33 @@ export default function BookSearchModal({
         </div>
 
         {/* 검색 결과 리스트 */}
-        {results.length > 0 && (
-          <ul className="max-h-[410px] overflow-y-auto transition-opacity duration-200">
-            {results.map((book: BookDetail) => (
-              <li
-                key={book.isbn}
-                className="group flex cursor-pointer p-2 hover:bg-[#08C818]/20"
-                onClick={() => {
-                  setSeletedBook(book);
-                  onClose();
-                  setQuery('');
-                }}
-              >
-                <div>
-                  <p className="font-medium group-hover:font-semibold">
-                    {book.title}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ul>
+
+        {isLoading ? (
+          <div className="flex h-[300px] items-center justify-center">
+            <div className="h-6 w-6 animate-spin rounded-full border-4 border-[#08C818] border-t-transparent"></div>
+          </div>
+        ) : (
+          results.length > 0 && (
+            <ul className="max-h-[410px] overflow-y-auto transition-opacity duration-200">
+              {results.map((book: BookDetail) => (
+                <li
+                  key={book.isbn}
+                  className="group flex cursor-pointer p-2 hover:bg-[#08C818]/20"
+                  onClick={() => {
+                    setSeletedBook(book);
+                    onClose();
+                    setQuery('');
+                  }}
+                >
+                  <div>
+                    <p className="font-medium group-hover:font-semibold">
+                      {book.title}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )
         )}
       </div>
     </div>
