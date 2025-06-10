@@ -11,4 +11,7 @@
   .modal-overlay {
     @apply fixed top-0 left-0 flex h-[100%] w-[100%] items-center justify-center bg-[#000000]/50;
   }
+  .errorButton {
+    @apply h-[40px] w-[238px] text-[16px];
+  }
 }
