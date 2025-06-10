@@ -2,9 +2,11 @@ import BookCard from '../components/common/BookCard';
 import { useState } from 'react';
 import { LuPencil } from 'react-icons/lu';
 import SettingModal from '../components/component/MyPage/SettingModal';
+import Button from '../components/component/MyPage/Button';
 
 export default function Profile() {
   const [openSetting, setOpenSetting] = useState<boolean>(false);
+  const btnName = ['다이어리', '자유채널', '독서모임', '북마크']
   return (
     <>
       <div>
@@ -39,10 +41,7 @@ export default function Profile() {
           </div>
           {/* 버튼 에리어 */}
           <div className="absolute bottom-0 flex h-[40px] w-full content-center items-center justify-center">
-            <button className="button">다이어리</button>
-            <button className="button">자유채널</button>
-            <button className="button">독서모임</button>
-            <button className="button">북마크</button>
+            <Button />
           </div>
         </div>
         <div className="flex items-center justify-center bg-[#FAFAFA]">
