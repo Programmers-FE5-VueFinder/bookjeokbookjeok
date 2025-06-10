@@ -1,5 +1,6 @@
 @import './tailwind.css';
 @import './font.css';
+@import './reactQuillCustom.css';
 
 @layer {
   .button {
@@ -17,4 +18,8 @@
   .errorButton {
     @apply h-[40px] w-[238px] text-[16px];
   }
+}
+
+select::-ms-expand {
+  display: none;
 }
