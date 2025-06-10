@@ -3,6 +3,24 @@
 @import './reactQuillCustom.css';
 
 @layer {
+  .textH1 {
+    @apply text-[36px] font-bold;
+  }
+  .textH2 {
+    @apply text-[36px] font-bold;
+  }
+  .textT1 {
+    @apply text-[36px] font-bold;
+  }
+  .textT2 {
+    @apply text-[36px] font-bold;
+  }
+  .textT3 {
+    @apply text-[36px] font-bold;
+  }
+  .textT4 {
+    @apply text-[36px] font-bold;
+  }
   .button {
     @apply h-[40px] w-[300px] border-green-400 hover:bg-gray-100 active:border-b-4;
   }
@@ -17,6 +35,9 @@
   }
   .errorButton {
     @apply h-[40px] w-[238px] text-[16px];
+  }
+  .clubInfo {
+    @apply flex items-center gap-[5px];
   }
 }
 

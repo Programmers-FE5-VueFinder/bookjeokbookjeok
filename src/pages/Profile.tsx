@@ -29,9 +29,7 @@ export default function Profile() {
             {/* 프로필 이미지 */}
             <div className="relative size-[100px]">
               <ProfileImg
-                src={
-                  profileImg || session?.user.user_metadata.avatar_url
-                }
+                src={profileImg || session?.user.user_metadata.avatar_url}
               />
               <button
                 className="absolute top-0 right-1 flex size-[25px] cursor-pointer items-center justify-center rounded-full border-3 border-white bg-gray-100"
@@ -43,9 +41,7 @@ export default function Profile() {
               </button>
             </div>
             <div className="mt-[14px] grid">
-              <span>
-                {session?.user.user_metadata.name}
-              </span>
+              <span>{session?.user.user_metadata.name}</span>
               <span>내 설명</span>
             </div>
             <div className="flex">

@@ -51,13 +51,13 @@ export default function BookClub() {
         <div className="flex justify-center bg-[#FAFAFA]">
           <div className="flex w-full justify-center p-[100px] text-wrap">
             <div className="flex w-[900px] flex-col">
-              <div className="flex items-center gap-[5px]">
+              <div className="clubInfo">
                 <IoMdInformationCircleOutline />
                 <span>클럽 정보</span>
               </div>
               <span>sample</span>
               <div id="targetMember" ref={memberRef}>
-                <div className="mt-[40px] flex items-center gap-[5px]">
+                <div className="clubInfo mt-[40px]">
                   <IoMdPerson />
                   <span>클럽 멤버</span>
                   <span>00명</span>
@@ -65,7 +65,7 @@ export default function BookClub() {
                 <span>sample</span>
               </div>
               <div>
-                <div className="mt-[40px] flex items-center gap-[5px]">
+                <div className="clubInfo mt-[40px]">
                   <IoMdPersonAdd />
                   <span>가입 신청</span>
                   <span>00명</span>

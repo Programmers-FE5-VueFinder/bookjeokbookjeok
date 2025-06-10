@@ -3,6 +3,7 @@ import { FaGear } from 'react-icons/fa6';
 import ProfileImg from './ProfileImg';
 import { useRef, useState } from 'react';
 import { useProfileStore } from '../../../store/profileStore';
+import { useAuthStore } from '../../../store/authStore';
 
 export default function SettingModal({
   setOpenSetting,
@@ -13,6 +14,7 @@ export default function SettingModal({
 }) {
   const [Image, setImage] = useState<string | null>('');
   const fileInput = useRef<HTMLInputElement | null>(null);
+  const session = useAuthStore((state) => state.session);
   const setProfileImg = useProfileStore((state) => state.setProfileImage);
 
   const isChanged = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -54,7 +56,7 @@ export default function SettingModal({
             <span className="text-[14px] font-bold">정보 수정</span>
           </div>
           <div className="relative my-[20px]">
-            <ProfileImg Image={Image} />
+            <ProfileImg src={Image || session?.user.user_metadata.avatar_url} />
             <label
               htmlFor="profileImg"
               className="absolute top-0 right-1 flex size-[25px] cursor-pointer items-center justify-center rounded-full border-3 border-white bg-gray-100 text-center"
