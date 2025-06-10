@@ -4,12 +4,16 @@ import { LuPencil } from 'react-icons/lu';
 import SettingModal from '../components/component/MyPage/SettingModal';
 import { twMerge } from 'tailwind-merge';
 import ProfileImg from '../components/component/MyPage/ProfileImg';
+import { useProfileStore } from '../store/profileStore';
+import { useAuthStore } from '../store/authStore';
 
 export default function Profile() {
   const [openSetting, setOpenSetting] = useState<boolean>(false);
   const [selectedBtn, setSelectedBtn] = useState<string>('다이어리');
   const [content, setContent] = useState<string>('다이어리');
   const buttonName = ['다이어리', '자유채널', '독서모임', '북마크'];
+  const profileImg = useProfileStore((state) => state.Image);
+  const session = useAuthStore((state) => state.session);
 
   const handleContentButton = (e: React.MouseEvent<HTMLButtonElement>) => {
     const { name } = e.currentTarget;
@@ -24,7 +28,11 @@ export default function Profile() {
           <div className="mt-[52px] flex flex-col items-center justify-center text-center">
             {/* 프로필 이미지 */}
             <div className="relative size-[100px]">
-              <ProfileImg />
+              <ProfileImg
+                src={
+                  profileImg || session?.user.user_metadata.avatar_url
+                }
+              />
               <button
                 className="absolute top-0 right-1 flex size-[25px] cursor-pointer items-center justify-center rounded-full border-3 border-white bg-gray-100"
                 onClick={() => {
@@ -32,12 +40,13 @@ export default function Profile() {
                 }}
               >
                 <LuPencil fontSize="small" />
-                <button></button>
-              </form>
+              </button>
             </div>
             <div className="mt-[14px] grid">
-              <span>닉네임</span>
-              <span>여기는 자기소개입니다.</span>
+              <span>
+                {session?.user.user_metadata.name}
+              </span>
+              <span>내 설명</span>
             </div>
             <div className="flex">
               <div className="mr-[25px]">

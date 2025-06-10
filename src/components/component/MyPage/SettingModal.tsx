@@ -1,5 +1,8 @@
 import { IoIosArrowBack } from 'react-icons/io';
 import { FaGear } from 'react-icons/fa6';
+import ProfileImg from './ProfileImg';
+import { useRef, useState } from 'react';
+import { useProfileStore } from '../../../store/profileStore';
 
 export default function SettingModal({
   setOpenSetting,
@@ -8,6 +11,28 @@ export default function SettingModal({
   setOpenSetting: React.Dispatch<React.SetStateAction<boolean>>;
   onClose: () => void;
 }) {
+  const [Image, setImage] = useState<string | null>('');
+  const fileInput = useRef<HTMLInputElement | null>(null);
+  const setProfileImg = useProfileStore((state) => state.setProfileImage);
+
+  const isChanged = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formData = new FormData();
+    formData.append('image', e.target.files![0]);
+    let profURL: string | undefined = undefined;
+
+    if (e.target.files && e.target.files.length > 0) {
+      profURL = URL.createObjectURL(e.target.files[0]);
+      setProfileImg(profURL);
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (reader.readyState === 2 && typeof reader.result === 'string') {
+        setImage(reader.result);
+      }
+    };
+    reader.readAsDataURL(e.target.files![0]);
+  };
   return (
     <>
       {/* 모달 외부 클릭 시 닫힘 */}
@@ -28,12 +53,23 @@ export default function SettingModal({
             </button>
             <span className="text-[14px] font-bold">정보 수정</span>
           </div>
-          <div className="my-[20px]">
-            <div className="relative size-[100px] rounded-full border-1 bg-black">
-              <button className="absolute top-0 right-1 flex size-[25px] cursor-pointer items-center justify-center rounded-full border-3 border-white bg-gray-100 text-center">
-                <FaGear />
-              </button>
-            </div>
+          <div className="relative my-[20px]">
+            <ProfileImg Image={Image} />
+            <label
+              htmlFor="profileImg"
+              className="absolute top-0 right-1 flex size-[25px] cursor-pointer items-center justify-center rounded-full border-3 border-white bg-gray-100 text-center"
+            >
+              <FaGear />
+            </label>
+            <input
+              type="file"
+              id="profileImg"
+              className=""
+              style={{ display: 'none' }}
+              ref={fileInput}
+              onChange={isChanged}
+              accept="image/*"
+            />
           </div>
           <div className="mb-[20px] flex gap-[13px]">
             <input
