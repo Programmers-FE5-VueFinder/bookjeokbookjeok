@@ -36,12 +36,13 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="flex h-[100px] w-full items-center justify-between border-b-[1px] border-[#EBEBEB] px-[362px]">
-      <div className="flex items-center space-x-4">
-        <Link to="/" className="text-[20px] font-medium">
-          북적북적
-        </Link>
-      </div>
+    <header className="flex h-[100px] w-full items-center justify-between border-b-[1px] border-[#EBEBEB]">
+      <div className='flex w-[1200px] content-center justify-between'>
+        <div className="flex items-center space-x-4">
+          <Link to="/" className="text-[20px] font-medium">
+            북적북적
+          </Link>
+        </div>
 
       <nav className="flex gap-x-[65px] text-[16px] font-medium">
         <Link to={'/channel/diary'}>다이어리</Link>
@@ -50,51 +51,52 @@ export default function Header() {
         <Link to={'/create-post'}>글작성</Link>
       </nav>
 
-      <div className="flex space-x-4" ref={dropdownRef}>
-        <Link to={'/search'}>
-          <SearchIcon className="text-black" />
-        </Link>
-        <Link to={'/notification'}>
-          <NotificationsOutlinedIcon className="text-black" />
-        </Link>
+        <div className="flex space-x-4" ref={dropdownRef}>
+          <Link to={'/search'}>
+            <SearchIcon className="text-black" />
+          </Link>
+          <Link to={'/notification'}>
+            <NotificationsOutlinedIcon className="text-black" />
+          </Link>
 
-        {isLogin ? (
-          <div className="relative">
-            <button onClick={() => setIsDropdownOpen((prev) => !prev)}>
-              <MdOutlinePersonOutline size={24} className="text-black" />
-            </button>
+          {isLogin ? (
+            <div className="relative">
+              <button onClick={() => setIsDropdownOpen((prev) => !prev)}>
+                <MdOutlinePersonOutline size={24} className="text-black" />
+              </button>
 
-            {isDropdownOpen && (
-              <div className="absolute right-0 z-50 mt-2 w-[100px] rounded-[5px] border border-[#E9E9E9] bg-white shadow-md">
-                <Link
-                  to="/profile"
-                  className="flex w-full items-center justify-center px-4 py-2 text-center text-[16px] font-medium text-black hover:bg-gray-100"
-                  onClick={() => {
-                    setIsDropdownOpen(false);
-                  }}
-                >
-                  프로필
-                </Link>
+              {isDropdownOpen && (
+                <div className="absolute right-0 z-50 mt-2 w-[100px] rounded-[5px] border border-[#E9E9E9] bg-white shadow-md">
+                  <Link
+                    to="/profile"
+                    className="flex w-full items-center justify-center px-4 py-2 text-center text-[16px] font-medium text-black hover:bg-gray-100"
+                    onClick={() => {
+                      setIsDropdownOpen(false);
+                    }}
+                  >
+                    프로필
+                  </Link>
 
-                <div className="mx-auto w-[87px] border-t border-[#E9E9E9]"></div>
+                  <div className="mx-auto w-[87px] border-t border-[#E9E9E9]"></div>
 
-                <button
-                  className="flex w-full items-center justify-center px-4 py-2 text-[16px] font-medium text-black hover:bg-gray-100"
-                  onClick={handleLogout}
-                >
-                  로그아웃
-                </button>
-              </div>
-            )}
-          </div>
-        ) : (
-          <>
-            <button onClick={() => setIsModalOpen(true)}>로그인</button>
-            {isModalOpen && (
-              <LoginModal onClose={() => setIsModalOpen(false)} />
-            )}
-          </>
-        )}
+                  <button
+                    className="flex w-full items-center justify-center px-4 py-2 text-[16px] font-medium text-black hover:bg-gray-100"
+                    onClick={handleLogout}
+                  >
+                    로그아웃
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <>
+              <button onClick={() => setIsModalOpen(true)}>로그인</button>
+              {isModalOpen && (
+                <LoginModal onClose={() => setIsModalOpen(false)} />
+              )}
+            </>
+          )}
+        </div>
       </div>
     </header>
   );
