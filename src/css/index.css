@@ -1,5 +1,6 @@
 @import './tailwind.css';
 @import './font.css';
+@import './reactQuillCustom.css';
 
 @layer {
   .button {
@@ -11,4 +12,8 @@
   .modal-overlay {
     @apply fixed top-0 left-0 flex h-[100%] w-[100%] items-center justify-center bg-[#000000]/50;
   }
+}
+
+select::-ms-expand {
+  display: none;
 }
