@@ -81,7 +81,7 @@ export default function ReactQuillEditor() {
             채널 선택 <IoIosArrowDown />
             {categoryToggle && (
               <div className="bg-red absolute top-[25px] z-1 w-full rounded-br-[5px] rounded-bl-[5px] bg-[#fff]">
-                <ul>
+                <ul className="w-full shadow-[0_0_5px_rgba(0,0,0,0.25)]">
                   <li
                     onClick={(e) => categoryToggleHandler(e)}
                     className="cursor-pointer px-[10px] py-[5px] hover:bg-[#f1f1f1]"
