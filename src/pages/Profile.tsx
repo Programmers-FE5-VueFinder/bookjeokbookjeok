@@ -14,7 +14,7 @@ export default function Profile() {
             {/* 프로필 이미지 */}
             <div className="relative size-[100px] rounded-full bg-black">
               <button
-                className="absolute top-0 right-1 size-[25px] cursor-pointer items-center justify-center rounded-full border-3 border-white bg-gray-100"
+                className="absolute top-0 right-1 flex size-[25px] cursor-pointer items-center justify-center rounded-full border-3 border-white bg-gray-100"
                 onClick={() => {
                   setOpenSetting(true);
                 }}
@@ -45,8 +45,8 @@ export default function Profile() {
             <button className="button">북마크</button>
           </div>
         </div>
-        <div className="flex items-center justify-center">
-          <div className="mt-[100px] grid w-[1196px] gap-[28px] md:grid-cols-2 lg:grid-cols-4">
+        <div className="flex items-center justify-center bg-[#FAFAFA]">
+          <div className="grid gap-[28px] p-[100px] md:grid-cols-2 lg:grid-cols-4">
             <BookCard />
             <BookCard />
             <BookCard />
@@ -59,7 +59,10 @@ export default function Profile() {
       </div>
       {openSetting ? (
         <div>
-          <SettingModal setOpenSetting={setOpenSetting} />
+          <SettingModal
+            setOpenSetting={setOpenSetting}
+            onClose={() => setOpenSetting(false)}
+          />
         </div>
       ) : null}
     </>

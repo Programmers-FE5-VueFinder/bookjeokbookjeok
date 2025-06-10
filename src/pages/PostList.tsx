@@ -1,6 +1,6 @@
-import { Link, useParams } from 'react-router';
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router';
 
 const sortOptionsMap: Record<string, string[]> = {
   diary: ['인기글', '최신글', '팔로잉'],
