@@ -23,10 +23,6 @@ const router = createBrowserRouter([
         Component: Home,
       },
       {
-        path: '/create-post',
-        Component: CreatePost,
-      },
-      {
         path: '/channel/:channelId',
         Component: ChannelLayout,
         children: [
@@ -61,6 +57,10 @@ const router = createBrowserRouter([
         Component: SearchResult,
       },
     ],
+  },
+  {
+    path: '/create-post/:category',
+    Component: CreatePost,
   },
   {
     path: '*',
