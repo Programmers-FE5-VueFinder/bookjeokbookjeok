@@ -1,6 +1,6 @@
 import { redirect } from 'react-router';
 import { useAuthStore } from '../../store/authStore';
-import supabase from '../../utils/supabase';
+import supabase from '../../apis';
 
 export const fetchUserData = async () => {
   const {
