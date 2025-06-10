@@ -1,6 +1,7 @@
 import { createBrowserRouter, RouterProvider } from 'react-router';
 import Home from '../pages/Home';
-import Login from '../pages/Login';
+import SignUp from '../pages/SignUp';
+// import Login from '../pages/Login';
 import Profile from '../pages/Profile';
 import PostList from '../pages/PostList';
 import NotFound from '../pages/NotFound';
@@ -10,10 +11,12 @@ import RootLayout from './layouts/RootLayout';
 import Notification from '../pages/Notification';
 import SearchResult from '../pages/SearchResult';
 import ChannelLayout from './layouts/ChannelLayout';
+import { fetchUserData } from './loader/auth.loader';
 
 const router = createBrowserRouter([
   {
     Component: RootLayout,
+    loader: fetchUserData,
     children: [
       {
         path: '/',
@@ -41,9 +44,13 @@ const router = createBrowserRouter([
         path: '/profile',
         Component: Profile,
       },
+      // {
+      //   path: '/login',
+      //   Component: Login,
+      // },
       {
-        path: '/login',
-        Component: Login,
+        path: '/signup',
+        Component: SignUp,
       },
       {
         path: '/notification',
