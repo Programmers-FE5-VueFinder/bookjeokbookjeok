@@ -19,7 +19,6 @@ const CustomToolbar = ({ category }: { category: string | undefined }) => (
     <button className="ql-underline" />
     <button className="ql-strike" />
     <button className="ql-image" />
-    {category === 'freetalk' && <button className="vote">투표하기</button>}
     <select className="ql-size" defaultValue="medium">
       <option value="small">Small</option>
       <option value="medium">Medium</option>
@@ -68,17 +67,12 @@ export default function ReactQuillEditor() {
       <div className="flex grow flex-col">
         <div className="flex h-[50px] items-center justify-between">
           <CustomToolbar category={category} />
-          {/* <select id="categorySelect" name="">
-            <option value="다이어리">다이어리</option>
-            <option value="독서모임">독서모임</option>
-            <option value="자유채널">자유채널</option>
-          </select> */}
           <div
             id="categorySelect"
             onClick={() => setCategoryToggle(true)}
             className="relative flex cursor-pointer items-center justify-center gap-[4px] rounded-[5px] bg-[#F1F1F1] px-[10px] py-[2px] text-[14px]"
           >
-            채널 선택 <IoIosArrowDown />
+            {category} <IoIosArrowDown />
             {categoryToggle && (
               <div className="bg-red absolute top-[25px] z-1 w-full rounded-br-[5px] rounded-bl-[5px] bg-[#fff]">
                 <ul className="w-full shadow-[0_0_5px_rgba(0,0,0,0.25)]">

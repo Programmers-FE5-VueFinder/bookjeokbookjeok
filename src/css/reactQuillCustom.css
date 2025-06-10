@@ -46,8 +46,7 @@
   margin: 0 auto !important;
   width: 1200px !important;
 }
-.searchbook,
-.vote {
+.searchbook {
   width: 90px !important;
   height: 15px !important;
   display: flex !important;

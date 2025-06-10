@@ -21,16 +21,16 @@ export default function Login({ onClose }: LoginProps) {
       <h1 className="mb-[40px] flex items-center justify-center text-[16px] font-medium">
         북적북적 로그인
       </h1>
-      <div className="flex flex-col gap-y-[15px]">
-        <button
-          // onClick={() => handleLogin("google")}
-          className="relative h-[45px] w-[340px] cursor-pointer rounded-[5px] border border-[#EBEBEB] text-[14px]"
-        >
-          <GoMail className="absolute top-1/2 left-[30px] h-5 w-5 -translate-y-1/2 text-[#767676]" />
-          <span className="absolute inset-0 flex items-center justify-center">
-            이메일 로그인
-          </span>
+      <div className="relative flex flex-col gap-y-[15px]">
+        <input
+          placeholder="이메일을 입력해 주세요."
+          className="relative h-[45px] w-[340px] rounded-[5px] border border-[#EBEBEB] pl-[5px] text-[14px]"
+        ></input>
+        <button className="h-[45px] w-[340px] cursor-pointer rounded-[5px] border bg-[#08C818] text-[14px] font-semibold text-[#fff]">
+          로그인
         </button>
+
+        <div className="my-[5px] h-[1px] w-full bg-[#F4F4F4]"></div>
 
         <button
           onClick={googleLogin}
