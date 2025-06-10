@@ -3,7 +3,6 @@ import { useParams } from 'react-router';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import '../../../css/reactQuillCustom.css';
-import { MdOutlineHowToVote } from 'react-icons/md';
 import { IoIosArrowDown } from 'react-icons/io';
 
 // const Size = Quill.import('attributors/style/size') as any;
