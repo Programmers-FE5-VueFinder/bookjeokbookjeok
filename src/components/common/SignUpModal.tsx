@@ -1,13 +1,45 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { IoMdCheckmark } from 'react-icons/io';
 import { IoMdClose } from 'react-icons/io';
 
 export default function SignUpModal() {
+  const [checked, setChecked] = useState(false);
+  const [consent, setConsent] = useState({
+    use: false,
+    personal: false,
+    marketing: false,
+  });
+
+  type ConsentKey = 'use' | 'personal' | 'marketing';
+
+  const handleConsentClick = (type: ConsentKey) => {
+    setConsent((prev) => {
+      return { ...prev, [type]: !prev[type] };
+    });
+  };
+
+  const handleCheckBoxValid = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const vaild = e.target.checked;
+    setChecked(vaild);
+    setConsent((prev) => {
+      return {
+        ...prev,
+        ...{
+          use: vaild,
+          personal: vaild,
+          marketing: vaild,
+        },
+      };
+    });
+  };
+
   const {
     register,
     handleSubmit,
     formState: { isSubmitting, isSubmitted, errors },
   } = useForm();
+
   return (
     <>
       <div className="relative flex w-[410px] flex-col rounded-[20px] bg-[#fff] px-[35px] py-[20px] shadow-[0_0_5px_rgba(0,0,0,0.25)]">
@@ -107,22 +139,50 @@ export default function SignUpModal() {
 
           <div className="my-[10px] flex flex-col gap-[8px]">
             <div className="flex h-fit items-center gap-[5px] pl-[2px]">
-              <input type="checkbox" id="AllConsentCheckbox"></input>
-              <label htmlFor="AllConsentCheckbox" className="text-[14px]">
+              <input
+                type="checkbox"
+                id="AllConsentCheckbox"
+                checked={checked}
+                onChange={(e) => handleCheckBoxValid(e)}
+                className="appearance-auto accent-[#08C818]"
+              ></input>
+              <label
+                htmlFor="AllConsentCheckbox"
+                className={`text-[14px] ${checked ? 'text-[#08C818]' : ''}`}
+              >
                 모두 동의 (선택포함)
               </label>
             </div>
             <div className="flex items-center gap-[5px]">
-              <IoMdCheckmark />
-              <span className="text-[14px]">(필수) 이용약관</span>
+              <IoMdCheckmark
+                className={`cursor-pointer ${consent.use ? 'text-[#08C818]' : ''}`}
+              />
+              <span
+                onClick={() => handleConsentClick('use')}
+                className={`cursor-pointer text-[14px] ${consent.use ? 'text-[#08C818]' : ''}`}
+              >
+                (필수) 이용약관
+              </span>
             </div>
             <div className="flex items-center gap-[5px]">
-              <IoMdCheckmark />
-              <span className="text-[14px]">(필수) 개인정보 취급방침</span>
+              <IoMdCheckmark
+                className={`cursor-pointer ${consent.personal ? 'text-[#08C818]' : ''}`}
+              />
+              <span
+                onClick={() => handleConsentClick('personal')}
+                className={`cursor-pointer text-[14px] ${consent.personal ? 'text-[#08C818]' : ''}`}
+              >
+                (필수) 개인정보 취급방침
+              </span>
             </div>
             <div className="flex items-center gap-[5px]">
-              <IoMdCheckmark />
-              <span className="text-[14px]">
+              <IoMdCheckmark
+                className={`cursor-pointer ${consent.marketing ? 'text-[#08C818]' : ''}`}
+              />
+              <span
+                onClick={() => handleConsentClick('marketing')}
+                className={`cursor-pointer text-[14px] ${consent.marketing ? 'text-[#08C818]' : ''}`}
+              >
                 (선택) 마케팅 정보 이메일 수신
               </span>
             </div>
