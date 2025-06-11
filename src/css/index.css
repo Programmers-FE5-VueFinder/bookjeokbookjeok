@@ -37,3 +37,10 @@ select::-ms-expand {
 ::-webkit-scrollbar-thumb:hover {
   background-color: #ababab;
 }
+
+.custom-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.custom-scrollbar {
+  -ms-overflow-style: none;
+}
