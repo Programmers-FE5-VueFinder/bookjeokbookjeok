@@ -1,4 +1,4 @@
-import supabase from './index';
+import supabase from '../utils/supabase';
 
 /* 로그인 여부 판별 */
 export async function isLoggedIn() {
