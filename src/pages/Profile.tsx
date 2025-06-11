@@ -6,12 +6,13 @@ import { twMerge } from 'tailwind-merge';
 import ProfileImg from '../components/component/MyPage/ProfileImg';
 import { useProfileStore } from '../store/profileStore';
 import { useAuthStore } from '../store/authStore';
+import Skeleton from '@mui/material/Skeleton';
 
 export default function Profile() {
   const [openSetting, setOpenSetting] = useState<boolean>(false);
   const [selectedBtn, setSelectedBtn] = useState<string>('다이어리');
   const [content, setContent] = useState<string>('다이어리');
-  const buttonName = ['다이어리', '자유채널', '독서모임', '북마크'];
+  const buttonName = ['다이어리', '자유채널', '마이 북클럽', '북마크'];
   const profileImg = useProfileStore((state) => state.Image);
   const session = useAuthStore((state) => state.session);
 
@@ -76,6 +77,12 @@ export default function Profile() {
         <div className="flex items-center justify-center bg-[#FAFAFA]">
           <div className="grid gap-[28px] p-[100px] md:grid-cols-2 lg:grid-cols-4">
             {content}
+            <Skeleton
+              variant="rounded"
+              width={'278px'}
+              height={'440px'}
+              animation="wave"
+            />
             <BookCard />
             <BookCard />
             <BookCard />
