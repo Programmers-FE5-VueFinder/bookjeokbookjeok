@@ -112,12 +112,30 @@ export async function createPost(
   title: string,
   body: string,
   image: string | null = null,
-  category: string,
+  category: 'diary' | 'community' | 'book_club',
+  book?: {
+    id: string;
+    star?: number;
+  }[],
 ) {
-  await supabase
+  const post = await supabase
     .from('post')
     .insert([{ title: title, body: body, image: image, category: category }])
-    .select();
+    .select()
+    .single();
+
+  if (book) {
+    for (const b of book) {
+      await supabase.from('book').insert({
+        book_id: b.id,
+        star: b.star,
+        reference_category: 'newPost.data!.category',
+        reference_id: 'newPost.data!.id',
+      });
+    }
+  }
+
+  return post.data!.id;
 }
 
 /* 게시물 수정 */
@@ -127,15 +145,34 @@ export async function editPost(
   body: string,
   image: string | null = null,
   category: string,
+  book?: {
+    id: number;
+    star?: number;
+  }[],
 ) {
-  return await supabase
+  const post = await supabase
     .from('post')
     .update({ title: title, body: body, image: image, category: category })
     .eq('id', id)
-    .select();
+    .select()
+    .single();
+
+  if (book) {
+    for (const b of book) {
+      await supabase.from('book').insert({
+        book_id: b.id,
+        star: b.star,
+        reference_category: post.data!.category,
+        reference_id: post.data!.id,
+      });
+    }
+  }
 }
 
 /* 게시물 삭제 */
 export async function deletePost(id: string) {
+  // like 삭제
+  // comment 삭제
+  // book 삭제
   await supabase.from('post').delete().eq('id', id);
 }
