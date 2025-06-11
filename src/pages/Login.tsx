@@ -1,4 +1,3 @@
-import { GoMail } from 'react-icons/go';
 import { useNavigate } from 'react-router';
 import { kakaoLogin } from '../apis/auth';
 import { googleLogin } from '../apis/auth';

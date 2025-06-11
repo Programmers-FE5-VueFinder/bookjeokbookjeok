@@ -10,7 +10,7 @@ export default function SignUpModal() {
   } = useForm();
   return (
     <>
-      <div className="relative flex w-[410px] flex-col rounded-[20px] bg-[#fff] px-[35px] py-[20px] shadow-[0_0_5px_rgba(0,0,0,0.25)]">
+      <div className="relative flex w-[410px] flex-col rounded-[10px] bg-[#fff] px-[35px] py-[20px] shadow-[0_0_5px_rgba(0,0,0,0.25)]">
         <div className="absolute top-[11px] right-[12px] cursor-pointer text-[#333]">
           <IoMdClose />
         </div>

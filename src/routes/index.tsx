@@ -30,8 +30,12 @@ const router = createBrowserRouter([
             index: true,
             Component: PostList,
           },
+          // {
+          //   path: 'post/:postId',
+          //   Component: PostDetail,
+          // },
           {
-            path: 'post/:postId',
+            path: 'postdev',
             Component: PostDetail,
           },
         ],
@@ -47,6 +51,10 @@ const router = createBrowserRouter([
       {
         path: '/signup',
         Component: SignUp,
+      },
+      {
+        path: 'postdev',
+        Component: PostDetail,
       },
       {
         path: '/notification',
