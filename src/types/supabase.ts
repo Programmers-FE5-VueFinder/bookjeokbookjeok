@@ -36,24 +36,33 @@ export type Database = {
     Tables: {
       book: {
         Row: {
-          body: string
+          author: string | null
+          categoryId: number | null
+          categoryName: string | null
+          cover: string | null
           created_at: string
-          id: number
-          rating: number | null
+          description: string | null
+          id: string
           title: string
         }
         Insert: {
-          body: string
+          author?: string | null
+          categoryId?: number | null
+          categoryName?: string | null
+          cover?: string | null
           created_at?: string
-          id?: number
-          rating?: number | null
+          description?: string | null
+          id: string
           title: string
         }
         Update: {
-          body?: string
+          author?: string | null
+          categoryId?: number | null
+          categoryName?: string | null
+          cover?: string | null
           created_at?: string
-          id?: number
-          rating?: number | null
+          description?: string | null
+          id?: string
           title?: string
         }
         Relationships: []
@@ -63,18 +72,74 @@ export type Database = {
           created_at: string
           id: string
           info: string | null
+          is_recruiting: boolean
+          name: string
+          owner_id: string
         }
         Insert: {
           created_at?: string
           id?: string
           info?: string | null
+          is_recruiting?: boolean
+          name: string
+          owner_id?: string
         }
         Update: {
           created_at?: string
           id?: string
           info?: string | null
+          is_recruiting?: boolean
+          name?: string
+          owner_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "book_club_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      book_club_chat: {
+        Row: {
+          book_club_id: string
+          created_at: string
+          id: string
+          message: string
+          user_id: string
+        }
+        Insert: {
+          book_club_id: string
+          created_at?: string
+          id?: string
+          message: string
+          user_id: string
+        }
+        Update: {
+          book_club_id?: string
+          created_at?: string
+          id?: string
+          message?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "book_club_chat_book_club_id_fkey"
+            columns: ["book_club_id"]
+            isOneToOne: false
+            referencedRelation: "book_club"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "chat_message_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profile"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       book_club_member: {
         Row: {
@@ -114,7 +179,7 @@ export type Database = {
       }
       book_tag: {
         Row: {
-          book_id: number
+          book_id: string
           created_at: string
           id: string
           reference_category: string
@@ -122,7 +187,7 @@ export type Database = {
           star: number | null
         }
         Insert: {
-          book_id: number
+          book_id: string
           created_at?: string
           id?: string
           reference_category: string
@@ -130,7 +195,7 @@ export type Database = {
           star?: number | null
         }
         Update: {
-          book_id?: number
+          book_id?: string
           created_at?: string
           id?: string
           reference_category?: string
@@ -163,102 +228,34 @@ export type Database = {
       }
       bookmark: {
         Row: {
-          book_id: number
+          book_id: string
           created_at: string
           id: string
           user_id: string
         }
         Insert: {
-          book_id: number
+          book_id: string
           created_at?: string
           id?: string
           user_id?: string
         }
         Update: {
-          book_id?: number
+          book_id?: string
           created_at?: string
           id?: string
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "bookmark_book_id_fkey"
+            columns: ["book_id"]
+            isOneToOne: false
+            referencedRelation: "book"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "bookmark_user_id_fkey"
             columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profile"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      chat_message: {
-        Row: {
-          body: string
-          chat_room_id: string
-          created_at: string
-          id: string
-          user_id: string
-        }
-        Insert: {
-          body: string
-          chat_room_id: string
-          created_at?: string
-          id?: string
-          user_id: string
-        }
-        Update: {
-          body?: string
-          chat_room_id?: string
-          created_at?: string
-          id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "chat_message_chat_room_id_fkey"
-            columns: ["chat_room_id"]
-            isOneToOne: false
-            referencedRelation: "chat_room"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "chat_message_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profile"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      chat_room: {
-        Row: {
-          book_club_id: string
-          created_at: string
-          id: string
-          owner_id: string
-        }
-        Insert: {
-          book_club_id: string
-          created_at?: string
-          id?: string
-          owner_id: string
-        }
-        Update: {
-          book_club_id?: string
-          created_at?: string
-          id?: string
-          owner_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "chat_room_book_club_id_fkey"
-            columns: ["book_club_id"]
-            isOneToOne: false
-            referencedRelation: "book_club"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "chat_room_owner_id_fkey"
-            columns: ["owner_id"]
             isOneToOne: false
             referencedRelation: "profile"
             referencedColumns: ["id"]
@@ -344,32 +341,35 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          post_id: string
+          reference_category: string
+          reference_id: string
           user_id: string
         }
         Insert: {
           created_at?: string
           id?: string
-          post_id: string
+          reference_category: string
+          reference_id: string
           user_id: string
         }
         Update: {
           created_at?: string
           id?: string
-          post_id?: string
+          reference_category?: string
+          reference_id?: string
           user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "Like_post_id_fkey"
-            columns: ["post_id"]
+            foreignKeyName: "like_reference_id_fkey"
+            columns: ["reference_id"]
             isOneToOne: false
             referencedRelation: "post"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "Like_post_id_fkey1"
-            columns: ["post_id"]
+            foreignKeyName: "like_reference_id_fkey1"
+            columns: ["reference_id"]
             isOneToOne: false
             referencedRelation: "review"
             referencedColumns: ["id"]
@@ -434,13 +434,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "notification_object_id_fkey4"
-            columns: ["object_id"]
-            isOneToOne: false
-            referencedRelation: "chat_room"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "notification_sender_id_fkey"
             columns: ["sender_id"]
             isOneToOne: false
@@ -459,35 +452,42 @@ export type Database = {
       post: {
         Row: {
           body: string
+          book_club_id: string | null
           category: string
           created_at: string
           id: string
           image: string | null
-          is_recruiting: boolean | null
           title: string
           user_id: string
         }
         Insert: {
           body: string
+          book_club_id?: string | null
           category: string
           created_at?: string
           id?: string
           image?: string | null
-          is_recruiting?: boolean | null
           title: string
           user_id?: string
         }
         Update: {
           body?: string
+          book_club_id?: string | null
           category?: string
           created_at?: string
           id?: string
           image?: string | null
-          is_recruiting?: boolean | null
           title?: string
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "post_book_club_id_fkey"
+            columns: ["book_club_id"]
+            isOneToOne: false
+            referencedRelation: "book_club"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "Post_user_fkey"
             columns: ["user_id"]

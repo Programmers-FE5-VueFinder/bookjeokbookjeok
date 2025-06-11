@@ -5,16 +5,14 @@ import { twMerge } from 'tailwind-merge';
 import ProfileImg from '../components/component/MyPage/ProfileImg';
 import { useProfileStore } from '../store/profileStore';
 import { useAuthStore } from '../store/authStore';
-import DiaryArea from '../components/component/MyPage/DiaryArea';
-import FreeChannelArea from '../components/component/MyPage/FreeChannelArea';
-import BookClubArea from '../components/component/MyPage/BookClubArea';
-import BookMarkArea from '../components/component/MyPage/BookMarkArea';
+import LoadingCardSimple from '../components/common/CardSkeleton';
+import SkeletonCard from '../components/common/CardSkeleton2';
 
 export default function Profile() {
   const [openSetting, setOpenSetting] = useState<boolean>(false);
   const [selectedBtn, setSelectedBtn] = useState<string>('다이어리');
   const [content, setContent] = useState<string>('다이어리');
-  const buttonName = ['다이어리', '자유채널', '독서모임', '북마크'];
+  const buttonName = ['다이어리', '자유채널', '마이 북클럽', '북마크'];
   const profileImg = useProfileStore((state) => state.Image);
   const session = useAuthStore((state) => state.session);
 
@@ -44,10 +42,8 @@ export default function Profile() {
               </button>
             </div>
             <div className="mt-[14px] grid">
-              <span className="text-[16px] font-semibold">
-                {session?.user.user_metadata.name}
-              </span>
-              <span className="text-[14px]">내 설명</span>
+              <span>{session?.user.user_metadata.name}</span>
+              <span>내 설명</span>
             </div>
             <div className="mt-[26px] flex">
               <div className="mr-[25px]">
@@ -83,10 +79,18 @@ export default function Profile() {
           </div>
         </div>
         <div className="flex items-center justify-center bg-[#FAFAFA]">
-          {content === '다이어리' ? <DiaryArea /> : null}
-          {content === '자유채널' ? <FreeChannelArea /> : null}
-          {content === '독서모임' ? <BookClubArea /> : null}
-          {content === '북마크' ? <BookMarkArea /> : null}
+          <div className="grid gap-[28px] p-[100px] md:grid-cols-2 lg:grid-cols-4">
+            {content}
+            <LoadingCardSimple />
+            <SkeletonCard />
+            <BookCard />
+            <BookCard />
+            <BookCard />
+            <BookCard />
+            <BookCard />
+            <BookCard />
+            <BookCard />
+          </div>
         </div>
       </div>
       {openSetting ? (

@@ -1,8 +1,4 @@
-export default function ProfileImg({
-  src,
-}: {
-  src: string;
-}) {
+export default function ProfileImg({ src }: { src: string | null }) {
   console.log(src);
   return (
     <>
