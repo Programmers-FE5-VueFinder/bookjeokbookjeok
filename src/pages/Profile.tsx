@@ -6,7 +6,8 @@ import { twMerge } from 'tailwind-merge';
 import ProfileImg from '../components/component/MyPage/ProfileImg';
 import { useProfileStore } from '../store/profileStore';
 import { useAuthStore } from '../store/authStore';
-import Skeleton from '@mui/material/Skeleton';
+import LoadingCardSimple from '../components/common/CardSkeleton';
+import SkeletonCard from '../components/common/CardSkeleton2';
 
 export default function Profile() {
   const [openSetting, setOpenSetting] = useState<boolean>(false);
@@ -77,12 +78,8 @@ export default function Profile() {
         <div className="flex items-center justify-center bg-[#FAFAFA]">
           <div className="grid gap-[28px] p-[100px] md:grid-cols-2 lg:grid-cols-4">
             {content}
-            <Skeleton
-              variant="rounded"
-              width={'278px'}
-              height={'440px'}
-              animation="wave"
-            />
+            <LoadingCardSimple />
+            <SkeletonCard />
             <BookCard />
             <BookCard />
             <BookCard />
