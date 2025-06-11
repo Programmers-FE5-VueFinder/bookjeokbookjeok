@@ -3,6 +3,8 @@ import { useForm } from 'react-hook-form';
 import { IoMdCheckmark } from 'react-icons/io';
 import { IoMdClose } from 'react-icons/io';
 
+type ConsentKey = 'use' | 'personal' | 'marketing';
+
 export default function SignUpModal() {
   const [checked, setChecked] = useState(false);
   const [consent, setConsent] = useState({
@@ -11,12 +13,11 @@ export default function SignUpModal() {
     marketing: false,
   });
 
-  type ConsentKey = 'use' | 'personal' | 'marketing';
-
   const handleConsentClick = (type: ConsentKey) => {
     setConsent((prev) => {
       return { ...prev, [type]: !prev[type] };
     });
+    setChecked(false);
   };
 
   const handleCheckBoxValid = (e: React.ChangeEvent<HTMLInputElement>) => {
