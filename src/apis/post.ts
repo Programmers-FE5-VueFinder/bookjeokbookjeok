@@ -171,8 +171,8 @@ export async function editPost(
 
 /* 게시물 삭제 */
 export async function deletePost(id: string) {
-  // like 삭제
-  // comment 삭제
-  // book 삭제
+  await supabase.from('like').delete().eq('post_id', id);
+  await supabase.from('comment').delete().eq('post_id', id);
+  await supabase.from('book_tag').delete().eq('reference_id', id);
   await supabase.from('post').delete().eq('id', id);
 }
