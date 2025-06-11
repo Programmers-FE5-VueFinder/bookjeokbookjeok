@@ -1,4 +1,4 @@
-import supabase from './index';
+import supabase from '../utils/supabase';
 
 /* 전체 게시물 조회 */
 export async function fetchPosts(category: string = 'all') {

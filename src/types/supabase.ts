@@ -36,52 +36,42 @@ export type Database = {
     Tables: {
       book: {
         Row: {
-          book_id: number;
+          book_id: string;
           created_at: string;
           id: string;
           reference_category: string;
           reference_id: string;
           star: number | null;
-          user_id: string;
         };
         Insert: {
-          book_id: number;
+          book_id: string;
           created_at?: string;
           id?: string;
           reference_category: string;
           reference_id: string;
           star?: number | null;
-          user_id: string;
         };
         Update: {
-          book_id?: number;
+          book_id?: string;
           created_at?: string;
           id?: string;
           reference_category?: string;
           reference_id?: string;
           star?: number | null;
-          user_id?: string;
         };
         Relationships: [
           {
-            foreignKeyName: 'book_rating_reference_id_fkey';
+            foreignKeyName: 'book_tag_reference_id_fkey';
             columns: ['reference_id'];
             isOneToOne: false;
             referencedRelation: 'post';
             referencedColumns: ['id'];
           },
           {
-            foreignKeyName: 'book_rating_reference_id_fkey1';
+            foreignKeyName: 'book_tag_reference_id_fkey1';
             columns: ['reference_id'];
             isOneToOne: false;
             referencedRelation: 'review';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'book_rating_user_id_fkey';
-            columns: ['user_id'];
-            isOneToOne: false;
-            referencedRelation: 'user';
             referencedColumns: ['id'];
           },
         ];
@@ -91,18 +81,81 @@ export type Database = {
           created_at: string;
           id: string;
           info: string | null;
+          name: string;
+          owner_id: string;
+          post_id: string;
         };
         Insert: {
           created_at?: string;
           id?: string;
           info?: string | null;
+          name: string;
+          owner_id: string;
+          post_id: string;
         };
         Update: {
           created_at?: string;
           id?: string;
           info?: string | null;
+          name?: string;
+          owner_id?: string;
+          post_id?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'book_club_owner_id_fkey';
+            columns: ['owner_id'];
+            isOneToOne: false;
+            referencedRelation: 'profile';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'book_club_post_id_fkey';
+            columns: ['post_id'];
+            isOneToOne: false;
+            referencedRelation: 'post';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      book_club_chat: {
+        Row: {
+          book_club_id: string;
+          created_at: string;
+          id: string;
+          message: string;
+          user_id: string;
+        };
+        Insert: {
+          book_club_id: string;
+          created_at?: string;
+          id?: string;
+          message: string;
+          user_id: string;
+        };
+        Update: {
+          book_club_id?: string;
+          created_at?: string;
+          id?: string;
+          message?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'book_club_chat_book_club_id_fkey';
+            columns: ['book_club_id'];
+            isOneToOne: false;
+            referencedRelation: 'book_club';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'chat_message_user_id_fkey';
+            columns: ['user_id'];
+            isOneToOne: false;
+            referencedRelation: 'profile';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       book_club_member: {
         Row: {
@@ -135,82 +188,36 @@ export type Database = {
             foreignKeyName: 'chat_room_user_user_id_fkey';
             columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: 'user';
+            referencedRelation: 'profile';
             referencedColumns: ['id'];
           },
         ];
       };
-      chat_message: {
+      bookmark: {
         Row: {
-          body: string;
-          chat_room_id: string;
+          book_id: string;
           created_at: string;
           id: string;
           user_id: string;
         };
         Insert: {
-          body: string;
-          chat_room_id: string;
+          book_id: string;
           created_at?: string;
           id?: string;
-          user_id: string;
+          user_id?: string;
         };
         Update: {
-          body?: string;
-          chat_room_id?: string;
+          book_id?: string;
           created_at?: string;
           id?: string;
           user_id?: string;
         };
         Relationships: [
           {
-            foreignKeyName: 'chat_message_chat_room_id_fkey';
-            columns: ['chat_room_id'];
-            isOneToOne: false;
-            referencedRelation: 'chat_room';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'chat_message_user_id_fkey';
+            foreignKeyName: 'bookmark_user_id_fkey';
             columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: 'user';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
-      chat_room: {
-        Row: {
-          book_club_id: string;
-          created_at: string;
-          id: string;
-          owner_id: string;
-        };
-        Insert: {
-          book_club_id: string;
-          created_at?: string;
-          id?: string;
-          owner_id: string;
-        };
-        Update: {
-          book_club_id?: string;
-          created_at?: string;
-          id?: string;
-          owner_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'chat_room_book_club_id_fkey';
-            columns: ['book_club_id'];
-            isOneToOne: false;
-            referencedRelation: 'book_club';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'chat_room_owner_id_fkey';
-            columns: ['owner_id'];
-            isOneToOne: false;
-            referencedRelation: 'user';
+            referencedRelation: 'profile';
             referencedColumns: ['id'];
           },
         ];
@@ -249,65 +256,7 @@ export type Database = {
             foreignKeyName: 'comment_user_id_fkey';
             columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: 'user';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
-      folder: {
-        Row: {
-          created_at: string;
-          id: string;
-          name: string | null;
-          user_id: string;
-        };
-        Insert: {
-          created_at?: string;
-          id?: string;
-          name?: string | null;
-          user_id: string;
-        };
-        Update: {
-          created_at?: string;
-          id?: string;
-          name?: string | null;
-          user_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'folder_user_id_fkey';
-            columns: ['user_id'];
-            isOneToOne: false;
-            referencedRelation: 'user';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
-      folder_item: {
-        Row: {
-          book: number;
-          created_at: string;
-          folder_id: string;
-          id: string;
-        };
-        Insert: {
-          book: number;
-          created_at?: string;
-          folder_id: string;
-          id?: string;
-        };
-        Update: {
-          book?: number;
-          created_at?: string;
-          folder_id?: string;
-          id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'folder_item_folder_id_fkey';
-            columns: ['folder_id'];
-            isOneToOne: false;
-            referencedRelation: 'folder';
+            referencedRelation: 'profile';
             referencedColumns: ['id'];
           },
         ];
@@ -336,14 +285,14 @@ export type Database = {
             foreignKeyName: 'follow_follower_id_fkey';
             columns: ['follower_id'];
             isOneToOne: false;
-            referencedRelation: 'user';
+            referencedRelation: 'profile';
             referencedColumns: ['id'];
           },
           {
             foreignKeyName: 'follow_following_id_fkey';
             columns: ['following_id'];
             isOneToOne: false;
-            referencedRelation: 'user';
+            referencedRelation: 'profile';
             referencedColumns: ['id'];
           },
         ];
@@ -352,32 +301,35 @@ export type Database = {
         Row: {
           created_at: string;
           id: string;
-          post_id: string;
+          reference_category: string;
+          reference_id: string;
           user_id: string;
         };
         Insert: {
           created_at?: string;
           id?: string;
-          post_id: string;
+          reference_category: string;
+          reference_id: string;
           user_id: string;
         };
         Update: {
           created_at?: string;
           id?: string;
-          post_id?: string;
+          reference_category?: string;
+          reference_id?: string;
           user_id?: string;
         };
         Relationships: [
           {
-            foreignKeyName: 'Like_post_id_fkey';
-            columns: ['post_id'];
+            foreignKeyName: 'like_reference_id_fkey';
+            columns: ['reference_id'];
             isOneToOne: false;
             referencedRelation: 'post';
             referencedColumns: ['id'];
           },
           {
-            foreignKeyName: 'Like_post_id_fkey1';
-            columns: ['post_id'];
+            foreignKeyName: 'like_reference_id_fkey1';
+            columns: ['reference_id'];
             isOneToOne: false;
             referencedRelation: 'review';
             referencedColumns: ['id'];
@@ -386,7 +338,7 @@ export type Database = {
             foreignKeyName: 'Like_user_id_fkey';
             columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: 'user';
+            referencedRelation: 'profile';
             referencedColumns: ['id'];
           },
         ];
@@ -442,31 +394,17 @@ export type Database = {
             referencedColumns: ['id'];
           },
           {
-            foreignKeyName: 'notification_object_id_fkey3';
-            columns: ['object_id'];
-            isOneToOne: false;
-            referencedRelation: 'reply';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'notification_object_id_fkey4';
-            columns: ['object_id'];
-            isOneToOne: false;
-            referencedRelation: 'chat_room';
-            referencedColumns: ['id'];
-          },
-          {
             foreignKeyName: 'notification_sender_id_fkey';
             columns: ['sender_id'];
             isOneToOne: false;
-            referencedRelation: 'user';
+            referencedRelation: 'profile';
             referencedColumns: ['id'];
           },
           {
             foreignKeyName: 'notification_user_id_fkey';
             columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: 'user';
+            referencedRelation: 'profile';
             referencedColumns: ['id'];
           },
         ];
@@ -478,6 +416,7 @@ export type Database = {
           created_at: string;
           id: string;
           image: string | null;
+          is_recruiting: boolean | null;
           title: string;
           user_id: string;
         };
@@ -487,6 +426,7 @@ export type Database = {
           created_at?: string;
           id?: string;
           image?: string | null;
+          is_recruiting?: boolean | null;
           title: string;
           user_id?: string;
         };
@@ -496,6 +436,7 @@ export type Database = {
           created_at?: string;
           id?: string;
           image?: string | null;
+          is_recruiting?: boolean | null;
           title?: string;
           user_id?: string;
         };
@@ -504,97 +445,12 @@ export type Database = {
             foreignKeyName: 'Post_user_fkey';
             columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: 'user';
+            referencedRelation: 'profile';
             referencedColumns: ['id'];
           },
         ];
       };
-      reply: {
-        Row: {
-          body: string;
-          comment_id: string;
-          created_at: string;
-          id: string;
-          post_id: string;
-          user_id: string;
-        };
-        Insert: {
-          body: string;
-          comment_id: string;
-          created_at?: string;
-          id?: string;
-          post_id: string;
-          user_id: string;
-        };
-        Update: {
-          body?: string;
-          comment_id?: string;
-          created_at?: string;
-          id?: string;
-          post_id?: string;
-          user_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'reply_comment_id_fkey';
-            columns: ['comment_id'];
-            isOneToOne: false;
-            referencedRelation: 'comment';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'reply_post_id_fkey';
-            columns: ['post_id'];
-            isOneToOne: false;
-            referencedRelation: 'post';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'reply_user_id_fkey';
-            columns: ['user_id'];
-            isOneToOne: false;
-            referencedRelation: 'user';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
-      review: {
-        Row: {
-          body: string;
-          created_at: string;
-          id: string;
-          user_id: string;
-        };
-        Insert: {
-          body: string;
-          created_at?: string;
-          id?: string;
-          user_id: string;
-        };
-        Update: {
-          body?: string;
-          created_at?: string;
-          id?: string;
-          user_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'Review_user_fkey';
-            columns: ['user_id'];
-            isOneToOne: false;
-            referencedRelation: 'user';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'review_user_id_fkey';
-            columns: ['user_id'];
-            isOneToOne: false;
-            referencedRelation: 'user';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
-      user: {
+      profile: {
         Row: {
           appellation: string | null;
           created_at: string;
@@ -621,96 +477,38 @@ export type Database = {
         };
         Relationships: [];
       };
-      vote: {
-        Row: {
-          created_at: string;
-          id: string;
-          name: string;
-          post_id: string;
-        };
-        Insert: {
-          created_at?: string;
-          id?: string;
-          name: string;
-          post_id: string;
-        };
-        Update: {
-          created_at?: string;
-          id?: string;
-          name?: string;
-          post_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'Vote_post_id_fkey';
-            columns: ['post_id'];
-            isOneToOne: false;
-            referencedRelation: 'post';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
-      vote_item: {
+      review: {
         Row: {
           body: string;
           created_at: string;
           id: string;
-          vote_id: string;
+          user_id: string;
         };
         Insert: {
           body: string;
           created_at?: string;
           id?: string;
-          vote_id: string;
+          user_id: string;
         };
         Update: {
           body?: string;
           created_at?: string;
           id?: string;
-          vote_id?: string;
-        };
-        Relationships: [
-          {
-            foreignKeyName: 'vote_item_vote_id_fkey';
-            columns: ['vote_id'];
-            isOneToOne: false;
-            referencedRelation: 'vote';
-            referencedColumns: ['id'];
-          },
-        ];
-      };
-      vote_item_voter: {
-        Row: {
-          created_at: string;
-          id: string;
-          user_id: string;
-          vote_item_id: string;
-        };
-        Insert: {
-          created_at?: string;
-          id?: string;
-          user_id: string;
-          vote_item_id: string;
-        };
-        Update: {
-          created_at?: string;
-          id?: string;
           user_id?: string;
-          vote_item_id?: string;
         };
         Relationships: [
           {
-            foreignKeyName: 'vote_item_voter_user_id_fkey';
+            foreignKeyName: 'Review_user_fkey';
             columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: 'user';
+            referencedRelation: 'profile';
             referencedColumns: ['id'];
           },
           {
-            foreignKeyName: 'vote_item_voter_vote_item_id_fkey';
-            columns: ['vote_item_id'];
+            foreignKeyName: 'review_user_id_fkey';
+            columns: ['user_id'];
             isOneToOne: false;
-            referencedRelation: 'vote_item';
+            referencedRelation: 'profile';
             referencedColumns: ['id'];
           },
         ];
