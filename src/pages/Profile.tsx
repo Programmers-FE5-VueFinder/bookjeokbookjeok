@@ -7,6 +7,7 @@ import { useProfileStore } from '../store/profileStore';
 import { useAuthStore } from '../store/authStore';
 import LoadingCardSimple from '../components/common/CardSkeleton';
 import SkeletonCard from '../components/common/CardSkeleton2';
+import BookCard from '../components/common/BookCard';
 
 export default function Profile() {
   const [openSetting, setOpenSetting] = useState<boolean>(false);
@@ -41,10 +42,10 @@ export default function Profile() {
                 <LuPencil fontSize="small" />
               </button>
             </div>
-            <div className="mt-[14px] grid">
-              <span>{session?.user.user_metadata.name}</span>
-              <span>내 설명</span>
+            <div className="mt-[14px] grid font-bold">
+              <span>{session?.user.user_metadata.name} 님</span>
             </div>
+            <span>내 설명</span>
             <div className="mt-[26px] flex">
               <div className="mr-[25px]">
                 <span className="mr-[8px] text-[16px] font-semibold">
