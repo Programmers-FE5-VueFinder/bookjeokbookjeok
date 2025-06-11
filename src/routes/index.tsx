@@ -12,6 +12,7 @@ import Notification from '../pages/Notification';
 import SearchResult from '../pages/SearchResult';
 import ChannelLayout from './layouts/ChannelLayout';
 import { fetchUserData } from './loader/auth.loader';
+import CreatePostLayout from './layouts/CreatPostLayout';
 import BookClub from '../pages/BookClub';
 
 const router = createBrowserRouter([
@@ -64,8 +65,14 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: '/create-post/:category',
-    Component: CreatePost,
+    Component: CreatePostLayout,
+    loader: fetchUserData,
+    children: [
+      {
+        path: '/create-post/:category',
+        Component: CreatePost,
+      },
+    ],
   },
   {
     path: '*',
