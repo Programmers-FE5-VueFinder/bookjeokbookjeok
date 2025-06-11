@@ -109,9 +109,12 @@ export default function BookSearchModal({
                     setQuery('');
                   }}
                 >
-                  <div>
-                    <p className="font-medium group-hover:font-semibold">
+                  <div className="flex w-full flex-col text-left">
+                    <p className="line-clamp-1 max-w-full font-medium group-hover:font-semibold">
                       {book.title}
+                    </p>
+                    <p className="font-medium whitespace-nowrap text-black/50">
+                      {book.author.split('(')[0]}
                     </p>
                   </div>
                 </li>
