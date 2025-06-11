@@ -17,7 +17,7 @@
   line-height: 24px;
 }
 .quill {
-  border-top: 1px solid #ebebeb !important;
+  /* border-top: 1px solid #ebebeb !important; */
   padding-top: 60px;
   height: calc(100vh - 280px);
 }
