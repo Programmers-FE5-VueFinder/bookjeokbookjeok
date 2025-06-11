@@ -14,41 +14,51 @@ export default function BookClub() {
     setSelectedBtn(name);
   };
 
+  const member = document.getElementById('member');
+  const scrollY = window.scrollY;
+
+  const memberPosition = Math.floor(
+    scrollY + member!.getBoundingClientRect().top,
+  );
+
   useEffect(() => {
     if (selectedBtn === '클럽 멤버') {
       memberRef?.current?.scrollIntoView({ behavior: 'smooth' });
     }
-    setTimeout(() => {
+    if (scrollY < memberPosition) {
       setSelectedBtn('클럽 정보');
-    }, 500);
-  }, [selectedBtn]);
+    }
+  }, [selectedBtn, memberPosition, scrollY]);
   return (
     <>
       <div>
         {/* 클럽 이름 에리어 */}
-        <div className="relative flex h-[200px] content-center justify-center shadow shadow-gray-200">
+        <div className="relative flex min-h-[160px] content-center justify-center">
           <span className="flex items-center justify-center text-[32px] font-bold">
             클럽 이름
           </span>
-          {/* 버튼 에리어 */}
-          <div className="absolute bottom-0 flex h-[40px] w-full content-center items-center justify-center">
-            {buttonName.map((item) => {
-              return (
-                <button
-                  className={twMerge(
-                    item === selectedBtn ? 'button-active' : 'button',
-                  )}
-                  onClick={handleContentButton}
-                  key={item}
-                  name={item}
-                >
-                  {item}
-                </button>
-              );
-            })}
-          </div>
         </div>
-        <div className="flex justify-center bg-[#FAFAFA]">
+        <div className="flex flex-col items-center justify-center bg-[#FAFAFA]">
+          {/* 버튼 에리어 */}
+          <div className="sticky top-0 z-50 flex h-[40px] w-screen content-center items-center justify-center self-start bg-white shadow-lg shadow-gray-100">
+            <div>
+              {buttonName.map((item) => {
+                return (
+                  <button
+                    className={twMerge(
+                      item === selectedBtn ? 'button-active' : 'button',
+                    )}
+                    onClick={handleContentButton}
+                    key={item}
+                    name={item}
+                  >
+                    {item}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           <div className="flex w-full justify-center p-[100px] text-wrap">
             <div className="flex w-[900px] flex-col">
               <div className="clubInfo">
@@ -56,7 +66,7 @@ export default function BookClub() {
                 <span>클럽 정보</span>
               </div>
               <span>sample</span>
-              <div id="targetMember" ref={memberRef}>
+              <div id="member" ref={memberRef}>
                 <div className="clubInfo mt-[40px]">
                   <IoMdPerson />
                   <span>클럽 멤버</span>
