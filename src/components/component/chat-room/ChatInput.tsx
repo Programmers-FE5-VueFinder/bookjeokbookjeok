@@ -21,13 +21,13 @@ export default function ChatInput() {
         <input
           type="text"
           placeholder="의견을 남겨주세요"
-          className="h-[80px] w-[100%] rounded-full pr-25 pl-10 text-2xl leading-[80px] placeholder-[#ADADAD] shadow-[0_0_4px_rgba(0,0,0,0.25)] focus:outline-none"
+          className="h-[80px] w-[100%] rounded-full pr-25 pl-10 text-2xl leading-[80px] placeholder-[#ADADAD] shadow-[0_0_4px_rgba(0,0,0,0.25)] focus:outline-[#08C818]"
         ></input>
         <button
           type="submit"
           className="absolute right-7 hover:[animation:bounce-x_1s_infinite] hover:cursor-pointer"
         >
-          <IoSend size={40} />
+          <IoSend size={40} color="#08C818" />
         </button>
       </form>
     </>

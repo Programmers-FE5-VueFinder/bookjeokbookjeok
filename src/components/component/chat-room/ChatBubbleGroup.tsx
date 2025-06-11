@@ -18,7 +18,7 @@ export default function ChatBubbleGroup({
       <div className="flex w-full flex-row gap-3">
         {!isMy && <Avatar />}
         <div className="flex w-full flex-col gap-1">
-          {isMy ? '\n' : name}
+          {isMy ? <p>&nbsp;</p> : name}
           {message.map((m) => (
             <>
               <ChatBubble isMy={isMy} message={m.message} time={m.time} />
