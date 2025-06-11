@@ -120,7 +120,7 @@ export async function createPost(
 ) {
   const post = await supabase
     .from('post')
-    .insert([{ title: title, body: body, image: image, category: category }])
+    .insert({ title: title, body: body, image: image, category: category })
     .select()
     .single();
 
