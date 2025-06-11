@@ -5,6 +5,8 @@ import 'react-quill-new/dist/quill.snow.css';
 import '../../../css/reactQuillCustom.css';
 import { MdOutlineHowToVote } from 'react-icons/md';
 import { IoIosArrowDown } from 'react-icons/io';
+import BookSearchModal from '../BookSearchModal';
+import type { BookDetail } from '../../../types/book';
 
 // const Size = Quill.import('attributors/style/size') as any;
 // Size.whitelist = fontsize;
@@ -13,7 +15,13 @@ import { IoIosArrowDown } from 'react-icons/io';
 // const colors = Quill.import('attributors/style/color') as any;
 // Quill.register(colors, true);
 
-const CustomToolbar = ({ category }: { category: string | undefined }) => (
+const CustomToolbar = ({
+  category,
+  setShowModal,
+}: {
+  category: string | undefined;
+  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+}) => (
   <div id="toolbar">
     <button className="ql-bold" />
     <button className="ql-italic" />
@@ -27,7 +35,15 @@ const CustomToolbar = ({ category }: { category: string | undefined }) => (
       <option value="large">Large</option>
       <option value="huge">Huge</option>
     </select>
-    {category === 'diary' && <button className="searchbook">도서찾기</button>}
+    {category === 'diary' && (
+      <button
+        type="button"
+        className="searchbook"
+        onClick={() => setShowModal(true)}
+      >
+        도서찾기
+      </button>
+    )}
   </div>
 );
 
@@ -40,6 +56,10 @@ export default function ReactQuillEditor() {
   const [category, setCategory] = useState(path.category);
   const [categoryToggle, setCategoryToggle] = useState(false);
   const [searchToggle, setSearchToggle] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedBook, setSeletedBook] = useState<BookDetail | null>(null); //도서 정보
+
+  const onClose = () => setShowModal(false);
 
   const categoryToggleHandler = (
     e: React.MouseEvent<HTMLLIElement, MouseEvent>,
@@ -67,13 +87,14 @@ export default function ReactQuillEditor() {
   return (
     <>
       <div className="flex grow flex-col">
-        <div className="flex h-[50px] items-center justify-between">
-          <CustomToolbar category={category} />
+        <div className="flex h-[50px] items-center justify-between border-b border-b-[#ebebeb]">
+          <CustomToolbar category={category} setShowModal={setShowModal} />
           {/* <select id="categorySelect" name="">
             <option value="다이어리">다이어리</option>
             <option value="독서모임">독서모임</option>
             <option value="자유채널">자유채널</option>
           </select> */}
+
           <div
             id="categorySelect"
             onClick={() => setCategoryToggle(true)}
@@ -106,6 +127,16 @@ export default function ReactQuillEditor() {
             )}
           </div>
         </div>
+        {/* 선택된 도서 정보 */}
+        {selectedBook && (
+          <div className="mx-auto mt-[60px] flex max-w-[600px] gap-[20px] bg-[#F6F6F6] p-[20px]">
+            <img src={selectedBook.cover} alt={selectedBook.title} />
+            <div className="text-[16px] font-medium">
+              <p>{selectedBook.title}</p>
+              <p className="mt-[20px]">{selectedBook.author.split(' (')[0]}</p>
+            </div>
+          </div>
+        )}
         <ReactQuill
           ref={quillRef}
           value={value}
@@ -116,6 +147,13 @@ export default function ReactQuillEditor() {
           placeholder="내용을 입력해주세요."
         />
       </div>
+
+      {/* 책 검색 모달 */}
+      <BookSearchModal
+        showModal={showModal}
+        onClose={onClose}
+        setSeletedBook={setSeletedBook}
+      />
     </>
   );
 }
