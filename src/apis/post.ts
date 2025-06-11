@@ -126,7 +126,7 @@ export async function createPost(
 
   if (book) {
     for (const b of book) {
-      await supabase.from('book').insert({
+      await supabase.from('book_tag').insert({
         book_id: b.id,
         star: b.star,
         reference_category: 'newPost.data!.category',
@@ -146,7 +146,7 @@ export async function editPost(
   image: string | null = null,
   category: string,
   book?: {
-    id: number;
+    id: string;
     star?: number;
   }[],
 ) {
@@ -159,7 +159,7 @@ export async function editPost(
 
   if (book) {
     for (const b of book) {
-      await supabase.from('book').insert({
+      await supabase.from('book_tag').insert({
         book_id: b.id,
         star: b.star,
         reference_category: post.data!.category,
