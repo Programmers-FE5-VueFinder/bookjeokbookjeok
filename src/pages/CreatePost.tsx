@@ -1,7 +1,9 @@
+import WritePost from '../components/component/write-post/WritePost';
+
 export default function CreatePost() {
   return (
     <>
-      <h1>CreatePost Component</h1>
+      <WritePost />
     </>
   );
 }
