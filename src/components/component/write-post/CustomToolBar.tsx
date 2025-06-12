@@ -1,9 +1,9 @@
+import { fontsize, palette } from './quillAttribute.ts';
+
 export default function CustomToolBar({
   category,
-  setShowModal,
 }: {
   category: string | undefined;
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   return (
     <>
@@ -13,27 +13,33 @@ export default function CustomToolBar({
           <button className="ql-italic" />
           <button className="ql-underline" />
           <button className="ql-strike" />
+          <select className="ql-color" defaultValue={palette[0]}>
+            {palette.map((color) => (
+              <option key={color} value={color}>
+                {color}
+              </option>
+            ))}
+          </select>
         </span>
         <span className="ql-formats">
           <button className="ql-image" />
         </span>
         <span className="ql-formats">
-          <select className="ql-size" defaultValue="medium">
-            <option value="small">Small</option>
-            <option value="medium">Medium</option>
-            <option value="large">Large</option>
-            <option value="huge">Huge</option>
+          <select className="ql-size" defaultValue="16px">
+            {fontsize.map((size) => (
+              <option key={size} value={size}>
+                {size.replace('px', '')}pt
+              </option>
+            ))}
           </select>
         </span>
-        {category === 'diary' && (
-          <button
-            type="button"
-            className="searchbook"
-            onClick={() => setShowModal(true)}
-          >
-            도서찾기
-          </button>
-        )}
+        <button
+          type="button"
+          className="ql-searchbook"
+          style={{ visibility: category === 'diary' ? 'visible' : 'hidden' }}
+        >
+          도서찾기
+        </button>
       </div>
     </>
   );

@@ -6,7 +6,7 @@
   display: flex;
   align-items: center;
   margin-left: calc((100% - 1200px) / 2);
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 .ql-size {
   line-height: 24px;
@@ -55,7 +55,7 @@
   outline: none !important;
   background-color: #f1f1f1 !important;
 }
-.searchbook {
+.ql-searchbook {
   width: 90px !important;
   height: 15px !important;
   display: flex !important;

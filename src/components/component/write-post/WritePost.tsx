@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import ReactQuillEditor from './ReactQuillEditor';
 import { IoIosArrowDown } from 'react-icons/io';
 import { MdArrowBack } from 'react-icons/md';
 import { useParams } from 'react-router';
+import ReactQuillEditor from './ReactQuillEditor';
 
 export default function WritePost() {
   //path : diary, bookclub, freetalk
@@ -16,19 +16,25 @@ export default function WritePost() {
     e: React.MouseEvent<HTMLLIElement, MouseEvent>,
   ) => {
     e.stopPropagation();
-    const text = e.target.textContent;
-    if (text === '다이어리') setCategory('diary');
+    const text = e.currentTarget.textContent as string;
+    if (text === '다이어리') {
+      setCategory('diary');
+    } else {
+      setCategory('');
+    }
+
     setSelectText(text);
     setCategoryToggle((toggle) => !toggle);
   };
+
   return (
     <>
       <section className="h-screen">
         <div
           id="categorySelect"
           onClick={() => setCategoryToggle((toggle) => !toggle)}
-          style={{ marginLeft: 'calc((100% - 1186px) / 2)' }}
-          className="ml-[calc(1300px - 1200px)] relative mt-[28px] flex w-fit cursor-pointer items-center justify-center gap-[4px] rounded-[5px] bg-[#F1F1F1] px-[10px] py-[2px] text-[14px]"
+          style={{ marginLeft: 'calc((100% - 1200px) / 2)' }}
+          className="relative mt-[28px] flex w-fit cursor-pointer items-center justify-center gap-[4px] rounded-[5px] bg-[#F1F1F1] px-[10px] py-[2px] text-[14px]"
         >
           {seletText} <IoIosArrowDown />
           {categoryToggle && (
@@ -60,7 +66,7 @@ export default function WritePost() {
           <input
             type="text"
             placeholder="제목을 입력해주세요."
-            className="mx-auto mt-[30px] mb-[20px] block h-[60px] w-[1200px] max-w-[1200px] pl-[5px] text-[36px] text-[#666666]"
+            className="mx-auto mt-[30px] mb-[20px] block h-[60px] w-[1200px] max-w-[1200px] text-[36px] text-[#666666]"
           />
           <ReactQuillEditor category={category} />
           <div className="flex h-[60px] min-h-[60px] w-[100%] justify-center border-t border-t-[#D5D5D5]">
