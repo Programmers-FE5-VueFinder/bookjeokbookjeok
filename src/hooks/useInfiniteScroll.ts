@@ -19,14 +19,11 @@ export function useInfiniteScroll({
 
     observer.current?.disconnect();
 
-    observer.current = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && hasMore && !isLoading) {
-          onIntersect();
-        }
-      },
-      { threshold: 1 },
-    );
+    observer.current = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && hasMore && !isLoading) {
+        onIntersect();
+      }
+    });
 
     observer.current.observe(ref.current);
 
