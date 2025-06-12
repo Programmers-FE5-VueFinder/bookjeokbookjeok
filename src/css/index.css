@@ -1,9 +1,31 @@
 @import './tailwind.css';
 @import './font.css';
+@import './reactQuillCustom.css';
 
 @layer {
+  .textH1 {
+    @apply text-[36px] font-bold;
+  }
+  .textH2 {
+    @apply text-[36px] font-bold;
+  }
+  .textT1 {
+    @apply text-[36px] font-bold;
+  }
+  .textT2 {
+    @apply text-[36px] font-bold;
+  }
+  .textT3 {
+    @apply text-[36px] font-bold;
+  }
+  .textT4 {
+    @apply text-[36px] font-bold;
+  }
   .button {
     @apply h-[40px] w-[300px] border-green-400 hover:bg-gray-100 active:border-b-4;
+  }
+  .button-active {
+    @apply h-[40px] w-[300px] border-b-4 border-green-400 hover:bg-gray-100;
   }
   .inputBox {
     @apply rounded-sm border-1 border-gray-300 pl-[10px] text-start text-[14px] placeholder-[#CDC9C9] placeholder:font-bold focus:outline-none;
@@ -11,4 +33,31 @@
   .modal-overlay {
     @apply fixed top-0 left-0 flex h-[100%] w-[100%] items-center justify-center bg-[#000000]/50;
   }
+  .errorButton {
+    @apply h-[40px] w-[238px] text-[16px];
+  }
+  .clubInfo {
+    @apply mb-[30px] flex items-center gap-[5px];
+  }
+}
+
+select::-ms-expand {
+  display: none;
+}
+
+/* 스크롤바 */
+::-webkit-scrollbar {
+  width: 15px;
+}
+::-webkit-scrollbar-track {
+  background: #00000000;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #d9d9d9;
+  border-radius: 10px;
+  border: solid 4px #00000000;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: #ababab;
 }

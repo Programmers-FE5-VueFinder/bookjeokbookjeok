@@ -2,17 +2,36 @@ import BookCard from '../components/common/BookCard';
 import { useState } from 'react';
 import { LuPencil } from 'react-icons/lu';
 import SettingModal from '../components/component/MyPage/SettingModal';
+import { twMerge } from 'tailwind-merge';
+import ProfileImg from '../components/component/MyPage/ProfileImg';
+import { useProfileStore } from '../store/profileStore';
+import { useAuthStore } from '../store/authStore';
+import Skeleton from '@mui/material/Skeleton';
 
 export default function Profile() {
   const [openSetting, setOpenSetting] = useState<boolean>(false);
+  const [selectedBtn, setSelectedBtn] = useState<string>('다이어리');
+  const [content, setContent] = useState<string>('다이어리');
+  const buttonName = ['다이어리', '자유채널', '마이 북클럽', '북마크'];
+  const profileImg = useProfileStore((state) => state.Image);
+  const session = useAuthStore((state) => state.session);
+
+  const handleContentButton = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const { name } = e.currentTarget;
+    setContent(name);
+    setSelectedBtn(name);
+  };
   return (
     <>
       <div>
         {/* 프로필 에리어 */}
         <div className="relative flex h-[350px] content-center justify-center shadow shadow-gray-200">
-          <div className="mt-[52px] flex flex-col items-center text-center">
+          <div className="mt-[52px] flex flex-col items-center justify-center text-center">
             {/* 프로필 이미지 */}
-            <div className="relative size-[100px] rounded-full bg-black">
+            <div className="relative size-[100px]">
+              <ProfileImg
+                src={profileImg || session?.user.user_metadata.avatar_url}
+              />
               <button
                 className="absolute top-0 right-1 flex size-[25px] cursor-pointer items-center justify-center rounded-full border-3 border-white bg-gray-100"
                 onClick={() => {
@@ -23,8 +42,8 @@ export default function Profile() {
               </button>
             </div>
             <div className="mt-[14px] grid">
-              <span>닉네임</span>
-              <span>여기는 자기소개입니다.</span>
+              <span>{session?.user.user_metadata.name}</span>
+              <span>내 설명</span>
             </div>
             <div className="flex">
               <div className="mr-[25px]">
@@ -39,14 +58,31 @@ export default function Profile() {
           </div>
           {/* 버튼 에리어 */}
           <div className="absolute bottom-0 flex h-[40px] w-full content-center items-center justify-center">
-            <button className="button">다이어리</button>
-            <button className="button">자유채널</button>
-            <button className="button">독서모임</button>
-            <button className="button">북마크</button>
+            {buttonName.map((item) => {
+              return (
+                <button
+                  className={twMerge(
+                    item === selectedBtn ? 'button-active' : 'button',
+                  )}
+                  onClick={handleContentButton}
+                  key={item}
+                  name={item}
+                >
+                  {item}
+                </button>
+              );
+            })}
           </div>
         </div>
         <div className="flex items-center justify-center bg-[#FAFAFA]">
           <div className="grid gap-[28px] p-[100px] md:grid-cols-2 lg:grid-cols-4">
+            {content}
+            <Skeleton
+              variant="rounded"
+              width={'278px'}
+              height={'440px'}
+              animation="wave"
+            />
             <BookCard />
             <BookCard />
             <BookCard />

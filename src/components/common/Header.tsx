@@ -1,5 +1,6 @@
 import { Link } from 'react-router';
-import supabase from '../../apis';
+import { logout } from '../../apis/auth';
+import supabase from '../../utils/supabase';
 import LoginModal from '../../pages/LoginModal';
 import { useEffect, useRef, useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
@@ -11,6 +12,7 @@ import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined
 export default function Header() {
   // const session = useAuthStore((state) => state.session); 나중에 프로필 받아올 때 사용
   const isLogin = useAuthStore((state) => state.isLogin);
+  const setLogin = useAuthStore((state) => state.setLogin);
   const setLogout = useAuthStore((state) => state.setLogout);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -18,9 +20,24 @@ export default function Header() {
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (!error) setLogout();
+    await logout();
+    setLogout();
   };
+
+  // 로그인 상태 관리는 zustand로 대체, logout만 auth.ts 사용
+  useEffect(() => {
+    const syncSession = async () => {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (session) {
+        setLogin(session);
+      } else {
+        setLogout();
+      }
+    };
+    syncSession();
+  }, [setLogin, setLogout]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -36,20 +53,20 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="flex h-[100px] w-full items-center justify-between border-b-[1px] border-[#EBEBEB]">
-      <div className='flex w-[1200px] content-center justify-between'>
+    <header className="flex h-[100px] w-full items-center justify-center border-b-[1px] border-[#EBEBEB]">
+      <div className="flex w-[1200px] content-center justify-between">
         <div className="flex items-center space-x-4">
           <Link to="/" className="text-[20px] font-medium">
             북적북적
           </Link>
         </div>
 
-      <nav className="flex gap-x-[65px] text-[16px] font-medium">
-        <Link to={'/channel/diary'}>다이어리</Link>
-        <Link to={'/channel/book_club'}>독서모임</Link>
-        <Link to={'/channel/community'}>자유채널</Link>
-        <Link to={'/create-post'}>글작성</Link>
-      </nav>
+        <nav className="flex gap-x-[65px] text-[16px] font-medium">
+          <Link to={'/channel/diary'}>다이어리</Link>
+          <Link to={'/channel/book-club'}>북클럽</Link>
+          <Link to={'/channel/free-board'}>자유채널</Link>
+          <Link to={'/create-post'}>글작성</Link>
+        </nav>
 
         <div className="flex space-x-4" ref={dropdownRef}>
           <Link to={'/search'}>
