@@ -61,11 +61,11 @@ const router = createBrowserRouter([
         path: '/bookclub',
         Component: BookClub,
       },
+      {
+        path: '/create-post',
+        Component: CreatePost,
+      },
     ],
-  },
-  {
-    path: '/create-post/:category',
-    Component: CreatePost,
   },
   {
     path: '*',

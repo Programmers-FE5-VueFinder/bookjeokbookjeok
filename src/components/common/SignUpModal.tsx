@@ -1,3 +1,5 @@
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { IoMdCheckmark } from 'react-icons/io';
@@ -139,20 +141,31 @@ export default function SignUpModal() {
           )}
 
           <div className="my-[10px] flex flex-col gap-[8px]">
-            <div className="flex h-fit items-center gap-[5px] pl-[2px]">
-              <input
-                type="checkbox"
-                id="AllConsentCheckbox"
-                checked={checked}
-                onChange={(e) => handleCheckBoxValid(e)}
-                className="appearance-auto accent-[#08C818]"
-              ></input>
-              <label
-                htmlFor="AllConsentCheckbox"
-                className={`text-[14px] ${checked ? 'text-[#08C818]' : ''}`}
-              >
-                모두 동의 (선택포함)
-              </label>
+            <div className="flex h-fit items-center gap-[5px]">
+              <FormControlLabel
+                required
+                control={
+                  <Checkbox
+                    sx={{
+                      color: 'black',
+                      '&.Mui-checked': { color: '#08C818' },
+                      padding: '0px',
+                      margin: '0px',
+                      paddingRight: '8px',
+                      paddingLeft: '9px',
+                    }}
+                    checked={checked}
+                    onChange={(e) => handleCheckBoxValid(e)}
+                    size="small"
+                    disableRipple
+                  />
+                }
+                label="모두 동의 (선택 포함)"
+                sx={{
+                  color: checked ? '#08c818' : 'black',
+                  '& .MuiTypography-root': { fontSize: '14px' },
+                }}
+              />
             </div>
             <div className="flex items-center gap-[5px]">
               <IoMdCheckmark

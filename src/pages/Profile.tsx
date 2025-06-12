@@ -13,6 +13,8 @@ import BookCard from '../components/common/BookCard';
 
 export default function Profile() {
   const [openSetting, setOpenSetting] = useState<boolean>(false);
+  const [follower, setFollwer] = useState<number>(0);
+  const [following, setFollowing] = useState<number>(0);
   const [selectedBtn, setSelectedBtn] = useState<string>('다이어리');
   const [content, setContent] = useState<string>('다이어리');
   const buttonName = ['다이어리', '자유채널', '마이 북클럽', '북마크'];
@@ -56,6 +58,36 @@ export default function Profile() {
       }
     };
 
+    const myFollower = async () => {
+      const { data: follow } = await supabase
+        .from('follow')
+        .select('follower_id, following_id');
+
+      console.log(follow);
+
+      if (follow?.length !== undefined) {
+        setFollwer(follow?.length);
+      } else {
+        setFollwer(0);
+      }
+    };
+    myFollower();
+
+    const myFollowing = async () => {
+      const { data: follow } = await supabase
+        .from('follow')
+        .select('follower_id,other_column');
+
+      console.log(follow);
+
+      if (follow?.length !== undefined) {
+        setFollowing(follow?.length);
+      } else {
+        setFollowing(0);
+      }
+    };
+    myFollowing();
+
     fetchInitialProfile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session?.user?.id]); // *** [최종 수정] user.id 라는 원시값을 의존성으로 사용합니다.
@@ -80,8 +112,9 @@ export default function Profile() {
                 <LuPencil fontSize="small" />
               </button>
             </div>
-            <div className="mt-[14px] grid font-bold">
+            <div className="mt-[14px] mb-[14px] flex items-center gap-[6px] font-bold">
               <span>{profileName} 님</span>
+              <div className="size-[15px] rounded-full border-1"></div>
             </div>
             <span>{intro}</span>
             <div className="mt-[26px] flex">
@@ -89,13 +122,13 @@ export default function Profile() {
                 <span className="mr-[8px] text-[16px] font-semibold">
                   팔로워
                 </span>
-                <span className="text-[16px]">000</span>
+                <span className="text-[16px]">{follower}</span>
               </div>
               <div>
                 <span className="mr-[8px] text-[16px] font-semibold">
                   팔로잉
                 </span>
-                <span className="text-[16px]">000</span>
+                <span className="text-[16px]">{following}</span>
               </div>
             </div>
           </div>
