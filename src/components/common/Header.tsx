@@ -61,8 +61,8 @@ export default function Header() {
 
         <nav className="flex gap-x-[65px] text-[16px] font-medium">
           <Link to={'/channel/diary'}>다이어리</Link>
-          <Link to={'/channel/book-club'}>북클럽</Link>
-          <Link to={'/channel/free-board'}>자유채널</Link>
+          <Link to={'/channel/book_club'}>북클럽</Link>
+          <Link to={'/channel/community'}>자유채널</Link>
           <Link to={'/create-post'}>글작성</Link>
         </nav>
 
