@@ -100,22 +100,31 @@ export default function PostList() {
     <>
       <div className="max-w-[1200px] w-full mx-auto px-4">
         <h1 className="my-[80px] text-[32px] font-bold">{channelName}</h1>
-
-        <div className="flex gap-x-[10px]">
-          {sortOptions.map((option) => (
-            <button
-              key={option}
-              onClick={() => setSelectedSort(option)}
-              className={clsx(
-                'flex h-[34px] w-[100px] items-center justify-center rounded-[20px] border-none px-4 py-2 text-[16px]',
-                selectedSort === option
-                  ? 'bg-[#08C818] font-bold text-[#FFFFFF]'
-                  : 'bg-[#F3F1F1] font-bold text-[#333333] hover:bg-gray-300',
-              )}
+        <div className="flex justify-between">
+          <div className="flex gap-x-[10px]">
+            {sortOptions.map((option) => (
+              <button
+                key={option}
+                onClick={() => setSelectedSort(option)}
+                className={clsx(
+                  'flex h-[34px] w-[100px] items-center justify-center rounded-[20px] border-none px-4 py-2 text-[16px]',
+                  selectedSort === option
+                    ? 'bg-[#08C818] font-bold text-[#FFFFFF]'
+                    : 'bg-[#F3F1F1] font-bold text-[#333333] hover:bg-gray-300',
+                )}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+          {channelName === '북클럽' && (
+            <Link
+              to={`/create-bookclub`}
+              className="flex cursor-pointer rounded-full bg-[#F3F1F1] px-6 py-2 text-[16px] font-bold text-[#333333] hover:bg-gray-300"
             >
-              {option}
-            </button>
-          ))}
+              북클럽 만들기
+            </Link>
+          )}
         </div>
 
         <div className='w-[1200px] my-[132px] bg-red-50'>
