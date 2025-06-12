@@ -1,11 +1,11 @@
 import supabase from '../utils/supabase';
 
-async function checkBookExists(bookId: string): Promise<boolean> {
+export async function checkBookExists(bookId: string): Promise<boolean> {
   const { data, error } = await supabase
     .from('book')
     .select('id')
     .eq('id', bookId)
-    .single();
+    .maybeSingle();
 
   if (error) return false;
   return data !== null;
@@ -122,4 +122,18 @@ export async function fetchReviewsWithStars(
       rating: tag.star ?? 0,
     };
   });
+}
+
+export async function getBookStars(bookId: string) {
+  const { data, error } = await supabase
+    .from('book_tag')
+    .select('star')
+    .eq('book_id', bookId);
+
+  if (error) {
+    console.error('별점 가져오기 실패:', error.message);
+    return [];
+  }
+
+  return data.map((item) => item.star);
 }
