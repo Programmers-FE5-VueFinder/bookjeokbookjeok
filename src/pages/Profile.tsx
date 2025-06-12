@@ -134,20 +134,22 @@ export default function Profile() {
           </div>
           {/* 버튼 에리어 */}
           <div className="absolute bottom-0 flex h-[40px] w-full content-center items-center justify-center">
-            {buttonName.map((item) => {
-              return (
-                <button
-                  className={twMerge(
-                    item === selectedBtn ? 'button-active' : 'button',
-                  )}
-                  onClick={handleContentButton}
-                  key={item}
-                  name={item}
-                >
-                  {item}
-                </button>
-              );
-            })}
+            <div className="flex w-[1200px] items-center justify-center ">
+              {buttonName.map((item) => {
+                return (
+                  <button
+                    className={twMerge(
+                      item === selectedBtn ? 'button-active' : 'button',
+                    )}
+                    onClick={handleContentButton}
+                    key={item}
+                    name={item}
+                  >
+                    {item}
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
         <div className="flex items-center justify-center bg-[#FAFAFA]">
