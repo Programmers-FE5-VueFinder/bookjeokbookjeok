@@ -1,5 +1,5 @@
 import './quillOverride.ts';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import '../../../css/reactQuillCustom.css';
@@ -11,8 +11,10 @@ import ReactDOMServer from 'react-dom/server';
 
 export default function ReactQuillEditor({
   category,
+  bodyRef,
 }: {
   category: string | undefined;
+  bodyRef: React.RefObject<ReactQuill | null>;
 }) {
   const quillRef = useRef<ReactQuill | null>(null);
   const [value, setValue] = useState('');
@@ -67,7 +69,7 @@ export default function ReactQuillEditor({
         {/* 선택된 도서 정보 */}
         {/* <BookHTML selectedBook={selectedBook} /> */}
         <ReactQuill
-          ref={quillRef}
+          ref={bodyRef}
           value={value}
           onChange={setValue}
           modules={modules}
