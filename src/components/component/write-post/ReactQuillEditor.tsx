@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
 import '../../../css/reactQuillCustom.css';
@@ -15,10 +15,11 @@ import CustomToolBar from './CustomToolBar.tsx';
 
 export default function ReactQuillEditor({
   category,
+  bodyRef,
 }: {
   category: string | undefined;
+  bodyRef: React.RefObject<ReactQuill | null>;
 }) {
-  const quillRef = useRef(null);
   const [value, setValue] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [selectedBook, setSeletedBook] = useState<BookDetail | null>(null); //도서 정보
@@ -52,7 +53,7 @@ export default function ReactQuillEditor({
         )}
 
         <ReactQuill
-          ref={quillRef}
+          ref={bodyRef}
           value={value}
           onChange={setValue}
           modules={modules}
