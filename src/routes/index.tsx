@@ -12,6 +12,7 @@ import Notification from '../pages/Notification';
 import SearchResult from '../pages/SearchResult';
 import ChannelLayout from './layouts/ChannelLayout';
 import { fetchUserData } from './loader/auth.loader';
+import BookClub from '../pages/BookClub';
 
 const router = createBrowserRouter([
   {
@@ -21,10 +22,6 @@ const router = createBrowserRouter([
       {
         path: '/',
         Component: Home,
-      },
-      {
-        path: '/create-post',
-        Component: CreatePost,
       },
       {
         path: '/channel/:channelId',
@@ -60,7 +57,15 @@ const router = createBrowserRouter([
         path: '/search',
         Component: SearchResult,
       },
+      {
+        path: '/bookclub',
+        Component: BookClub,
+      },
     ],
+  },
+  {
+    path: '/create-post/:category',
+    Component: CreatePost,
   },
   {
     path: '*',

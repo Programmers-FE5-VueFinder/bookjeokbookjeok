@@ -1,3 +1,4 @@
+// 클라이언트 생성 파일
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from '../types/supabase';
 
