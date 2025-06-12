@@ -2,8 +2,9 @@ import { useRef, useState } from 'react';
 import ReactQuillEditor from './ReactQuillEditor';
 import { IoIosArrowDown } from 'react-icons/io';
 import { MdArrowBack } from 'react-icons/md';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import type ReactQuill from 'react-quill-new';
+import { createBookClub } from '../../../apis/book-club';
 
 export default function WritePost({
   isCreateBookClub,
@@ -20,6 +21,8 @@ export default function WritePost({
   const titleRef = useRef<HTMLInputElement>(null);
   const bodyRef = useRef<ReactQuill>(null);
 
+  const navigate = useNavigate();
+
   const categoryToggleHandler = (
     e: React.MouseEvent<HTMLLIElement, MouseEvent>,
   ) => {
@@ -30,11 +33,11 @@ export default function WritePost({
     setCategoryToggle((toggle) => !toggle);
   };
 
-  const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+  const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const title = titleRef.current?.value;
-    const body = bodyRef.current?.value;
+    const body = bodyRef.current?.value.toString();
 
     if (!title || !body) return; // toastify로 제목이나 내용을 모두 입력해 달라는 경고문구 추가
 
@@ -52,7 +55,8 @@ export default function WritePost({
         return;
       }
       default: {
-        // book-club 생성 api
+        const bookclub_id = await createBookClub(title, body);
+        navigate(`/bookclub/${bookclub_id}`);
       }
     }
   };

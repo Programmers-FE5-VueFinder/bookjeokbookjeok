@@ -14,6 +14,7 @@ import ChannelLayout from './layouts/ChannelLayout';
 import { fetchUserData } from './loader/auth.loader';
 import CreatePostLayout from './layouts/CreatPostLayout';
 import BookClub from '../pages/BookClub';
+import CreateBookClub from '../pages/CreateBookClub';
 
 const router = createBrowserRouter([
   {
@@ -59,7 +60,7 @@ const router = createBrowserRouter([
         Component: SearchResult,
       },
       {
-        path: '/bookclub',
+        path: '/bookclub/:bookclub_id',
         Component: BookClub,
       },
     ],
@@ -71,6 +72,10 @@ const router = createBrowserRouter([
       {
         path: '/create-post/:category',
         Component: CreatePost,
+      },
+      {
+        path: '/create-bookclub',
+        Component: CreateBookClub,
       },
     ],
   },
