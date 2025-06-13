@@ -126,7 +126,7 @@ export async function createPost(
 
   if (book) {
     for (const b of book) {
-      await supabase.from('book').insert({
+      await supabase.from('book_tag').insert({
         book_id: b.id,
         star: b.star,
         reference_category: 'newPost.data!.category',
@@ -146,7 +146,7 @@ export async function editPost(
   image: string | null = null,
   category: string,
   book?: {
-    id: number;
+    id: string;
     star?: number;
   }[],
 ) {
@@ -159,7 +159,7 @@ export async function editPost(
 
   if (book) {
     for (const b of book) {
-      await supabase.from('book').insert({
+      await supabase.from('book_tag').insert({
         book_id: b.id,
         star: b.star,
         reference_category: post.data!.category,
@@ -175,4 +175,30 @@ export async function deletePost(id: string) {
   await supabase.from('comment').delete().eq('post_id', id);
   await supabase.from('book_tag').delete().eq('reference_id', id);
   await supabase.from('post').delete().eq('id', id);
+}
+
+export async function getBookPost(bookId: string, from: number, to: number) {
+  const { data, error } = await supabase
+    .from('post')
+    .select(
+      `
+      id,
+      title,
+      body,
+      created_at,
+      user_id,
+      profile (
+        name,
+        image
+      )
+    `,
+    )
+    .eq('book_id', bookId)
+    .order('created_at', { ascending: false })
+    .range(from, to);
+  if (error) {
+    console.error('게시글  가져오기 실패:', error.message);
+    return [];
+  }
+  return data;
 }
