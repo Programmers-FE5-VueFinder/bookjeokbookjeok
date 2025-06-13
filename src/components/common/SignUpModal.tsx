@@ -67,7 +67,10 @@ export default function SignUpModal() {
           onClick={() => setView(false)}
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
         >
-          <div className="relative flex w-[410px] flex-col rounded-[20px] bg-[#fff] px-[35px] py-[20px] shadow-[0_0_5px_rgba(0,0,0,0.25)]">
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative flex w-[410px] flex-col rounded-[20px] bg-[#fff] px-[35px] py-[20px] shadow-[0_0_5px_rgba(0,0,0,0.25)]"
+          >
             <div
               onClick={() => setView(false)}
               className="absolute top-[11px] right-[12px] flex cursor-pointer items-center justify-center text-[#333]"
