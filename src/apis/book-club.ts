@@ -2,17 +2,22 @@ import supabase from '../utils/supabase';
 
 /* 북클럽 상세 조회 */
 export async function fetchBookClub(id: string) {
-  const { data, error } = await supabase
+  const { data: book_club } = await supabase
     .from('book_club')
-    .select('*')
+    .select(`*, book_club_member(*)`)
     .eq('id', id)
     .single();
 
-  if (error) {
-    console.log(error);
-  }
+  const userIds = book_club.book_club_member.map(
+    (m: BookclubMember) => m.user_id,
+  );
+  const { data: user } = await supabase
+    .from('profile')
+    .select('*')
+    .in('id', userIds);
 
-  return data;
+  const { book_club_member, ...rest } = book_club;
+  return { ...rest, member: user };
 }
 
 /* 북클럽 생성 */
