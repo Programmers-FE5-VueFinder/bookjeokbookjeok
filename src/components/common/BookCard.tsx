@@ -9,7 +9,7 @@ export default function BookCard({
   body: string;
   title: string;
   name: string;
-  create: string;
+  create: Date;
 }) {
   return (
     <>

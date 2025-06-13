@@ -40,7 +40,15 @@ export default function Profile() {
 
   const handleContentButton = (e: React.MouseEvent<HTMLButtonElement>) => {
     const { name } = e.currentTarget;
-    setContent(name);
+    if (name === '다이어리') {
+      setContent('diary');
+    } else if (name === '자유채널') {
+      setContent('community');
+    } else if (name === '마이 북클럽') {
+      setContent('bookclub');
+    } else {
+      setContent('bookmark');
+    }
     setSelectedBtn(name);
   };
 
@@ -126,6 +134,7 @@ export default function Profile() {
           .select('*')
           .eq('user_id', userId!);
         setPost(post);
+        console.error(error);
       };
       await Promise.all([
         fetchInitialProfile(),
@@ -204,7 +213,7 @@ export default function Profile() {
         </div>
         <div className="flex items-center justify-center bg-[#FAFAFA]">
           <div className="grid gap-[28px] p-[100px] md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {post?.map((item) => {
+            {post?.map((item, content) => {
               {
                 return (
                   <BookCard
@@ -212,7 +221,9 @@ export default function Profile() {
                     body={item.body}
                     title={item.title}
                     name={profileName!}
-                    create={item.created_at}
+                    create={new Date(item.created_at).toLocaleDateString(
+                      'ko-KR',
+                    )}
                   />
                 );
               }
