@@ -1,14 +1,16 @@
 import { FaRegComment, FaRegHeart } from 'react-icons/fa';
+import type { BookCardProps } from '../../types/type';
 
 export default function BookCard({
   nickname,
-  badge = '',
+  // badge = '',
   title,
   body,
   image,
   likes = 0,
   comments = 0,
   createdAt,
+  profileImage,
 }: BookCardProps) {
   return (
     <>
@@ -30,15 +32,17 @@ export default function BookCard({
           )}
         </div>
         <div className="p-[13px] text-start">
-          <div className="flex items-center bg-blue-100">
-            <div className="mr-[7px] flex items-center font-bold">
-              <div>{nickname}</div>
-            </div>
-            {/* 배지 에리어 */}
-            <div className="flex size-[15px] items-center justify-center overflow-hidden rounded-full border">
-              {badge}
+          <div className="bg-amber-100 flex items-center gap-x-[6px]">
+            <img 
+              src={profileImage ?? '이미지 없음'}
+              alt="프로필사진" 
+              className=" w-auto h-[25px] rounded-full"
+            />
+            <div className="flex items-center">
+              <div className="text-[16px] font-semibold">{nickname}</div>
             </div>
           </div>
+
           <div className="mt-[15px] truncate text-[18px] font-bold">
             <span>{title}</span>
           </div>

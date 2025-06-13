@@ -42,7 +42,6 @@ export async function fetchPostDetail(id: string) {
       category,
       like(*),
       comment(*),
-      vote(*),
       created_at
     `,
     )
