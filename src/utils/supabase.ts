@@ -5,5 +5,7 @@ import type { Database } from '../types/supabase';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabase = createClient<Database>(supabaseUrl, supabaseKey);
+export const STORAGE_BASE_URL =
+  'https://nnmxnwggcalqmvwecxur.supabase.co/storage/v1/object/public/image/';
 
 export default supabase;
