@@ -1,7 +1,7 @@
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Tooltip from '@mui/material/Tooltip';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { IoMdCheckmark } from 'react-icons/io';
 import { IoMdClose } from 'react-icons/io';
@@ -17,6 +17,8 @@ export default function SignUpModal() {
     personal: false,
     marketing: false,
   });
+  const background = useRef(null);
+  const closeButton = useRef(null);
 
   const handleConsentClick = (type: ConsentKey) => {
     setConsent((prev) => {
@@ -64,6 +66,7 @@ export default function SignUpModal() {
     <>
       {view && (
         <div
+          ref={background}
           onClick={() => setView(false)}
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
         >
@@ -72,6 +75,7 @@ export default function SignUpModal() {
             className="relative flex w-[410px] flex-col rounded-[20px] bg-[#fff] px-[35px] py-[20px] shadow-[0_0_5px_rgba(0,0,0,0.25)]"
           >
             <div
+              ref={closeButton}
               onClick={() => setView(false)}
               className="absolute top-[11px] right-[12px] flex cursor-pointer items-center justify-center text-[#333]"
             >
