@@ -4,6 +4,7 @@ import { getBookPost } from '../../../apis/post';
 import { useInfiniteScroll } from '../../../hooks/use-infinite-scroll';
 import Snackbar from '@mui/material/Snackbar';
 import getElapsedTime from '../../../utils/format-time';
+import BookPostSkeleton from './BookPostSkeleton';
 
 interface Post {
   id: string;
@@ -71,6 +72,7 @@ export default function BookPost({ isbn }: { isbn: string }) {
         <p className="border-b border-b-[#D8D8D8] py-[30px] text-center text-[20px] font-semibold">
           포스트
         </p>
+        {isLoading && <BookPostSkeleton />}
         {posts.length === 0 && !isLoading ? (
           <p className="flex h-[400px] items-center justify-center border-t border-t-[#D8D8D8] py-[30px] text-2xl text-gray-500">
             등록된 포스트가 없습니다.
