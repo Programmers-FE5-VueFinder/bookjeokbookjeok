@@ -1,11 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import BookPost from './BookPost';
 import OneLineReview from './OneLineReview';
 import RelatedContents from './RelatedContents';
-import { FaCaretDown } from 'react-icons/fa6';
-import { CiBookmark } from 'react-icons/ci';
+import { FaCaretDown, FaBookmark, FaRegBookmark } from 'react-icons/fa6';
 import Rating from '@mui/material/Rating';
 import type { BookDetail } from '../../../types/book';
+import { insertBookIfNotExists } from '../../../apis/add-book-if-not-exists';
+import { checkBookExists } from '../../../apis/book-review';
+import {
+  addBookmark,
+  isBookBookmarked,
+  removeBookmark,
+} from '../../../apis/bookmark';
+import { getBookStars } from '../../../apis/book-review';
 
 type BookPagesProps = {
   isOpen: boolean;
@@ -19,20 +26,75 @@ export default function BookPage({
   bookDetail,
 }: BookPagesProps) {
   const [visible, setVisible] = useState(false);
-  const [selectedContent, setSelectedCotent] = useState<
+  const [selectedContent, setSelectedContent] = useState<
     'oneLineReview' | 'relatedContents' | 'post'
   >('oneLineReview');
+
+  const [bookmarked, setBookmarked] = useState(false);
+  const [averageStar, setAverageStar] = useState<number>(0);
+
+  const handleAddBookmark = async () => {
+    try {
+      await insertBookIfNotExists(bookDetail);
+      await addBookmark(bookDetail.isbn13);
+      setBookmarked(true);
+    } catch (error) {
+      console.error('북마크 추가 실패:', error);
+    }
+  };
+
+  const handleRemoveBookmark = async () => {
+    try {
+      await removeBookmark(bookDetail.isbn13);
+      setBookmarked(false);
+    } catch (error) {
+      console.error('북마크 삭제 실패:', error);
+    }
+  };
+
+  const refreshAverageStar = async () => {
+    const newAverage = await loadAverageStar(bookDetail.isbn13);
+    setAverageStar(newAverage);
+  };
+
+  const checkBookmarkStatus = useCallback(async () => {
+    try {
+      const exists = await checkBookExists(bookDetail.isbn13);
+      if (!exists) {
+        return;
+      }
+
+      const result = await isBookBookmarked(bookDetail.isbn13);
+      setBookmarked(result);
+    } catch (error) {
+      console.error('북마크 상태 확인 실패:', error);
+    }
+  }, [bookDetail]);
+
+  async function loadAverageStar(isbn13: string): Promise<number> {
+    try {
+      const stars = await getBookStars(isbn13);
+      if (!stars.length) return 0;
+
+      const sumStars = stars.reduce((a, b) => a! + b!, 0);
+      return Math.round((sumStars! / stars.length) * 10) / 10;
+    } catch (error) {
+      console.error('별점 평균 로딩 실패:', error);
+      return 0;
+    }
+  }
 
   useEffect(() => {
     if (isOpen) {
       setVisible(true);
+      checkBookmarkStatus();
+      loadAverageStar(bookDetail.isbn13).then(setAverageStar);
     } else {
       setVisible(false);
     }
-  }, [isOpen]);
+  }, [isOpen, bookDetail, checkBookmarkStatus]);
 
   if (!isOpen) return null;
-
   return (
     <>
       <div
@@ -68,7 +130,7 @@ export default function BookPage({
                   className="relative z-10 object-cover"
                 />
               </div>
-              <div className="relative px-[32px] pt-[20px]">
+              <div className="custom-scrollbar relative max-h-[500px] overflow-auto px-[32px] pt-[20px]">
                 <div className="flex flex-col gap-[20px] text-[16px] font-semibold">
                   <span className="text-[#08C818]">
                     {bookDetail.categoryName.split('>')[1]}
@@ -77,25 +139,35 @@ export default function BookPage({
                     <span className="text-[20px] font-semibold text-[#333333]">
                       {bookDetail.title}
                     </span>
-                    <CiBookmark className="mt-[5px] shrink-0 cursor-pointer text-[24px]" />
+                    {bookmarked ? (
+                      <FaBookmark
+                        onClick={handleRemoveBookmark}
+                        className="mt-[5px] shrink-0 cursor-pointer text-[24px] text-[#08C818]"
+                      />
+                    ) : (
+                      <FaRegBookmark
+                        onClick={handleAddBookmark}
+                        className="mt-[5px] shrink-0 cursor-pointer text-[24px] text-[#ccc] hover:text-[#08C818]"
+                      />
+                    )}
                   </div>
                   <span className="flex justify-between text-[16px] font-semibold text-[#797979]">
-                    {bookDetail.author.split('(')[0]}{' '}
+                    {bookDetail.author.split('(')[0]}
                     <div className="mr-[15px] flex items-center justify-center">
                       <Rating
                         name="half-rating-read"
-                        defaultValue={4.6}
+                        value={averageStar}
                         precision={0.1}
                         size="small"
                         readOnly
                       />
                       <span className="ml-[6px] text-[16px] font-bold text-black">
-                        4.6
+                        {averageStar.toFixed(1)}
                       </span>
                     </div>
                   </span>
                 </div>
-                <div className="mt-[15px] line-clamp-3 h-[80px] text-[16px] font-medium">
+                <div className="mt-[15px] max-h-[200px] pb-[20px] text-[16px] font-medium">
                   {bookDetail.description}
                 </div>
               </div>
@@ -118,7 +190,7 @@ export default function BookPage({
                     ? 'border-b-[#08C818] font-semibold text-[#08C818]'
                     : 'border-b-[#D8D8D8]'
                 } border-b-[3px]`}
-                onClick={() => setSelectedCotent('oneLineReview')}
+                onClick={() => setSelectedContent('oneLineReview')}
               >
                 한 줄 리뷰
               </div>
@@ -128,7 +200,7 @@ export default function BookPage({
                     ? 'border-b-[#08C818] font-semibold text-[#08C818]'
                     : 'border-b-[#D8D8D8]'
                 } border-b-[3px]`}
-                onClick={() => setSelectedCotent('relatedContents')}
+                onClick={() => setSelectedContent('relatedContents')}
               >
                 연관 콘텐츠
               </div>
@@ -138,15 +210,25 @@ export default function BookPage({
                     ? 'border-b-[#08C818] font-semibold text-[#08C818]'
                     : 'border-b-[#D8D8D8]'
                 } border-b-[3px]`}
-                onClick={() => setSelectedCotent('post')}
+                onClick={() => setSelectedContent('post')}
               >
                 포스트
               </div>
             </div>
 
-            {selectedContent === 'oneLineReview' && <OneLineReview />}
-            {selectedContent === 'relatedContents' && <RelatedContents />}
-            {selectedContent === 'post' && <BookPost />}
+            {selectedContent === 'oneLineReview' && (
+              <OneLineReview
+                isbn={bookDetail.isbn13}
+                bookDetail={bookDetail}
+                onReviewSubmit={refreshAverageStar}
+              />
+            )}
+            {selectedContent === 'relatedContents' && (
+              <RelatedContents genre={bookDetail.categoryId} />
+            )}
+            {selectedContent === 'post' && (
+              <BookPost isbn={bookDetail.isbn13} />
+            )}
           </div>
 
           {/* 닫기 버튼 */}
