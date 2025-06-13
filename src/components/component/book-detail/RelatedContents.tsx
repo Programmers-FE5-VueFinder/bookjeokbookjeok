@@ -108,7 +108,7 @@ export default function RelatedContents({ genre }: { genre: number }) {
             <div className="text-center text-[14px] font-semibold">
               {book.title}
             </div>
-            <div className="text-center text-[14px] font-medium">
+            <div className="text-center text-[14px] font-medium text-[#797979]">
               {formatAuthor(book.author)}
             </div>
           </div>
