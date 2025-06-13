@@ -27,14 +27,12 @@ export default function Header() {
   // 로그인 상태 관리는 zustand로 대체, logout만 auth.ts 사용
   useEffect(() => {
     const syncSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      if (session) {
-        setLogin(session);
-      } else {
-        setLogout();
-      }
+        const { data: { session }} = await supabase.auth.getSession();
+        if (session) {
+            setLogin(session);
+        } else {
+            setLogout();
+        }
     };
     syncSession();
   }, [setLogin, setLogout]);
@@ -63,8 +61,8 @@ export default function Header() {
 
         <nav className="flex gap-x-[65px] text-[16px] font-medium">
           <Link to={'/channel/diary'}>다이어리</Link>
-          <Link to={'/channel/book-club'}>북클럽</Link>
-          <Link to={'/channel/free-board'}>자유채널</Link>
+          <Link to={'/channel/book_club'}>북클럽</Link>
+          <Link to={'/channel/community'}>자유채널</Link>
           <Link to={'/create-post'}>글작성</Link>
         </nav>
 

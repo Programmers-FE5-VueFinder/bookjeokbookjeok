@@ -61,3 +61,13 @@ select::-ms-expand {
 ::-webkit-scrollbar-thumb:hover {
   background-color: #ababab;
 }
+
+/* 스크롤바 숨김 */
+.scroll-hidden {
+  overflow-y: scroll;
+  scrollbar-width: none; /* Firefox */
+}
+
+.scroll-hidden::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
