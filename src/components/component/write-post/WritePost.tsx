@@ -5,7 +5,6 @@ import { IoIosArrowDown } from 'react-icons/io';
 import { MdArrowBack } from 'react-icons/md';
 import { useNavigate, useParams } from 'react-router';
 import { MdOutlineSearch } from 'react-icons/md';
-import { FaStar } from 'react-icons/fa';
 import BookSearchModal from '../BookSearchModal';
 import type { BookDetail } from '../../../types/book';
 import BookHTML from './BookHTML';
@@ -22,14 +21,12 @@ export default function WritePost({
   const [seletText, setSelectText] = useState('채널선택');
   const [category, setCategory] = useState(path.category);
   const [categoryToggle, setCategoryToggle] = useState(false);
-  const [rating, setRating] = useState(0);
   const [value, setValue] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [selectedBook, setSeletedBook] = useState<BookDetail | null>(null);
 
   const titleRef = useRef<HTMLInputElement>(null);
 
-  const ratings = [1, 2, 3, 4, 5];
   const onClose = () => setShowModal(false);
 
   const categoryToggleHandler = (
@@ -144,7 +141,7 @@ export default function WritePost({
                   style={{ marginLeft: 'calc((100% - 1200px) / 2)' }}
                   className="mt-[15px] flex w-fit gap-[5px]"
                 >
-                  {ratings.map((num) => {
+                  {/* {ratings.map((num) => {
                     return (
                       <button className="cursor-pointer">
                         <FaStar
@@ -158,7 +155,7 @@ export default function WritePost({
                         />
                       </button>
                     );
-                  })}
+                  })} */}
                 </div>
               )}
               <ReactQuillEditor
@@ -181,7 +178,7 @@ export default function WritePost({
                   onClick={() => console.log(value)}
                   className="cursor-pointer rounded-[5px] bg-[#F1F1F1] px-[23px] py-[8px] text-[14px] hover:bg-[#41D94D] hover:font-semibold hover:text-[#fff]"
                 >
-                  저장하기
+                  발행하기
                 </button>
               </div>
             </div>
