@@ -56,8 +56,6 @@ export interface PostDetail extends Post {
     }
     like: PostDetailResponse['like'];
     comment: PostDetailResponse['comment'];
-}
-
 };
 
 type PopularDiaryCardProps = {

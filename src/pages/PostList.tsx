@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import { fetchPosts } from '../apis/post';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router';
 import BookCard from '../components/common/BookCard';
