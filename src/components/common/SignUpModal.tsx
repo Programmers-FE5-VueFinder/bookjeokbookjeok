@@ -6,6 +6,7 @@ import { IoMdClose } from 'react-icons/io';
 type ConsentKey = 'use' | 'personal' | 'marketing';
 
 export default function SignUpModal() {
+  const [checkValid, setCheckValid] = useState<boolean | null>(null);
   const [checked, setChecked] = useState(false);
   const [consent, setConsent] = useState({
     use: false,
@@ -18,6 +19,20 @@ export default function SignUpModal() {
       return { ...prev, [type]: !prev[type] };
     });
     setChecked(false);
+  };
+
+  const handleCheckValid = () => {
+    if (consent.use === true && consent.personal === true) {
+      setCheckValid(false);
+      return;
+    }
+    if (
+      consent.use === false ||
+      consent.personal === false ||
+      checkValid === null
+    ) {
+      setCheckValid(true);
+    }
   };
 
   const handleCheckBoxValid = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -187,9 +202,15 @@ export default function SignUpModal() {
                 (선택) 마케팅 정보 이메일 수신
               </span>
             </div>
+            {checkValid && (
+              <small role="errorAlert" className="pl-[2px] text-[#FF3333]">
+                필수 동의 항목을 체크해 주세요.
+              </small>
+            )}
           </div>
 
           <button
+            onClick={handleCheckValid}
             disabled={isSubmitting}
             className="h-[45px] w-full cursor-pointer items-center justify-center rounded-[5px] bg-[#08C818] font-semibold text-[#f1f1f1]"
           >
