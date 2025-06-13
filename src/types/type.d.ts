@@ -57,3 +57,19 @@ export interface PostDetail extends Post {
     like: PostDetailResponse['like'];
     comment: PostDetailResponse['comment'];
 }
+
+};
+
+type PopularDiaryCardProps = {
+    genre: string;  
+    title: string;
+    content: string;
+};
+
+type Bestsellers = {
+  title: string;
+  author: string;
+  cover: string;
+  isbn13?: string;
+};
+
