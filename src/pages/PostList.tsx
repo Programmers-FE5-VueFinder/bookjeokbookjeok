@@ -1,7 +1,7 @@
 import clsx from 'clsx';
+import { fetchPosts } from '../apis/post';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router';
-import { fetchPosts } from '../apis/post';
 import BookCard from '../components/common/BookCard';
 
 const sortOptionsMap: Record<string, string[]> = {

@@ -17,3 +17,16 @@ type BookCardProps = {
     comments?: number;
     createdAt: string;
 };
+
+type PopularDiaryCardProps = {
+    genre: string;  
+    title: string;
+    content: string;
+};
+
+type Bestsellers = {
+  title: string;
+  author: string;
+  cover: string;
+  isbn13?: string;
+};
