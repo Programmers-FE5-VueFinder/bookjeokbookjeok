@@ -108,7 +108,18 @@ export async function fetchReviewsWithStars(
 
   const { data: reviews, error: reviewError } = await supabase
     .from('review')
-    .select('id, body, created_at')
+    .select(
+      `
+    id,
+    body,
+    created_at,
+    user_id,
+    profile:user_id (
+      name,
+      image
+    )
+  `,
+    )
     .in('id', reviewIds);
 
   if (reviewError) throw reviewError;
@@ -117,9 +128,13 @@ export async function fetchReviewsWithStars(
     const review = reviews.find((r) => r.id === tag.reference_id);
     return {
       id: tag.id,
-      review: review?.body || '',
-      date: review?.created_at || '',
+      review: review?.body ?? '',
+      date: review?.created_at ?? '',
       rating: tag.star ?? 0,
+      author: {
+        name: review?.profile?.name ?? '알 수 없음',
+        image: review?.profile?.image ?? null,
+      },
     };
   });
 }
