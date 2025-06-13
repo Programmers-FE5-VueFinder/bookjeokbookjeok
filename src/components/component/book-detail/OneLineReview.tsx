@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import Rating from '@mui/material/Rating';
 import { submitReview, fetchReviewsWithStars } from '../../../apis/book-review';
 import BookReviewSkeleton from './BookReviewSkeleton';
-import { useInfiniteScroll } from '../../../hooks/useInfiniteScroll';
+import { useInfiniteScroll } from '../../../hooks/use-infinite-scroll';
 import type { BookDetail } from '../../../types/book';
 import { insertBookIfNotExists } from '../../../apis/add-book-if-not-exists';
 import Snackbar from '@mui/material/Snackbar';

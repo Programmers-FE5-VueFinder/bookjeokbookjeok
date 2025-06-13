@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { FaRegComment, FaRegHeart } from 'react-icons/fa';
 import { getBookPost } from '../../../apis/post';
-import { useInfiniteScroll } from '../../../hooks/useInfiniteScroll';
+import { useInfiniteScroll } from '../../../hooks/use-infinite-scroll';
 import Snackbar from '@mui/material/Snackbar';
 
 interface Post {

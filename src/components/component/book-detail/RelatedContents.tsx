@@ -3,7 +3,7 @@ import { getRelatedBooks } from '../../../apis/book-search';
 import type { BookDetail } from '../../../types/book';
 import BookPage from './BookPage';
 import ReactDOM from 'react-dom';
-import { useInfiniteScroll } from '../../../hooks/useInfiniteScroll';
+import { useInfiniteScroll } from '../../../hooks/use-infinite-scroll';
 import RelatedContentSkeleton from './RelatedContentSkeleton';
 import Snackbar from '@mui/material/Snackbar';
 
