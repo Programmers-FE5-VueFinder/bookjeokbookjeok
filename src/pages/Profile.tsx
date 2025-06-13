@@ -1,5 +1,5 @@
 // pages/Profile.tsx (Final Refactored Version)
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LuPencil } from 'react-icons/lu';
 import SettingModal from '../components/component/MyPage/SettingModal';
 import { twMerge } from 'tailwind-merge';
@@ -9,6 +9,7 @@ import { useAuthStore } from '../store/authStore';
 import supabase, { STORAGE_BASE_URL } from '../utils/supabase';
 import SkeletonCard from '../components/common/CardSkeleton2';
 import BookCard from '../components/common/BookCard';
+import { useParams } from 'react-router';
 
 export default function Profile() {
   const [openSetting, setOpenSetting] = useState<boolean>(false);
@@ -17,6 +18,7 @@ export default function Profile() {
   const [selectedBtn, setSelectedBtn] = useState<string>('다이어리');
   const [content, setContent] = useState<string>('다이어리');
   const buttonName = ['다이어리', '자유채널', '마이 북클럽', '북마크'];
+  const { userId } = useParams();
 
   const { session } = useAuthStore();
   const { Image: avatarUrl, profileName, intro } = useProfileStore();
@@ -39,7 +41,7 @@ export default function Profile() {
       const { data: profile, error } = await supabase
         .from('profile')
         .select('image, name, intro')
-        .eq('id', user.id)
+        .eq('id', userId!)
         .single();
 
       if (error) {
@@ -68,13 +70,11 @@ export default function Profile() {
       let followerNumber = 0;
 
       for (let i = 0; i < followData.length; i++) {
-        if (followData[i] === session?.user.id) {
+        if (followData[i] === userId) {
           followerNumber += 1;
-          console.log('작동함');
         }
       }
       setFollwer(followerNumber);
-      console.log(follow?.length);
     };
     myFollower();
 
@@ -89,19 +89,17 @@ export default function Profile() {
       let followingNumber = 0;
 
       for (let i = 0; i < followData.length; i++) {
-        if (followData[i] === session?.user.id) {
+        if (followData[i] === userId) {
           followingNumber += 1;
-          console.log('작동함');
         }
       }
       setFollowing(followingNumber);
-      console.log(follow?.length);
     };
     myFollowing();
 
     fetchInitialProfile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session?.user?.id]); // *** [최종 수정] user.id 라는 원시값을 의존성으로 사용합니다.
+  }, [userId]); // *** [최종 수정] user.id 라는 원시값을 의존성으로 사용합니다.
 
   return (
     <>
@@ -114,14 +112,16 @@ export default function Profile() {
               <ProfileImg
                 src={avatarUrl || session?.user.user_metadata.avatar_url}
               />
-              <button
-                className="absolute top-0 right-1 flex size-[25px] cursor-pointer items-center justify-center rounded-full border-3 border-white bg-gray-100"
-                onClick={() => {
-                  setOpenSetting(true);
-                }}
-              >
-                <LuPencil fontSize="small" />
-              </button>
+              {session?.user.id === userId ? (
+                <button
+                  className="absolute top-0 right-1 flex size-[25px] cursor-pointer items-center justify-center rounded-full border-3 border-white bg-gray-100"
+                  onClick={() => {
+                    setOpenSetting(true);
+                  }}
+                >
+                  <LuPencil fontSize="small" />
+                </button>
+              ) : null}
             </div>
             <div className="mt-[14px] mb-[14px] flex items-center gap-[6px] font-bold">
               <span>{profileName} 님</span>
