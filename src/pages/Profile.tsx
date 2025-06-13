@@ -213,15 +213,18 @@ export default function Profile() {
         </div>
         <div className="flex items-center justify-center bg-[#FAFAFA]">
           <div className="grid gap-[28px] p-[100px] md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {post?.map((item, content) => {
+            {post?.map((item) => {
               {
                 return (
                   <BookCard
+                    profileImage={
+                      avatarUrl || session?.user.user_metadata.avatar_url
+                    }
                     key={item.id}
                     body={item.body}
                     title={item.title}
-                    name={profileName!}
-                    create={new Date(item.created_at).toLocaleDateString(
+                    nickname={profileName!}
+                    createdAt={new Date(item.created_at).toLocaleDateString(
                       'ko-KR',
                     )}
                   />
