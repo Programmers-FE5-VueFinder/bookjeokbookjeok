@@ -1,12 +1,8 @@
-import Quill from 'quill';
-import { fontsize, palette } from './quillAttribute';
+import ReactQuill from 'react-quill-new';
+import { fontsize } from './quillAttribute';
+const Quill = ReactQuill.Quill;
 
-const Size = Quill.import('attributors/style/size') as any;
+const Size = Quill.import('formats/size') as any;
 Size.whitelist = fontsize;
 Quill.register(Size, true);
-
-const Color = Quill.import('attributors/style/color') as any;
-Color.whitelist = palette;
-Quill.register(Color, true);
-
-console.log(Color.whitelist, Size.whitelist);
+export { Size };

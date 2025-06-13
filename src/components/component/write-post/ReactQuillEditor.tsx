@@ -1,75 +1,102 @@
-import './quillOverride.ts';
-import React, { useEffect, useRef, useState } from 'react';
+import supabase from '../../../utils/supabase.ts';
+import { Size } from './quillOverride.ts';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
+import { useRef } from 'react';
 import '../../../css/reactQuillCustom.css';
-import BookSearchModal from '../BookSearchModal';
-import type { BookDetail } from '../../../types/book';
-import CustomToolBar from './CustomToolBar.tsx';
-import BookHTML from './BookHTML.tsx';
-import ReactDOMServer from 'react-dom/server';
+import { formats } from './quillAttribute.ts';
 
 export default function ReactQuillEditor({
-  category,
-  bodyRef,
+  setValue,
+  value,
 }: {
-  category: string | undefined;
-  bodyRef: React.RefObject<ReactQuill | null>;
+  setValue: (value: string) => void;
+  value: string;
 }) {
   const quillRef = useRef<ReactQuill | null>(null);
-  const [value, setValue] = useState('');
-  const [showModal, setShowModal] = useState(false);
-  const [selectedBook, setSeletedBook] = useState<BookDetail | null>(null); //도서 정보
-  const [quillReady, setQuillReady] = useState(false);
-
-  const onClose = () => setShowModal(false);
-
-  const formats = [
-    'bold',
-    'italic',
-    'underline',
-    'strike',
-    'image',
-    'size',
-    'color',
-  ];
-
   const modules = {
     toolbar: {
-      container: '#toolbar',
+      container: [
+        [{ size: Size.whitelist }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ list: 'ordered' }],
+        [{ align: [] }],
+        [{ color: [] }],
+        ['image'],
+      ],
       handlers: {
-        //custom tool handler 지정
-        searchbook: () => {
-          setShowModal(true);
+        image: () => {
+          imageHandler();
         },
       },
     },
   };
 
-  useEffect(() => {
-    if (quillRef.current) {
-      setQuillReady(true);
-    }
-  }, []); // 최초 렌더 시점
+  const imageHandler = async () => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
 
-  useEffect(() => {
-    if (selectedBook && quillRef.current && quillReady) {
-      const editor = quillRef.current.getEditor();
-      const htmlString = ReactDOMServer.renderToStaticMarkup(
-        <BookHTML selectedBook={selectedBook} />,
-      );
-      editor.clipboard.dangerouslyPasteHTML(0, htmlString);
-    }
-  });
+    console.log('작동 중');
+
+    input.onchange = async () => {
+      console.log('onChange 첫 동작');
+      if (!input.files || input.files.length === 0) return;
+      const file = input.files[0];
+      const safeFileName = encodeURIComponent(file.name);
+      const fileName = `public/posts/${Date.now()}_${safeFileName}`;
+
+      console.log('onChange 중간 동작');
+
+      const { data, error } = await supabase.storage
+        .from('images')
+        .upload(fileName, file, {
+          contentType: file.type,
+          upsert: true,
+        });
+
+      if (error) {
+        console.error('Upload error:', error.message);
+        return;
+      }
+
+      console.log(data);
+
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from('images').getPublicUrl(fileName);
+
+      const quill = quillRef!.current!.getEditor();
+      const range = quill.getSelection();
+      quill.insertEmbed(range!.index, 'image', publicUrl);
+    };
+  };
+
+  //트러블 슈팅-생명주기, 라이브러리 인스턴스 생성 시기
+  // useEffect(() => {
+  //   if (!selectedBook) return;
+
+  //   setTimeout(() => {
+  //     if (!quillRef.current) return;
+  //     try {
+  //       const editor = quillRef.current.getEditor();
+  //       console.log(editor.getContents());
+  //       const html = ReactDOMServer.renderToStaticMarkup(
+  //         <BookHTML selectedBook={selectedBook} />,
+  //       );
+  //       editor.clipboard.dangerouslyPasteHTML(0, html);
+  //     } catch (e) {
+  //       console.error('에디터가 연결 되기 전에 접근:', e);
+  //     }
+  //   }, 0);
+  // }, [selectedBook]);
 
   return (
     <>
-      <div className="flex grow flex-col">
-        <CustomToolBar category={category} />
-        {/* 선택된 도서 정보 */}
-        {/* <BookHTML selectedBook={selectedBook} /> */}
+      <div className="flex grow-1 flex-col">
         <ReactQuill
-          ref={bodyRef}
+          ref={quillRef}
           value={value}
           onChange={setValue}
           modules={modules}
@@ -78,13 +105,6 @@ export default function ReactQuillEditor({
           placeholder="내용을 입력해주세요."
         />
       </div>
-
-      {/* 책 검색 모달 */}
-      <BookSearchModal
-        showModal={showModal}
-        onClose={onClose}
-        setSeletedBook={setSeletedBook}
-      />
     </>
   );
 }

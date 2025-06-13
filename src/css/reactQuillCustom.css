@@ -1,24 +1,20 @@
 /* react-quill custom css */
-#toolbar {
-  border: none !important;
-  padding: 0 !important;
-  width: fit-content;
+.ql-toolbar {
+  width: 100%;
+  padding: 15px 0 15px 0 !important;
+  padding-left: calc((100% - 1200px) / 2) !important;
   display: flex;
   align-items: center;
-  margin-left: calc((100% - 1200px) / 2);
-  margin-bottom: 25px;
-}
-.ql-size {
-  line-height: 24px;
+  border: none !important;
+  border-bottom: 1px solid #efefef !important;
 }
 .quill {
-  border-top: 1px solid #ebebeb !important;
-  padding-top: 60px;
-  height: calc(100vh - 280px);
+  flex-grow: 1;
 }
 .ql-editor {
-  padding-left: 8px;
   -ms-overflow-style: none;
+  overflow-y: scroll !important;
+  font-family: 'noto-sans-kr', sans-serif;
 }
 .ql-editor::-webkit-scrollbar {
   width: 7px;
@@ -40,6 +36,7 @@
   border: none !important;
   margin: 0 auto !important;
   width: 1200px !important;
+  height: calc(60px) !important;
 }
 .ql-category {
   -o-appearance: none;

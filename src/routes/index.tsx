@@ -65,14 +65,8 @@ const router = createBrowserRouter([
     ],
   },
   {
-    Component: CreatePostLayout,
-    loader: fetchUserData,
-    children: [
-      {
-        path: '/create-post/:category',
-        Component: CreatePost,
-      },
-    ],
+    path: '/create-post/:category',
+    Component: CreatePost,
   },
   {
     path: '*',
