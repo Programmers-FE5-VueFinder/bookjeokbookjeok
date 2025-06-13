@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router';
 import BookCard from '../components/common/BookCard';
 
+import { fetchPosts, fetchPostDetail } from '../apis/post';
+import type { Post, PostDetail } from '../types/type';
+
 const sortOptionsMap: Record<string, string[]> = {
   'diary': ['최신글', '인기글', '팔로잉'],
   'book_club': ['최신글', '인기글', '내 모임'],
@@ -14,7 +17,7 @@ export default function PostList() {
   const params = useParams();
   const channelId = params.channelId;
   
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<PostDetail[]>([]);
   const [loading, setLoading] = useState(true);
 
   const channelNames: { [key: string]: string } = {
@@ -23,15 +26,15 @@ export default function PostList() {
     'community': '자유채널',
   };
 
-  const sortedPosts = [...posts].sort((a, b) => {
-    if (selectedSort === '최신글') {
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-    }
-    if (selectedSort === '인기글') {
-      // return b.likes - a.likes;
-    }
-    return 0;
-  })
+  // const sortedPosts = [...posts].sort((a, b) => {
+  //   if (selectedSort === '최신글') {
+  //     return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  //   }
+  //   if (selectedSort === '인기글') {
+  //     // return b.likes - a.likes;
+  //   }
+  //   return 0;
+  // })
 
   const channelName = channelId
     ? channelNames[channelId] || '알 수 없는 채널'
@@ -47,23 +50,39 @@ export default function PostList() {
 
       const result = await fetchPosts(category);
 
-      
-      if (!result) {
-        console.error('게시글 응답 없음');
+      if (!result || !result.data) {
+        console.error('게시글 불러오기 실패', result?.error);
+        setPosts([]);
         setLoading(false);
         return;
       }
-      
-      if (result.error) {
-        console.error('게시글 불러오기 실패');
-      } else if (result.data) {
-        setPosts(result.data);
-      }
-      
+
       if (result.data) {
         console.log('백엔드 응답 데이터:', result.data);
       }
-      
+
+      const detailPosts: PostDetail[] = await Promise.all(
+        result.data.map(async (post: Post) => {
+          const detail = await fetchPostDetail(post.id);
+
+          console.log('Post Detail 응답 데이터:', detail);
+
+          return {
+            ...post,
+            profile: detail?.profile ?? { 
+              id: 'unknown', 
+              name: '익명', 
+              image: null, 
+              intro: null, 
+              appellation: null, 
+              created_at: new Date().toISOString() 
+            },
+            like: detail?.like ?? [],
+            comment: detail?.comment ?? [],
+          };
+        })
+      );
+      setPosts(detailPosts);
       setLoading(false);
     };
 
@@ -75,6 +94,7 @@ export default function PostList() {
     }
 
   }, [channelId]);
+
 
   return (
     <>
@@ -98,27 +118,28 @@ export default function PostList() {
           ))}
         </div>
 
-        <div className='my-[132px] bg-red-50'>
+        <div className='w-[1200px] my-[132px] bg-red-50'>
           {loading ? (
             <div>로딩중...</div>
           ) : posts.length === 0 ? (
             <div>게시글이 없습니다.</div>
           ) : (
             // 카드 컴포
-            <div className='w-fit space-y-4'>
-              {sortedPosts.map((post) => (
+            <div className='grid grid-cols-4 gap-[28px] w-[1200px] h-fit'>
+              {posts.map((post) => (
                 <Link
                   key={post.id}
                   to={`/channel/${post.category}/post/${post.id}`}
                 >
                   <BookCard 
-                    nickname='잉크묻은 고양이' // 임시 닉네임
-                    badge='' // 임시 뱃지
+                    nickname={post.profile.name || '잉크묻은 고양이'}
+                    // badge='' // 임시 뱃지
                     title={post.title}
                     body={post.body}
                     image={post.image}
-                    likes={34} // 임시 좋아요 값
-                    comments={6} // 임시 댓글 값
+                    profileImage={post.profile.image}
+                    likes={post.like.length} 
+                    comments={post.comment.length} 
                     createdAt={new Date(post.created_at).toLocaleDateString()}
                   />
                 </Link>
