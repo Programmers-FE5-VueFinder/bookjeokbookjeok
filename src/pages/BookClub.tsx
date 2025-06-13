@@ -3,8 +3,9 @@ import { twMerge } from 'tailwind-merge';
 import { IoMdInformationCircleOutline } from 'react-icons/io';
 import { IoMdPerson } from 'react-icons/io';
 import { IoMdPersonAdd } from 'react-icons/io';
-import { fetchBookClub } from '../apis/book-club';
+import { fetchBookClub, isBookClubOwner } from '../apis/book-club';
 import { useParams } from 'react-router';
+import UserCard from '../components/common/UserCard';
 
 export default function BookClub() {
   const [selectedBtn, setSelectedBtn] = useState<string>('클럽 정보');
@@ -13,6 +14,7 @@ export default function BookClub() {
 
   const bookclub_id = useParams().bookclub_id;
   const [bookclubInfo, setBookclubInfo] = useState<Bookclub>();
+  const [isOwner, setIsOwner] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -24,6 +26,7 @@ export default function BookClub() {
   useEffect(() => {
     const fetchBookclub = async () => {
       setBookclubInfo(await fetchBookClub(bookclub_id!));
+      setIsOwner(await isBookClubOwner(bookclub_id!));
       setIsLoading(false);
     };
     fetchBookclub();
@@ -59,6 +62,7 @@ export default function BookClub() {
                     <button
                       className={twMerge(
                         item === selectedBtn ? 'button-active' : 'button',
+                        'cursor-pointer',
                       )}
                       onClick={handleContentButton}
                       key={item}
@@ -75,14 +79,28 @@ export default function BookClub() {
         <div className="flex flex-col items-center justify-center bg-[#FAFAFA]">
           <div className="flex w-full justify-center text-wrap">
             <div className="mx-[100px] flex w-[900px] scroll-m-[200px] flex-col">
-              <div className="mt-[100px]">
-                <div className="clubInfo">
-                  <IoMdPersonAdd />
-                  <span>가입 신청</span>
-                  <span>00명</span>
-                </div>
-                <div>sample</div>
-              </div>
+              {isOwner && (
+                <>
+                  <div className="mt-[20px] flex flex-row gap-2">
+                    <button className="h-[41px] w-[107px] cursor-pointer rounded hover:border hover:border-[#DEDEDE] hover:bg-[#EDEDED]">
+                      모임 정보 수정
+                    </button>
+                    <button className="h-[41px] w-[107px] cursor-pointer rounded hover:border hover:border-[#DEDEDE] hover:bg-[#EDEDED]">
+                      모집 글 작성
+                    </button>
+                  </div>
+                  <div className="mt-[40px]">
+                    <div className="clubInfo">
+                      <IoMdPersonAdd />
+                      <p>
+                        가입 신청{' '}
+                        <span className="font-bold text-[#08C818]">0</span>명
+                      </p>
+                    </div>
+                    <div>{/* 가입 신청 목록 */}</div>
+                  </div>
+                </>
+              )}
 
               <div className="mt-[40px]">
                 <div className="clubInfo">
@@ -93,13 +111,26 @@ export default function BookClub() {
                   dangerouslySetInnerHTML={{ __html: bookclubInfo!.info }}
                 ></span>
               </div>
-              <div className="scroll-m-[200px]" id="member" ref={memberRef}>
-                <div className="clubInfo mt-[40px]">
+              <div
+                className="mt-[40px] scroll-m-[200px]"
+                id="member"
+                ref={memberRef}
+              >
+                <div className="clubInfo">
                   <IoMdPerson />
-                  <span>클럽 멤버</span>
-                  <span>00명</span>
+                  <p>
+                    클럽 멤버{' '}
+                    <span className="font-bold text-[#08C818]">
+                      {bookclubInfo!.member.length}
+                    </span>
+                    명
+                  </p>
                 </div>
-                <span>멤버 0_0</span>
+                <div className="flex flex-row gap-5">
+                  {bookclubInfo!.member.map((member) => (
+                    <UserCard key={member.id} user={member} />
+                  ))}
+                </div>
               </div>
             </div>
           </div>

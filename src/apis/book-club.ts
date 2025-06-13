@@ -1,5 +1,21 @@
 import supabase from '../utils/supabase';
 
+/* 북클럽 오너 판별 */
+export async function isBookClubOwner(id: string) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return false;
+
+  const { data: book_club } = await supabase
+    .from('book_club')
+    .select('owner_id')
+    .eq('id', id)
+    .single();
+
+  return book_club.owner_id === user.id;
+}
+
 /* 북클럽 상세 조회 */
 export async function fetchBookClub(id: string) {
   const { data: book_club } = await supabase
@@ -22,17 +38,14 @@ export async function fetchBookClub(id: string) {
 
 /* 북클럽 생성 */
 export async function createBookClub(name: string, info: string | null) {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  const book_club = await supabase
+  const { data: book_club } = await supabase
     .from('book_club')
     .insert({ name: name, info: info })
     .select()
     .single();
   await supabase
     .from('book_club_member')
-    .insert({ user_id: user!.id, book_club_id: book_club.data!.id });
+    .insert({ user_id: book_club.owner_id, book_club_id: book_club.id });
 
   return book_club.data!.id;
 }

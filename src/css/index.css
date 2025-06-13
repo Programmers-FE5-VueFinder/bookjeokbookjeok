@@ -40,7 +40,7 @@
     @apply h-[40px] w-[238px] text-[16px];
   }
   .clubInfo {
-    @apply mb-[30px] flex items-center gap-[5px];
+    @apply my-[30px] flex items-center gap-[5px];
   }
 }
 

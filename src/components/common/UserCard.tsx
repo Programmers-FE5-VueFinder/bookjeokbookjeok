@@ -27,7 +27,7 @@ export default function UserCard({
           </div>
         ) : (
           <p
-            className={`${!user.intro && 'text-gray-400'} line-clamp-2 w-full text-center text-sm break-all`}
+            className={`${!user.intro && 'text-gray-400'} line-clamp-2 w-full cursor-default text-center text-sm break-all`}
           >
             {!user.intro ? '한 줄 소개를 작성하지 않았습니다.' : user.intro}
           </p>
