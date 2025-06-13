@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 
 export default function getElapsedTime(createdAt: string) {
   const now = dayjs().add(9, 'hour');
-  const writeTime = dayjs(createdAt).add(9, 'hour');
+  const writeTime = dayjs(createdAt);
 
   const gap = now.diff(writeTime, 's');
   if (gap < 60) return `${gap}초 전`;
