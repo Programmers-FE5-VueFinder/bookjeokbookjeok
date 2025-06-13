@@ -8,6 +8,7 @@ import { MdOutlineSearch } from 'react-icons/md';
 import BookSearchModal from '../BookSearchModal';
 import type { BookDetail } from '../../../types/book';
 import BookHTML from './BookHTML';
+import BookRating from './BookRating';
 
 export default function WritePost({
   isCreateBookClub,
@@ -20,6 +21,7 @@ export default function WritePost({
 
   const [seletText, setSelectText] = useState('채널선택');
   const [category, setCategory] = useState(path.category);
+  const [rating, setRating] = useState(0);
   const [categoryToggle, setCategoryToggle] = useState(false);
   const [value, setValue] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -136,28 +138,7 @@ export default function WritePost({
                   도서 검색
                 </button>
               )}
-              {selectedBook && (
-                <div
-                  style={{ marginLeft: 'calc((100% - 1200px) / 2)' }}
-                  className="mt-[15px] flex w-fit gap-[5px]"
-                >
-                  {/* {ratings.map((num) => {
-                    return (
-                      <button className="cursor-pointer">
-                        <FaStar
-                          key={num}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setRating(num);
-                          }}
-                          // onMouseEnter={}
-                          className="text-[#DFDFDF] hover:text-[#FFCC00]"
-                        />
-                      </button>
-                    );
-                  })} */}
-                </div>
-              )}
+              {selectedBook && <BookRating setRating={setRating} />}
               <ReactQuillEditor
                 // bodyRef={bodyRef}
                 setValue={setValue}

@@ -12,7 +12,7 @@ import Notification from '../pages/Notification';
 import SearchResult from '../pages/SearchResult';
 import ChannelLayout from './layouts/ChannelLayout';
 import { fetchUserData } from './loader/auth.loader';
-import CreatePostLayout from './layouts/CreatPostLayout';
+// import CreatePostLayout from './layouts/CreatPostLayout';
 import BookClub from '../pages/BookClub';
 
 const router = createBrowserRouter([
@@ -62,11 +62,11 @@ const router = createBrowserRouter([
         path: '/bookclub',
         Component: BookClub,
       },
-      {
-        path: '/create-post',
-        Component: CreatePost,
-      },
     ],
+  },
+  {
+    path: '/create-post/:category',
+    Component: CreatePost,
   },
   {
     path: '*',
