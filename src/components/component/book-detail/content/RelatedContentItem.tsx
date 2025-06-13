@@ -21,10 +21,10 @@ export function RelatedContentItem({
     >
       <img
         src={book.cover}
-        className={`origin-left transition-all duration-700 ease-in-out ${
+        className={`origin-left transition-all duration-600 ease-in-out ${
           isOpen && selectedBook?.isbn13 === book.isbn13
-            ? 'pointer-events-none z-2 mt-[-50px] h-[220px] w-[150px] translate-x-[-5px] -rotate-y-180 rounded-2xl opacity-0'
-            : 'h-[220px] w-[150px] cursor-pointer rounded-sm'
+            ? 'pointer-events-none z-2 mt-[-50px] h-[220px] w-[150px] translate-x-[-5px] scale-300 -rotate-y-180 rounded-2xl opacity-0'
+            : 'h-[220px] w-[150px] cursor-pointer rounded-sm hover:-translate-y-2 hover:scale-110 hover:shadow-lg'
         }`}
       />
       <div className="text-center text-[14px] font-semibold">{book.title}</div>
