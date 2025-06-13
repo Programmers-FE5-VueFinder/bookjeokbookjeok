@@ -85,6 +85,11 @@ export default function SettingModal({ onClose }: SettingModalProps) {
 
         const newImageUrl = `${STORAGE_BASE_URL}${newFilePath}?t=${new Date().getTime()}`;
         setGlobalProfileImage(newImageUrl);
+
+        const { data } = supabase.storage
+          .from('image')
+          .getPublicUrl(newFilePath);
+        setGlobalProfileImage(data.publicUrl);
       }
 
       onClose();
@@ -185,7 +190,6 @@ export default function SettingModal({ onClose }: SettingModalProps) {
           </button>
         </div>
       </div>
-
     </div>
   );
 }

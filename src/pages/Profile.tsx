@@ -6,15 +6,27 @@ import { twMerge } from 'tailwind-merge';
 import ProfileImg from '../components/component/MyPage/ProfileImg';
 import { useProfileStore } from '../store/profileStore';
 import { useAuthStore } from '../store/authStore';
-import supabase, { STORAGE_BASE_URL } from '../utils/supabase';
+import supabase from '../utils/supabase';
 import SkeletonCard from '../components/common/CardSkeleton2';
 import BookCard from '../components/common/BookCard';
 import { useParams } from 'react-router';
+
+type Post = {
+  body: string;
+  book_club_id: string | null;
+  category: string;
+  created_at: string;
+  id: string;
+  image: string | null;
+  title: string;
+  user_id: string;
+};
 
 export default function Profile() {
   const [openSetting, setOpenSetting] = useState<boolean>(false);
   const [follower, setFollwer] = useState<number>(0);
   const [following, setFollowing] = useState<number>(0);
+  const [post, setPost] = useState<Post[] | null>([]);
   const [selectedBtn, setSelectedBtn] = useState<string>('다이어리');
   const [content, setContent] = useState<string>('다이어리');
   const buttonName = ['다이어리', '자유채널', '마이 북클럽', '북마크'];
@@ -23,7 +35,6 @@ export default function Profile() {
   const { session } = useAuthStore();
   const { Image: avatarUrl, profileName, intro } = useProfileStore();
 
-  // 상태 업데이트 함수는 useEffect 바깥에 선언해도 안전합니다.
   const { setProfileName, setProfileIntro, setProfileImage } =
     useProfileStore.getState();
 
@@ -34,72 +45,100 @@ export default function Profile() {
   };
 
   useEffect(() => {
-    const fetchInitialProfile = async () => {
-      const user = session?.user;
-      if (!user) return;
+    const fetchData = async () => {
+      const fetchInitialProfile = async () => {
+        const user = session?.user;
+        if (!user) return;
 
-      const { data: profile, error } = await supabase
-        .from('profile')
-        .select('image, name, intro')
-        .eq('id', userId!)
-        .single();
+        const { data: profile, error } = await supabase
+          .from('profile')
+          .select('image, name, intro')
+          .eq('id', userId!)
+          .single();
 
-      if (error) {
-        console.error('초기 프로필 데이터 로딩 실패:', error);
-        return;
-      }
-
-      if (profile) {
-        setProfileName(profile.name);
-        setProfileIntro(profile.intro);
-        if (profile.image) {
-          const initialUrl = `${STORAGE_BASE_URL}${profile.image}?t=${new Date().getTime()}`;
-          setProfileImage(initialUrl);
+        if (error) {
+          console.error('초기 프로필 데이터 로딩 실패:', error);
+          return;
         }
-      }
+
+        if (profile) {
+          setProfileName(profile.name);
+          setProfileIntro(profile.intro);
+          if (profile.image) {
+            if (profile.image.includes('https://')) {
+              const initialUrl = `${profile.image}?t=${new Date().getTime()}`;
+              setProfileImage(initialUrl);
+            } else {
+              const { data: urlData } = supabase.storage
+                .from('image')
+                .getPublicUrl(profile.image);
+
+              const imageURL = urlData.publicUrl;
+              const separator = imageURL.includes('?') ? '&' : '?';
+              const initialUrl = `${imageURL}${separator}v=${new Date().getTime()}`;
+              setProfileImage(initialUrl);
+            }
+          } else {
+            setProfileImage('');
+          }
+        }
+      };
+
+      const myFollower = async () => {
+        const { data: follow, error } = await supabase
+          .from('follow')
+          .select('follower_id, following_id');
+
+        console.error(error);
+
+        const followData = follow!.map((follower) => follower.following_id);
+        let followerNumber = 0;
+
+        for (let i = 0; i < followData.length; i++) {
+          if (followData[i] === userId) {
+            followerNumber += 1;
+          }
+        }
+        setFollwer(followerNumber);
+      };
+
+      const myFollowing = async () => {
+        const { data: follow, error } = await supabase
+          .from('follow')
+          .select('following_id, follower_id');
+
+        console.error(error);
+
+        const followData = follow!.map((follower) => follower.follower_id);
+        let followingNumber = 0;
+
+        for (let i = 0; i < followData.length; i++) {
+          if (followData[i] === userId) {
+            followingNumber += 1;
+          }
+        }
+        setFollowing(followingNumber);
+      };
+
+      const myPost = async () => {
+        const { data: post, error } = await supabase
+          .from('post')
+          .select('*')
+          .eq('user_id', userId!);
+        setPost(post);
+      };
+      await Promise.all([
+        fetchInitialProfile(),
+        myFollowing(),
+        myFollower(),
+        myPost(),
+      ]);
     };
 
-    const myFollower = async () => {
-      const { data: follow, error } = await supabase
-        .from('follow')
-        .select('follower_id, following_id');
+    fetchData();
 
-      console.error(error);
-
-      const followData = follow!.map((follower) => follower.following_id);
-      let followerNumber = 0;
-
-      for (let i = 0; i < followData.length; i++) {
-        if (followData[i] === userId) {
-          followerNumber += 1;
-        }
-      }
-      setFollwer(followerNumber);
-    };
-    myFollower();
-
-    const myFollowing = async () => {
-      const { data: follow, error } = await supabase
-        .from('follow')
-        .select('following_id, follower_id');
-
-      console.error(error);
-
-      const followData = follow!.map((follower) => follower.follower_id);
-      let followingNumber = 0;
-
-      for (let i = 0; i < followData.length; i++) {
-        if (followData[i] === userId) {
-          followingNumber += 1;
-        }
-      }
-      setFollowing(followingNumber);
-    };
-    myFollowing();
-
-    fetchInitialProfile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId]); // *** [최종 수정] user.id 라는 원시값을 의존성으로 사용합니다.
+  }, [userId]);
 
   return (
     <>
@@ -164,16 +203,20 @@ export default function Profile() {
           </div>
         </div>
         <div className="flex items-center justify-center bg-[#FAFAFA]">
-          <div className="grid gap-[28px] p-[100px] md:grid-cols-2 lg:grid-cols-4">
-            {content}
-            <SkeletonCard />
-            <BookCard />
-            <BookCard />
-            <BookCard />
-            <BookCard />
-            <BookCard />
-            <BookCard />
-            <BookCard />
+          <div className="grid gap-[28px] p-[100px] md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {post?.map((item) => {
+              {
+                return (
+                  <BookCard
+                    key={item.id}
+                    body={item.body}
+                    title={item.title}
+                    name={profileName!}
+                    create={item.created_at}
+                  />
+                );
+              }
+            })}
           </div>
         </div>
       </div>
