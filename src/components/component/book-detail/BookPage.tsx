@@ -1,7 +1,4 @@
 import { useCallback, useEffect, useState } from 'react';
-import BookPost from './BookPost';
-import OneLineReview from './OneLineReview';
-import RelatedContents from './RelatedContents';
 import { FaCaretDown, FaBookmark, FaRegBookmark } from 'react-icons/fa6';
 import Rating from '@mui/material/Rating';
 import type { BookDetail } from '../../../types/book';
@@ -15,6 +12,9 @@ import {
 import { getBookStars } from '../../../apis/book-review';
 import { formatAuthor } from '../../../utils/format-author';
 import Snackbar from '@mui/material/Snackbar';
+import { OneLineReview } from './review/OneLineReview';
+import { BookPost } from './post/BookPost';
+import { RelatedContents } from './content/RelatedContents';
 
 type BookPagesProps = {
   isOpen: boolean;

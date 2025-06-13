@@ -1,16 +1,16 @@
 import { useEffect, useState, useCallback } from 'react';
-import { getRelatedBooks } from '../../../apis/book-search';
-import type { BookDetail } from '../../../types/book';
-import BookPage from './BookPage';
-import ReactDOM from 'react-dom';
-import { useInfiniteScroll } from '../../../hooks/use-infinite-scroll';
-import RelatedContentSkeleton from './RelatedContentSkeleton';
+import { getRelatedBooks } from '../../../../apis/book-search';
+import type { BookDetail } from '../../../../types/book';
+import { useInfiniteScroll } from '../../../../hooks/use-infinite-scroll';
 import Snackbar from '@mui/material/Snackbar';
-import { formatAuthor } from '../../../utils/format-author';
+import ReactDOM from 'react-dom';
+import RelatedContentSkeleton from './RelatedContentSkeleton';
+import BookPage from '../BookPage';
+import { RelatedContentItem } from './RelatedContentItem';
 
 const MAX_PAGE = 10;
 
-export default function RelatedContents({ genre }: { genre: number }) {
+export function RelatedContents({ genre }: { genre: number }) {
   const [selectedBook, setSelectedBook] = useState<BookDetail | null>(null);
   const [relatedBooks, setRelatedBooks] = useState<BookDetail[]>([]);
   const [fetchedPages, setFetchedPages] = useState<Set<number>>(new Set());
@@ -29,9 +29,7 @@ export default function RelatedContents({ genre }: { genre: number }) {
     setSelectedBook(null);
   };
 
-  const handleSnackbarClose = () => {
-    setSnackbarOpen(false);
-  };
+  const handleSnackbarClose = () => setSnackbarOpen(false);
 
   const fetchBooks = useCallback(async () => {
     if (!hasMore || isFetching || fetchedPages.size >= MAX_PAGE) return;
@@ -92,29 +90,16 @@ export default function RelatedContents({ genre }: { genre: number }) {
 
       <div className="flex flex-wrap justify-between gap-y-[40px] px-[25px] pb-[15px]">
         {relatedBooks.map((book) => (
-          <div
+          <RelatedContentItem
             key={book.isbn13 + book.title}
-            className="relative w-[150px] flex-shrink-0 cursor-pointer perspective-[2000px]"
+            book={book}
+            isOpen={isOpen}
+            selectedBook={selectedBook}
             onClick={() => handleOpen(book)}
-          >
-            <img
-              src={book.cover}
-              className={`origin-left transition-all duration-700 ease-in-out ${
-                isOpen && selectedBook?.isbn13 === book.isbn13
-                  ? 'pointer-events-none z-2 mt-[-50px] h-[220px] w-[150px] translate-x-[-5px] -rotate-y-180 rounded-2xl opacity-0'
-                  : 'h-[220px] w-[150px] cursor-pointer rounded-sm'
-              }`}
-            />
-            <div className="text-center text-[14px] font-semibold">
-              {book.title}
-            </div>
-            <div className="text-center text-[14px] font-medium text-[#797979]">
-              {formatAuthor(book.author)}
-            </div>
-          </div>
+          />
         ))}
-        {relatedBooks.length % 3 === 1 && <div className="w-[150px]"></div>}
-        {relatedBooks.length % 3 === 2 && <div className="w-[150px]"></div>}
+        {relatedBooks.length % 3 === 1 && <div className="w-[150px]" />}
+        {relatedBooks.length % 3 === 2 && <div className="w-[150px]" />}
       </div>
 
       {isOpen &&
@@ -129,11 +114,12 @@ export default function RelatedContents({ genre }: { genre: number }) {
         )}
 
       <div ref={loadMoreRef} className="h-[1px]" />
+
       <Snackbar
         open={snackbarOpen}
         autoHideDuration={2000}
         onClose={handleSnackbarClose}
-        message={'더 이상 불러올 콘텐츠가 없습니다.'}
+        message="더 이상 불러올 콘텐츠가 없습니다."
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       />
     </div>

@@ -1,42 +1,27 @@
 import { useCallback, useEffect, useState } from 'react';
-import Rating from '@mui/material/Rating';
-import { submitReview, fetchReviewsWithStars } from '../../../apis/book-review';
+import { ReviewItem } from './ReviewItem';
+import {
+  fetchReviewsWithStars,
+  submitReview,
+} from '../../../../apis/book-review';
 import BookReviewSkeleton from './BookReviewSkeleton';
-import { useInfiniteScroll } from '../../../hooks/use-infinite-scroll';
-import type { BookDetail } from '../../../types/book';
-import { insertBookIfNotExists } from '../../../apis/add-book-if-not-exists';
+import { useInfiniteScroll } from '../../../../hooks/use-infinite-scroll';
+import { insertBookIfNotExists } from '../../../../apis/add-book-if-not-exists';
+import { ReviewInput } from './ReviewInput';
 import Snackbar from '@mui/material/Snackbar';
-import getElapsedTime from '../../../utils/format-time';
+import type { BookDetail, Review } from '../../../../types/book';
 
-const ratingText = [
-  '이 도서 어떠셨나요?',
-  '매우 불만족 😡',
-  '불만족 😟',
-  '보통 😊',
-  '만족 😄',
-  '매우 만족 🥰',
-];
-
-interface Review {
-  id: string;
-  review: string;
-  date: string;
-  rating: number;
-  author: {
-    name: string;
-    image: string | null;
-  };
-}
-
-export default function OneLineReview({
-  isbn,
-  bookDetail,
-  onReviewSubmit,
-}: {
+interface OneLineReviewProps {
   isbn: string;
   bookDetail: BookDetail;
   onReviewSubmit?: () => Promise<void>;
-}) {
+}
+
+export function OneLineReview({
+  isbn,
+  bookDetail,
+  onReviewSubmit,
+}: OneLineReviewProps) {
   const [review, setReview] = useState('');
   const [selectedRating, setSelectedRating] = useState(0);
   const [reviewList, setReviewList] = useState<Review[]>([]);
@@ -107,7 +92,7 @@ export default function OneLineReview({
       return;
     }
     try {
-      insertBookIfNotExists(bookDetail);
+      await insertBookIfNotExists(bookDetail);
       await submitReview({ bookId: isbn, body: review, star: selectedRating });
       setSnackbar({
         open: true,
@@ -133,39 +118,13 @@ export default function OneLineReview({
 
   return (
     <div className="custom-scrollbar h-full max-h-[calc(75vh-60px)] overflow-auto rounded-[10px]">
-      <div className="rounded-[10px] bg-[#FFFFFF] pb-[20px]">
-        <p className="mt-[14px] text-center text-[20px] font-semibold">
-          {ratingText[selectedRating]}
-        </p>
-        <div className="mt-[7px] text-center">
-          <Rating
-            name="half-rating"
-            value={selectedRating}
-            precision={1}
-            sx={{ fontSize: 40 }}
-            onChange={(_event, rating) => setSelectedRating(rating ?? 0)}
-          />
-        </div>
-        <div className="relative mt-[14px] flex justify-center gap-[12px]">
-          <input
-            type="text"
-            value={review}
-            onChange={handleReviewChange}
-            maxLength={30}
-            placeholder="리뷰를 작성해주세요."
-            className="h-[47px] w-[480px] rounded-[5px] border border-[#D6D6D6] pr-[60px] pl-[10px] placeholder:text-[16px] placeholder:text-[#B3B3B3] focus:border-[#08C818] focus:outline-none"
-          />
-          <span className="absolute top-1/2 right-[110px] -translate-y-1/2 text-[16px] font-medium text-[#969696]">
-            {review.length}/30
-          </span>
-          <button
-            className="h-[47px] w-[68px] cursor-pointer rounded-[5px] bg-[#08C818]/20 text-[16px] font-medium"
-            onClick={handleSubmitReview}
-          >
-            작성
-          </button>
-        </div>
-      </div>
+      <ReviewInput
+        review={review}
+        selectedRating={selectedRating}
+        onReviewChange={handleReviewChange}
+        onRatingChange={setSelectedRating}
+        onSubmit={handleSubmitReview}
+      />
 
       {isLoading && <BookReviewSkeleton />}
 
@@ -175,40 +134,7 @@ export default function OneLineReview({
         </p>
       ) : (
         reviewList.map((item, i) => (
-          <div
-            key={`${item.id}-${i}`}
-            className="max-h-full border-t border-t-[#D8D8D8] p-[15px] pl-[20px]"
-          >
-            <div className="flex flex-col gap-[10px] font-medium">
-              <div className="flex">
-                <div className="flex cursor-pointer">
-                  <img
-                    src={item.author.image!}
-                    alt="작성자 프로필"
-                    className="mt-[2px] h-[25px] w-[25px] rounded-full object-cover"
-                  />
-
-                  <p className="mx-[10px] mt-[2px] text-[16px] text-[#333333]">
-                    {item.author.name}
-                  </p>
-                </div>
-                <Rating
-                  name="half-rating-read"
-                  value={item.rating}
-                  precision={1}
-                  size="small"
-                  readOnly
-                  className="mt-[5px]"
-                />
-              </div>
-              <p className="ml-[40px] text-[16px] text-[#333333]">
-                {item.review}
-              </p>
-              <p className="ml-[40px] text-[16px]">
-                {getElapsedTime(item.date)}
-              </p>
-            </div>
-          </div>
+          <ReviewItem key={`${item.id}-${i}`} item={item} />
         ))
       )}
 
