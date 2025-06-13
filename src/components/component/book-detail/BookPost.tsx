@@ -84,14 +84,14 @@ export default function BookPost({ isbn }: { isbn: string }) {
               {/* 작성자 */}
               <div className="mb-[10px] flex">
                 <div className="flex cursor-pointer items-center gap-[10px]">
-                  <p className="text-[16px] text-[#333333]">
-                    {post.profile.name}
-                  </p>
                   <img
                     src={post.profile.image!}
                     alt="작성자 프로필"
-                    className="mt-[5px] h-[16px] w-[16px] rounded-full object-cover"
+                    className="mt-[2px] h-[25px] w-[25px] rounded-full object-cover"
                   />
+                  <p className="text-[16px] text-[#333333]">
+                    {post.profile.name}
+                  </p>
                 </div>
               </div>
               <div className="flex cursor-pointer flex-col gap-[10px] font-medium">

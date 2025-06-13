@@ -185,7 +185,7 @@ export default function OneLineReview({
                   <img
                     src={item.author.image!}
                     alt="작성자 프로필"
-                    className="h-[30px] w-[30px] rounded-full object-cover"
+                    className="mt-[2px] h-[25px] w-[25px] rounded-full object-cover"
                   />
 
                   <p className="mx-[10px] mt-[2px] text-[16px] text-[#333333]">
