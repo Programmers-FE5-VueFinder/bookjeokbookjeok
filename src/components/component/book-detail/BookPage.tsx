@@ -13,6 +13,7 @@ import {
   removeBookmark,
 } from '../../../apis/bookmark';
 import { getBookStars } from '../../../apis/book-review';
+import { formatAuthor } from '../../../utils/format-author';
 
 type BookPagesProps = {
   isOpen: boolean;
@@ -152,7 +153,7 @@ export default function BookPage({
                     )}
                   </div>
                   <span className="flex justify-between text-[16px] font-semibold text-[#797979]">
-                    {bookDetail.author.split('(')[0]}
+                    {formatAuthor(bookDetail.author)}
                     <div className="mr-[15px] flex items-center justify-center">
                       <Rating
                         name="half-rating-read"

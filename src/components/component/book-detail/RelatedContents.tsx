@@ -6,6 +6,7 @@ import ReactDOM from 'react-dom';
 import { useInfiniteScroll } from '../../../hooks/use-infinite-scroll';
 import RelatedContentSkeleton from './RelatedContentSkeleton';
 import Snackbar from '@mui/material/Snackbar';
+import { formatAuthor } from '../../../utils/format-author';
 
 const MAX_PAGE = 10;
 
@@ -108,7 +109,7 @@ export default function RelatedContents({ genre }: { genre: number }) {
               {book.title}
             </div>
             <div className="text-center text-[14px] font-medium">
-              {book.author.split('(')[0]}
+              {formatAuthor(book.author)}
             </div>
           </div>
         ))}
