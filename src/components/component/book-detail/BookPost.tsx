@@ -3,6 +3,7 @@ import { FaRegComment, FaRegHeart } from 'react-icons/fa';
 import { getBookPost } from '../../../apis/post';
 import { useInfiniteScroll } from '../../../hooks/use-infinite-scroll';
 import Snackbar from '@mui/material/Snackbar';
+import getElapsedTime from '../../../utils/format-time';
 
 interface Post {
   id: string;
@@ -109,7 +110,7 @@ export default function BookPost({ isbn }: { isbn: string }) {
                     </span>
                     <span>6</span>
                   </div>
-                  <div>{post.created_at}</div>
+                  <div>{getElapsedTime(post.created_at)}</div>
                 </div>
               </div>
             </div>

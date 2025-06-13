@@ -6,6 +6,7 @@ import { useInfiniteScroll } from '../../../hooks/use-infinite-scroll';
 import type { BookDetail } from '../../../types/book';
 import { insertBookIfNotExists } from '../../../apis/add-book-if-not-exists';
 import Snackbar from '@mui/material/Snackbar';
+import getElapsedTime from '../../../utils/format-time';
 
 const ratingText = [
   '이 도서 어떠셨나요?',
@@ -203,7 +204,9 @@ export default function OneLineReview({
               <p className="ml-[40px] text-[16px] text-[#333333]">
                 {item.review}
               </p>
-              <p className="ml-[40px] text-[16px]">{item.date}</p>
+              <p className="ml-[40px] text-[16px]">
+                {getElapsedTime(item.date)}
+              </p>
             </div>
           </div>
         ))
