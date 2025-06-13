@@ -60,16 +60,16 @@ const router = createBrowserRouter([
         Component: SearchResult,
       },
       {
+        path: '/create-bookclub',
+        Component: CreateBookClub,
+      },
+      {
         path: '/bookclub/:bookclub_id',
         Component: BookClub,
       },
       {
         path: '/create-post',
         Component: CreatePost,
-      },
-      {
-        path: '/create-bookclub',
-        Component: CreateBookClub,
       },
     ],
   },
