@@ -1,5 +1,5 @@
 // pages/Profile.tsx (Final Refactored Version)
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { LuPencil } from 'react-icons/lu';
 import SettingModal from '../components/component/MyPage/SettingModal';
 import { twMerge } from 'tailwind-merge';
@@ -7,7 +7,6 @@ import ProfileImg from '../components/component/MyPage/ProfileImg';
 import { useProfileStore } from '../store/profileStore';
 import { useAuthStore } from '../store/authStore';
 import supabase, { STORAGE_BASE_URL } from '../utils/supabase';
-import LoadingCardSimple from '../components/common/CardSkeleton';
 import SkeletonCard from '../components/common/CardSkeleton2';
 import BookCard from '../components/common/BookCard';
 
@@ -59,32 +58,44 @@ export default function Profile() {
     };
 
     const myFollower = async () => {
-      const { data: follow } = await supabase
+      const { data: follow, error } = await supabase
         .from('follow')
         .select('follower_id, following_id');
 
-      console.log(follow);
+      console.error(error);
 
-      if (follow?.length !== undefined) {
-        setFollwer(follow?.length);
-      } else {
-        setFollwer(0);
+      const followData = follow!.map((follower) => follower.following_id);
+      let followerNumber = 0;
+
+      for (let i = 0; i < followData.length; i++) {
+        if (followData[i] === session?.user.id) {
+          followerNumber += 1;
+          console.log('작동함');
+        }
       }
+      setFollwer(followerNumber);
+      console.log(follow?.length);
     };
     myFollower();
 
     const myFollowing = async () => {
-      const { data: follow } = await supabase
+      const { data: follow, error } = await supabase
         .from('follow')
-        .select('follower_id,other_column');
+        .select('following_id, follower_id');
 
-      console.log(follow);
+      console.error(error);
 
-      if (follow?.length !== undefined) {
-        setFollowing(follow?.length);
-      } else {
-        setFollowing(0);
+      const followData = follow!.map((follower) => follower.follower_id);
+      let followingNumber = 0;
+
+      for (let i = 0; i < followData.length; i++) {
+        if (followData[i] === session?.user.id) {
+          followingNumber += 1;
+          console.log('작동함');
+        }
       }
+      setFollowing(followingNumber);
+      console.log(follow?.length);
     };
     myFollowing();
 
@@ -134,7 +145,7 @@ export default function Profile() {
           </div>
           {/* 버튼 에리어 */}
           <div className="absolute bottom-0 flex h-[40px] w-full content-center items-center justify-center">
-            <div className="flex w-[1200px] items-center justify-center ">
+            <div className="flex w-[1200px] items-center justify-center">
               {buttonName.map((item) => {
                 return (
                   <button
@@ -155,7 +166,6 @@ export default function Profile() {
         <div className="flex items-center justify-center bg-[#FAFAFA]">
           <div className="grid gap-[28px] p-[100px] md:grid-cols-2 lg:grid-cols-4">
             {content}
-            <LoadingCardSimple />
             <SkeletonCard />
             <BookCard />
             <BookCard />

@@ -1,5 +1,6 @@
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import Tooltip from '@mui/material/Tooltip';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { IoMdCheckmark } from 'react-icons/io';
@@ -111,8 +112,16 @@ export default function SignUpModal() {
             </small>
           )}
 
-          <label htmlFor="password" className="font-bold text-[#333]">
+          <label
+            htmlFor="password"
+            className="flex items-center gap-[5px] font-bold text-[#333]"
+          >
             비밀번호
+            <Tooltip title="비밀번호는 8자 이상 16자 이하, 영문과 숫자, 특수문자를 포함하여 입력해주세요">
+              <div className="size-[16px] items-center justify-center rounded-full border-1 text-center text-[10px]">
+                ?
+              </div>
+            </Tooltip>
           </label>
           <input
             id="password"
@@ -125,7 +134,8 @@ export default function SignUpModal() {
                 message: '8자리 이상 16자리 이하의 비밀번호를 입력해주세요',
               },
               pattern: {
-                value: /^(?=.*[a-z])(?=.*\d)[a-z\d]{8,16}$/,
+                value:
+                  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+~`\-={}[\]:;"'<>,.?/\\]).{8,16}$/,
                 message: '비밀번호 형식에 맞지 않습니다',
               },
             })}
