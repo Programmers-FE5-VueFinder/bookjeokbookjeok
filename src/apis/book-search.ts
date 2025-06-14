@@ -38,8 +38,6 @@ export const getRelatedBooks = async (categoryId: number, page: number) => {
   const { data } = await axios.get(url, { params });
   return data.item || [];
 };
-<<<<<<< HEAD
-=======
 
 export const getBestsellerBooks = async () => {
   const url = `/api/ttb/api/ItemList.aspx`;
@@ -61,5 +59,3 @@ export const getBestsellerBooks = async () => {
 // Small : 작은 크기 : 너비 75px
 // Mini : 매우 작은 크기 : 너비 65px
 // None : 없음
-
->>>>>>> dev
