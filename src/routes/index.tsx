@@ -79,6 +79,10 @@ const router = createBrowserRouter([
     Component: BookClubChat,
   },
   {
+    path: '/bookclub/:bookclub_id/chat',
+    Component: BookClubChat,
+  },
+  {
     path: '*',
     Component: NotFound,
   },
