@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import SkeletonCard from '../../common/CardSkeleton2';
-import BookCard from '../../common/BookCard';
 import type { Post } from '../../../types/type';
+import BookCard from '../../common/BookCard';
+import SkeletonCard from '../../common/CardSkeleton2';
+import { Link } from 'react-router';
 
-export default function BookClubArea({
+export default function CommunityArea({
   post,
   profileImage,
   profileName,
@@ -24,11 +25,11 @@ export default function BookClubArea({
 
   return (
     <>
-      <div className="relative items-center">
+      <div className="relative w-full items-center justify-center">
         {loading ? null : post?.length === 0 ? (
           <div className="h-[440px]">
-            <div className="absolute top-[47%] left-0 w-[270px text-center">
-              <span className="textT1">참가한 북클럽이 없습니다.</span>
+            <div className="absolute top-[47%] left-[15%] text-center">
+              <span className="textT1">게시글이 없습니다.</span>
             </div>
           </div>
         ) : null}
@@ -39,16 +40,18 @@ export default function BookClubArea({
             post?.map((item) => {
               {
                 return (
-                  <BookCard
-                    profileImage={profileImage}
-                    key={item.id}
-                    body={item.body}
-                    title={item.title}
-                    nickname={profileName!}
-                    createdAt={new Date(item.created_at).toLocaleDateString(
-                      'ko-KR',
-                    )}
-                  />
+                  <Link to={`/channel/community/post/${item.id}`}>
+                    <BookCard
+                      profileImage={profileImage}
+                      key={item.id}
+                      body={item.body}
+                      title={item.title}
+                      nickname={profileName!}
+                      createdAt={new Date(item.created_at).toLocaleDateString(
+                        'ko-KR',
+                      )}
+                    />
+                  </Link>
                 );
               }
             })
