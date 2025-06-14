@@ -79,7 +79,7 @@ export function OneLineReview({
   });
 
   const handleReviewChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setReview(e.target.value.slice(0, 30));
+    setReview(e.target.value.slice(0, 50));
   };
 
   const handleSubmitReview = async () => {
