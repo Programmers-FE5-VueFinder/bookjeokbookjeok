@@ -15,6 +15,7 @@ import { fetchUserData } from './loader/auth.loader';
 import CreatePostLayout from './layouts/CreatPostLayout';
 import BookClub from '../pages/BookClub';
 import CreateBookClub from '../pages/CreateBookClub';
+import BookClubChat from '../pages/BookClubChat';
 
 const router = createBrowserRouter([
   {
@@ -72,6 +73,10 @@ const router = createBrowserRouter([
         Component: CreatePost,
       },
     ],
+  },
+  {
+    path: '/bookclub/:bookclub_id/chat',
+    Component: BookClubChat,
   },
   {
     path: '*',

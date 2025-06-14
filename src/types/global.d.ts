@@ -4,7 +4,7 @@ export declare global {
     name: string | null;
     image: string;
     intro: string | null;
-    appellation: string;
+    appellation: string | null;
     created_at: string;
   }
   interface Bookclub {
@@ -19,6 +19,12 @@ export declare global {
     id: string;
     user_id: string;
     book_club_id: string;
+    created_at: string;
+  }
+  interface Chat {
+    id: string;
+    profile: User;
+    message: string;
     created_at: string;
   }
 }

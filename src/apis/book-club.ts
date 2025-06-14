@@ -13,7 +13,7 @@ export async function isBookClubOwner(id: string) {
     .eq('id', id)
     .single();
 
-  return book_club.owner_id === user.id;
+  return book_club!.owner_id === user.id;
 }
 
 /* 북클럽 상세 조회 */
@@ -24,8 +24,8 @@ export async function fetchBookClub(id: string) {
     .eq('id', id)
     .single();
 
-  const userIds = book_club.book_club_member.map(
-    (m: BookclubMember) => m.user_id,
+  const userIds = book_club!.book_club_member.map(
+    (member: BookclubMember) => member.user_id,
   );
   const { data: user } = await supabase
     .from('profile')
@@ -45,9 +45,9 @@ export async function createBookClub(name: string, info: string | null) {
     .single();
   await supabase
     .from('book_club_member')
-    .insert({ user_id: book_club.owner_id, book_club_id: book_club.id });
+    .insert({ user_id: book_club!.owner_id, book_club_id: book_club!.id });
 
-  return book_club.data!.id;
+  return book_club!.id;
 }
 
 /* 북클럽 수정 */
@@ -80,4 +80,14 @@ export async function deleteBookClub(id: string) {
   await supabase.from('book_club_chat').delete().eq('book_club_id', id);
   await supabase.from('book_club_member').delete().eq('book_club_id', id);
   await supabase.from('book_club').delete().eq('id', id);
+}
+
+/* 북클럽 채팅 조회 */
+export async function fetchChat(id: string) {
+  const { data: chat } = await supabase
+    .from('book_club_chat')
+    .select(`id, profile(*), message, created_at`)
+    .eq('book_club_id', id);
+
+  return chat;
 }
