@@ -47,7 +47,7 @@ export function ReviewInput({
           placeholder="리뷰를 작성해주세요."
           className="h-[47px] w-[480px] rounded-[5px] border border-[#D6D6D6] pr-[60px] pl-[10px] placeholder:text-[16px] placeholder:text-[#B3B3B3] focus:border-[#08C818] focus:outline-none"
         />
-        <span className="absolute top-1/2 right-[110px] -translate-y-1/2 text-[16px] font-medium text-[#969696]">
+        <span className="absolute top-1/2 right-[90px] -translate-y-1/2 text-[16px] font-medium text-[#969696]">
           {review.length}/50
         </span>
         <button

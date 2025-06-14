@@ -4,7 +4,7 @@ import type { Post } from '../../../../types/post';
 
 export function BookPostItem({ post }: { post: Post }) {
   return (
-    <div className="max-h-full w-full flex-col justify-center border-b border-b-[#D8D8D8] p-[15px] pl-[20px] text-[16px]">
+    <div className="max-h-full w-full flex-col justify-center border-b border-b-[#D8D8D8] py-[15px] text-[16px]">
       <div className="mb-[10px] flex">
         <div className="flex cursor-pointer items-center gap-[10px]">
           <img

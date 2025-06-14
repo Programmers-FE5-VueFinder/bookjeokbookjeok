@@ -4,7 +4,7 @@ import type { Review } from '../../../../types/book';
 
 export function ReviewItem({ item }: { item: Review }) {
   return (
-    <div className="max-h-full border-t border-t-[#D8D8D8] p-[15px] pl-[20px]">
+    <div className="max-h-full border-t border-t-[#D8D8D8] py-[15px]">
       <div className="flex flex-col gap-[10px] font-medium">
         <div className="flex">
           <div className="flex cursor-pointer">

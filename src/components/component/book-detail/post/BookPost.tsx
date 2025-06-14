@@ -55,7 +55,7 @@ export function BookPost({ isbn }: { isbn: string }) {
   }, [isbn]);
 
   return (
-    <div className="custom-scrollbar h-full max-h-[calc(75vh-68px)] overflow-auto rounded-[10px]">
+    <div className="custom-scrollbar h-full max-h-[calc(75vh-68px)] overflow-auto rounded-[10px] px-[20px]">
       <p className="border-b border-b-[#D8D8D8] py-[30px] text-center text-[20px] font-semibold">
         포스트
       </p>
