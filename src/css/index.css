@@ -65,6 +65,12 @@ select::-ms-expand {
   background-color: #ababab;
 }
 
+.custom-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.custom-scrollbar {
+  -ms-overflow-style: none;
+}
 /* 스크롤바 숨김 */
 .scroll-hidden {
   overflow-y: scroll;
@@ -73,4 +79,8 @@ select::-ms-expand {
 
 .scroll-hidden::-webkit-scrollbar {
   display: none; /* Chrome, Safari */
+}
+
+.custom-progress {
+  background-color: #08c818 !important;
 }
