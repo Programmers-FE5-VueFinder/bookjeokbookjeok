@@ -2,11 +2,11 @@ import { useEffect, useState, useCallback } from 'react';
 import { getRelatedBooks } from '../../../../apis/book-search';
 import type { BookDetail } from '../../../../types/book';
 import { useInfiniteScroll } from '../../../../hooks/use-infinite-scroll';
-import Snackbar from '@mui/material/Snackbar';
 import ReactDOM from 'react-dom';
 import RelatedContentSkeleton from './RelatedContentSkeleton';
 import BookPage from '../BookPage';
 import { RelatedContentItem } from './RelatedContentItem';
+import { toast } from 'react-toastify';
 
 const MAX_PAGE = 10;
 
@@ -17,7 +17,6 @@ export function RelatedContents({ genre }: { genre: number }) {
   const [hasMore, setHasMore] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   const handleOpen = (book: BookDetail) => {
     setSelectedBook(book);
@@ -28,8 +27,6 @@ export function RelatedContents({ genre }: { genre: number }) {
     setIsOpen(false);
     setSelectedBook(null);
   };
-
-  const handleSnackbarClose = () => setSnackbarOpen(false);
 
   const fetchBooks = useCallback(async () => {
     if (!hasMore || isFetching || fetchedPages.size >= MAX_PAGE) return;
@@ -46,7 +43,7 @@ export function RelatedContents({ genre }: { genre: number }) {
 
     if (fetchedPages.has(randomPage)) {
       setHasMore(false);
-      setSnackbarOpen(true);
+      toast.info('더 이상 불러올 콘텐츠가 없습니다.');
       setIsFetching(false);
       return;
     }
@@ -57,7 +54,7 @@ export function RelatedContents({ genre }: { genre: number }) {
       const books = await getRelatedBooks(genre, randomPage);
       if (books.length === 0) {
         setHasMore(false);
-        setSnackbarOpen(true);
+        toast.info('더 이상 불러올 콘텐츠가 없습니다.');
       } else {
         setRelatedBooks((prev) => [...prev, ...books]);
       }
@@ -113,15 +110,7 @@ export function RelatedContents({ genre }: { genre: number }) {
           document.body,
         )}
 
-      <div ref={loadMoreRef} className="h-[1px]" />
-
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={2000}
-        onClose={handleSnackbarClose}
-        message="더 이상 불러올 콘텐츠가 없습니다."
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      />
+      <div ref={loadMoreRef} className="h-[20px]" />
     </div>
   );
 }

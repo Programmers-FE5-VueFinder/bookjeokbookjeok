@@ -2,18 +2,15 @@ import { useCallback, useEffect, useState } from 'react';
 import { getBookPost } from '../../../../apis/post';
 import { useInfiniteScroll } from '../../../../hooks/use-infinite-scroll';
 import type { Post } from '../../../../types/post';
-import Snackbar from '@mui/material/Snackbar';
 import BookPostSkeleton from './BookPostSkeleton';
 import { BookPostItem } from './BookPostItem';
+import { toast } from 'react-toastify';
 
 export function BookPost({ isbn }: { isbn: string }) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-
-  const handleSnackbarClose = () => setSnackbarOpen(false);
 
   const fetchPosts = useCallback(async () => {
     if (isLoading || !hasMore) return;
@@ -44,7 +41,7 @@ export function BookPost({ isbn }: { isbn: string }) {
 
   useEffect(() => {
     if (!hasMore && !isLoading && posts.length > 0) {
-      setSnackbarOpen(true);
+      toast.info('더 이상 불러올 포스트가 없습니다.');
     }
   }, [hasMore, isLoading, posts.length]);
 
@@ -71,14 +68,6 @@ export function BookPost({ isbn }: { isbn: string }) {
       )}
 
       <div ref={loadMoreRef} className="h-[1px]" />
-
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={2000}
-        onClose={handleSnackbarClose}
-        message="더 이상 불러올 포스트가 없습니다."
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      />
     </div>
   );
 }

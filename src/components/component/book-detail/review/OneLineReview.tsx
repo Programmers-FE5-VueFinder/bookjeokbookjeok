@@ -8,8 +8,8 @@ import BookReviewSkeleton from './BookReviewSkeleton';
 import { useInfiniteScroll } from '../../../../hooks/use-infinite-scroll';
 import { insertBookIfNotExists } from '../../../../apis/add-book-if-not-exists';
 import { ReviewInput } from './ReviewInput';
-import Snackbar from '@mui/material/Snackbar';
 import type { BookDetail, Review } from '../../../../types/book';
+import { toast } from 'react-toastify';
 
 interface OneLineReviewProps {
   isbn: string;
@@ -29,20 +29,6 @@ export function OneLineReview({
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [snackbar, setSnackbar] = useState<{
-    open: boolean;
-    message: string;
-    position: { vertical: 'top' | 'bottom'; horizontal: 'center' };
-  }>({
-    open: false,
-    message: '',
-    position: { vertical: 'top', horizontal: 'center' },
-  });
-
-  const handleSnackbarClose = () => {
-    setSnackbar((prev) => ({ ...prev, open: false }));
-  };
-
   const getReviews = useCallback(async () => {
     if (isLoading || !hasMore) return;
     setIsLoading(true);
@@ -58,11 +44,7 @@ export function OneLineReview({
         setHasMore(false);
 
         if (page > 0 || newReviews.length > 0) {
-          setSnackbar({
-            open: true,
-            message: '더 이상 불러올 리뷰가 없습니다.',
-            position: { vertical: 'bottom', horizontal: 'center' },
-          });
+          toast.info('더 이상 불러올 리뷰가 없습니다.');
         }
       }
     } catch (error) {
@@ -84,21 +66,13 @@ export function OneLineReview({
 
   const handleSubmitReview = async () => {
     if (!review || selectedRating === 0) {
-      setSnackbar({
-        open: true,
-        message: '리뷰와 별점을 모두 입력해주세요!',
-        position: { vertical: 'top', horizontal: 'center' },
-      });
+      toast.warn('리뷰와 별점을 모두 입력해주세요!');
       return;
     }
     try {
       await insertBookIfNotExists(bookDetail);
       await submitReview({ bookId: isbn, body: review, star: selectedRating });
-      setSnackbar({
-        open: true,
-        message: '리뷰가 등록되었습니다!',
-        position: { vertical: 'top', horizontal: 'center' },
-      });
+      toast.success('리뷰가 등록되었습니다!');
       setReview('');
       setSelectedRating(0);
       setPage(0);
@@ -139,14 +113,6 @@ export function OneLineReview({
       )}
 
       <div ref={loadMoreRef} className="h-[1px]" />
-
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={2000}
-        onClose={handleSnackbarClose}
-        message={snackbar.message}
-        anchorOrigin={snackbar.position}
-      />
     </div>
   );
 }

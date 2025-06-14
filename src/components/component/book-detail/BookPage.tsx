@@ -11,7 +11,7 @@ import {
 } from '../../../apis/bookmark';
 import { getBookStars } from '../../../apis/book-review';
 import { formatAuthor } from '../../../utils/format-author';
-import Snackbar from '@mui/material/Snackbar';
+import { toast } from 'react-toastify';
 import { OneLineReview } from './review/OneLineReview';
 import { BookPost } from './post/BookPost';
 import { RelatedContents } from './content/RelatedContents';
@@ -35,19 +35,6 @@ export default function BookPage({
   const [bookmarked, setBookmarked] = useState(false);
   const [averageStar, setAverageStar] = useState<number>(0);
   const [isBookmarking, setIsBookmarking] = useState(false);
-  const [snackbar, setSnackbar] = useState<{
-    open: boolean;
-    message: string;
-    position: { vertical: 'bottom'; horizontal: 'center' };
-  }>({
-    open: false,
-    message: '',
-    position: { vertical: 'bottom', horizontal: 'center' },
-  });
-
-  const handleSnackbarClose = () => {
-    setSnackbar((prev) => ({ ...prev, open: false }));
-  };
 
   const handleAddBookmark = async () => {
     if (isBookmarking) return;
@@ -57,11 +44,7 @@ export default function BookPage({
       await insertBookIfNotExists(bookDetail);
       await addBookmark(bookDetail.isbn13);
       setBookmarked(true);
-      setSnackbar({
-        open: true,
-        message: '북마크에 추가했습니다.',
-        position: { vertical: 'bottom', horizontal: 'center' },
-      });
+      toast.success('북마크에 추가했습니다.');
     } catch (error) {
       console.error('북마크 추가 실패:', error);
     } finally {
@@ -76,11 +59,7 @@ export default function BookPage({
     try {
       await removeBookmark(bookDetail.isbn13);
       setBookmarked(false);
-      setSnackbar({
-        open: true,
-        message: '북마크에서 제거했습니다.',
-        position: { vertical: 'bottom', horizontal: 'center' },
-      });
+      toast.success('북마크에서 제거했습니다.');
     } catch (error) {
       console.error('북마크 삭제 실패:', error);
     } finally {
@@ -208,14 +187,6 @@ export default function BookPage({
                 </div>
               </div>
             </div>
-            <Snackbar
-              open={snackbar.open}
-              autoHideDuration={2000}
-              onClose={handleSnackbarClose}
-              message={snackbar.message}
-              anchorOrigin={snackbar.position}
-              ContentProps={{ style: { transform: 'scaleX(-1)' } }}
-            />
           </div>
 
           {/* 오른쪽 페이지 */}
