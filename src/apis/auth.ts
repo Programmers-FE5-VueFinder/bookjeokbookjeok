@@ -1,10 +1,19 @@
-import supabase from '../utils/supabase';
+import supabase from "../utils/supabase";
 
 /* 로그인 여부 판별 */
 export async function isLoggedIn() {
   supabase.auth.getSession().then(({ data: { session } }) => {
     return !!session;
   });
+}
+
+/* 로그인 유저 id */
+export async function fetchAuthId() {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  return user ? user.id : '';
 }
 
 /* 구글 로그인 */

@@ -38,3 +38,28 @@ export const getRelatedBooks = async (categoryId: number, page: number) => {
   const { data } = await axios.get(url, { params });
   return data.item || [];
 };
+<<<<<<< HEAD
+=======
+
+export const getBestsellerBooks = async () => {
+  const url = `/api/ttb/api/ItemList.aspx`;
+  const params = {
+    ...baseParams,
+    Cover: 'MidBig',
+    QueryType: 'Bestseller',
+    MaxResults: 10,
+    start: 1,
+  };
+
+  const { data } = await axios.get(url, { params });
+  return data.item || [];
+};
+
+// Big : 큰 크기 : 너비 200px
+// MidBig : 중간 큰 크기 : 너비 150px
+// Mid(기본값) : 중간 크기 : 너비 85px
+// Small : 작은 크기 : 너비 75px
+// Mini : 매우 작은 크기 : 너비 65px
+// None : 없음
+
+>>>>>>> dev

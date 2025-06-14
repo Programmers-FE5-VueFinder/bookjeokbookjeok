@@ -1,85 +1,30 @@
-import supabase from '../utils/supabase';
+import supabase from "../utils/supabase";
 
 /* 전체 게시물 조회 */
 export async function fetchPosts(category: string = 'all') {
-  switch (category) {
-    case 'all': {
-      const result = await supabase.from('post').select(
-        `id,
-      title,
-      body,
-      image,
-      profile(*),
-      category,
-      like(*),
-      comment(*),
-      vote(*),
-      created_at
-    `,
-      );
-
-      return result.data;
+  try {
+    switch (category) {
+      case 'all':
+        return await supabase.from('post').select('*');
+      case 'diary':
+        return await supabase
+          .from('post')
+          .select('*')
+          .eq('category', 'diary');
+      case 'community':
+        return await supabase
+          .from('post')
+          .select('*')
+          .eq('category', 'community');
+      case 'book_club':
+        return await supabase
+          .from('post')
+          .select('*')
+          .eq('category', 'book_club');
     }
-    case 'diary': {
-      const result = await supabase
-        .from('post')
-        .select(
-          `id,
-      title,
-      body,
-      image,
-      profile(*),
-      category,
-      like(*),
-      comment(*),
-      vote(*),
-      created_at
-    `,
-        )
-        .eq('category', 'diary');
-
-      return result.data;
-    }
-    case 'community': {
-      const result = await supabase
-        .from('post')
-        .select(
-          `id,
-      title,
-      body,
-      image,
-      profile(*),
-      category,
-      like(*),
-      comment(*),
-      vote(*),
-      created_at
-    `,
-        )
-        .eq('category', 'community');
-
-      return result.data;
-    }
-    case 'book_club': {
-      const result = await supabase
-        .from('post')
-        .select(
-          `id,
-      title,
-      body,
-      image,
-      profile(*),
-      category,
-      like(*),
-      comment(*),
-      vote(*),
-      created_at
-    `,
-        )
-        .eq('category', 'book_club');
-
-      return result.data;
-    }
+  } catch (e) {
+    console.error(e);
+    return { data: null, error: e};
   }
 }
 
@@ -97,7 +42,6 @@ export async function fetchPostDetail(id: string) {
       category,
       like(*),
       comment(*),
-      vote(*),
       created_at
     `,
     )
