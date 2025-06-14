@@ -9,6 +9,7 @@ import { FaStar } from 'react-icons/fa';
 import BookSearchModal from '../BookSearchModal';
 import type { BookDetail } from '../../../types/book';
 import BookHTML from './BookHTML';
+import { createBookClub } from '../../../apis/book-club';
 
 export default function WritePost({
   isCreateBookClub,
@@ -47,7 +48,7 @@ export default function WritePost({
     setCategoryToggle((toggle) => !toggle);
   };
 
-  const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+  const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const title = titleRef.current?.value;
@@ -69,7 +70,8 @@ export default function WritePost({
         return;
       }
       default: {
-        // book-club 생성 api
+        const bookclub_id = await createBookClub(title, body);
+        navigate(`/bookclub/${bookclub_id}`);
       }
     }
   };
