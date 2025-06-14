@@ -12,6 +12,7 @@ import Notification from '../pages/Notification';
 import SearchResult from '../pages/SearchResult';
 import ChannelLayout from './layouts/ChannelLayout';
 import { fetchUserData } from './loader/auth.loader';
+import CreatePostLayout from './layouts/CreatPostLayout';
 import BookClub from '../pages/BookClub';
 
 const router = createBrowserRouter([
