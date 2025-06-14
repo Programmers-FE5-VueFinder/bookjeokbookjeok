@@ -80,3 +80,7 @@ select::-ms-expand {
 .scroll-hidden::-webkit-scrollbar {
   display: none; /* Chrome, Safari */
 }
+
+.custom-progress {
+  background-color: #08c818 !important;
+}
