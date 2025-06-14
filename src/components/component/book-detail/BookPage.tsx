@@ -227,7 +227,7 @@ export default function BookPage({
             } fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2`}
           >
             {/* 탭 메뉴 */}
-            <div className="flex h-[60px] items-center justify-around rounded-t-[20px] text-[16px] font-medium text-[#2B2B2B]">
+            <div className="flex h-[68px] items-center justify-around rounded-t-[20px] text-[16px] font-medium text-[#2B2B2B]">
               <div
                 className={`flex h-full w-full cursor-pointer items-center justify-center ${
                   selectedContent === 'oneLineReview'
