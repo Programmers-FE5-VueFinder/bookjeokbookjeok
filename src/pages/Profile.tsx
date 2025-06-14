@@ -27,11 +27,19 @@ type Post = {
   user_id: string;
 };
 
+export type BookMark = {
+  book_id: string;
+  created_at: string;
+  id: string;
+  user_id: string;
+};
+
 export default function Profile() {
   const [openSetting, setOpenSetting] = useState<boolean>(false);
   const [follower, setFollower] = useState<number>(0);
   const [following, setFollowing] = useState<number>(0);
   const [post, setPost] = useState<Post[] | null>([]);
+  const [bookMark, setBookMark] = useState<BookMark[] | null>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedBtn, setSelectedBtn] = useState<string>('다이어리');
   const [content, setContent] = useState<string>('diary');
@@ -197,7 +205,32 @@ export default function Profile() {
         }
         console.error(error);
       };
-      await Promise.all([fetchInitialProfile(), myFollow(), myPost()]);
+
+      const myBookmark = async () => {
+        const { data: bookmark, error } = await supabase
+          .from('bookmark')
+          .select('*');
+        console.log(bookmark);
+        setBookMark(bookmark);
+        console.error(error);
+      };
+      const myBookClub = async () => {
+        const { data: book_club, error } = await supabase
+          .from('book_club')
+          .select('*');
+
+          
+        console.log(book_club);
+        console.error(error);
+      };
+
+      await Promise.all([
+        fetchInitialProfile(),
+        myFollow(),
+        myPost(),
+        myBookmark(),
+        myBookClub(),
+      ]);
     };
 
     fetchData();
@@ -322,7 +355,7 @@ export default function Profile() {
             ) : null}
             {content === 'bookmark' ? (
               <BookMarkArea
-                post={post}
+                post={bookMark}
                 profileImage={
                   avatarUrl || session?.user.user_metadata.avatar_url
                 }

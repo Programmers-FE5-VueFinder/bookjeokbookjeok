@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
-import type { Post } from '../../../types/type';
 import SkeletonCard from '../../common/CardSkeleton2';
 import BookCard from '../../common/BookCard';
+import type { BookMark } from '../../../pages/Profile';
 
 export default function BookMarkArea({
   post,
   profileImage,
   profileName,
 }: {
-  post: Post[] | null;
+  post: BookMark[] | null;
   profileImage: string | null;
   profileName: string | null;
 }) {
