@@ -82,7 +82,7 @@ export function RelatedContents({ genre }: { genre: number }) {
   });
 
   return (
-    <div className="custom-scrollbar h-full max-h-[calc(75vh-60px)] overflow-auto rounded-[10px]">
+    <div className="custom-scrollbar h-full max-h-[calc(75vh-68px)] overflow-auto rounded-[10px]">
       <p className="my-[30px] text-center text-[20px] font-semibold">
         연관 컨텐츠
       </p>

@@ -117,7 +117,7 @@ export function OneLineReview({
   }, [isbn]);
 
   return (
-    <div className="custom-scrollbar h-full max-h-[calc(75vh-60px)] overflow-auto rounded-[10px]">
+    <div className="custom-scrollbar h-full max-h-[calc(75vh-68px)] overflow-auto rounded-[10px]">
       <ReviewInput
         review={review}
         selectedRating={selectedRating}
