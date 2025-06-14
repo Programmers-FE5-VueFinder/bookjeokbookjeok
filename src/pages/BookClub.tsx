@@ -4,19 +4,20 @@ import { IoMdInformationCircleOutline } from 'react-icons/io';
 import { IoMdPerson } from 'react-icons/io';
 import { IoMdPersonAdd } from 'react-icons/io';
 import { fetchBookClub, isBookClubOwner } from '../apis/book-club';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import UserCard from '../components/common/UserCard';
 
 export default function BookClub() {
   const [selectedBtn, setSelectedBtn] = useState<string>('클럽 정보');
-  const buttonName = ['클럽 정보', '클럽 멤버', '토론장'];
+  const buttonName = ['클럽 정보', '클럽 멤버', '채팅방'];
   const memberRef = useRef<HTMLDivElement>(null);
 
   const bookclub_id = useParams().bookclub_id;
-  const [bookclubInfo, setBookclubInfo] = useState<Bookclub>();
+  const [bookclub, setBookclub] = useState<Bookclub>();
   const [isOwner, setIsOwner] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
+  const navigate = useNavigate();
 
   const handleContentButton = (e: React.MouseEvent<HTMLButtonElement>) => {
     const { name } = e.currentTarget;
@@ -25,12 +26,13 @@ export default function BookClub() {
 
   useEffect(() => {
     const fetchBookclub = async () => {
-      setBookclubInfo(await fetchBookClub(bookclub_id!));
+      setBookclub(await fetchBookClub(bookclub_id!));
       setIsOwner(await isBookClubOwner(bookclub_id!));
       setIsLoading(false);
     };
     fetchBookclub();
   }, [bookclub_id]);
+  console.log(bookclub);
 
   useEffect(() => {
     if (selectedBtn === '클럽 멤버') {
@@ -42,6 +44,9 @@ export default function BookClub() {
     if (selectedBtn === '클럽 정보') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+    if (selectedBtn === '채팅방') {
+      navigate(`/bookclub/${bookclub_id}/chat`);
+    }
   }, [selectedBtn]);
 
   if (isLoading) return <>로딩중..</>;
@@ -52,7 +57,7 @@ export default function BookClub() {
         <div className="sticky top-0 flex min-h-[200px] content-center justify-center self-start bg-white">
           <div className="relative flex content-center justify-center">
             <span className="mb-[40px] flex items-center justify-center text-[32px] font-bold">
-              {bookclubInfo!.name}
+              {bookclub!.name}
             </span>
             {/* 버튼 에리어 */}
             <div className="absolute bottom-0 flex h-[40px] w-screen content-center items-center justify-center self-start bg-white shadow-lg shadow-gray-100">
@@ -108,7 +113,7 @@ export default function BookClub() {
                   <span>클럽 정보</span>
                 </div>
                 <span
-                  dangerouslySetInnerHTML={{ __html: bookclubInfo!.info }}
+                  dangerouslySetInnerHTML={{ __html: bookclub!.info }}
                 ></span>
               </div>
               <div
@@ -121,13 +126,13 @@ export default function BookClub() {
                   <p>
                     클럽 멤버{' '}
                     <span className="font-bold text-[#08C818]">
-                      {bookclubInfo!.member.length}
+                      {bookclub!.member.length}
                     </span>
                     명
                   </p>
                 </div>
                 <div className="flex flex-row gap-5">
-                  {bookclubInfo!.member.map((member) => (
+                  {bookclub!.member.map((member) => (
                     <UserCard key={member.id} user={member} />
                   ))}
                 </div>
