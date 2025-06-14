@@ -20,7 +20,7 @@ export default function PostList() {
 
   const channelNames: { [key: string]: string } = {
     diary: '다이어리',
-    book_club: '독서모임',
+    book_club: '북클럽',
     community: '자유채널',
   };
 
@@ -116,7 +116,7 @@ export default function PostList() {
           {channelName === '북클럽' && (
             <Link
               to={`/create-bookclub`}
-              className="flex cursor-pointer rounded-full bg-[#F3F1F1] px-6 py-2 text-[16px] font-bold text-[#333333] hover:bg-gray-300"
+              className="flex h-[34px] w-[140px] cursor-pointer items-center justify-center rounded-full bg-[#F3F1F1] text-[16px] font-bold text-[#333333] hover:bg-gray-300"
             >
               북클럽 만들기
             </Link>

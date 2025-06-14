@@ -61,7 +61,7 @@ export default function BookClub() {
             </span>
             {/* 버튼 에리어 */}
             <div className="absolute bottom-0 flex h-[40px] w-screen content-center items-center justify-center self-start bg-white shadow-lg shadow-gray-100">
-              <div>
+              <div className="flex w-[900px] flex-row">
                 {buttonName.map((item) => {
                   return (
                     <button
