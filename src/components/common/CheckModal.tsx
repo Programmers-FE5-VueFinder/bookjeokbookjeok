@@ -3,13 +3,11 @@ import { Link } from 'react-router';
 interface CheckModalProps {
   onClose: () => void;
   content: string;
-  click: () => Promise<void>;
 }
 
 export default function CheckModal({
   content,
   onClose,
-  click,
 }: CheckModalProps) {
   return (
     <>
@@ -25,7 +23,6 @@ export default function CheckModal({
             <Link to={'/'}>
               <button
                 className="h-[32px] w-[50%] cursor-pointer content-center items-center justify-center bg-[#bdbfbd] text-center"
-                onClick={click}
               >
                 <span className="text-[16px] font-semibold text-white">
                   확인

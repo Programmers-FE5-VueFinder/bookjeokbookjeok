@@ -54,15 +54,15 @@ export default function SettingModal({ onClose }: SettingModalProps) {
     }
   };
 
-  const handleDeleteUser = async () => {
-    if (session?.user.id !== undefined) {
-      const { error } = await supabase
-        .from('profile')
-        .delete()
-        .eq('id', session?.user.id);
-      console.error(error);
-    }
-  };
+  // const handleDeleteUser = async () => {
+  //   if (session?.user.id !== undefined) {
+  //     const { error } = await supabase
+  //       .from('profile')
+  //       .delete()
+  //       .eq('id', session?.user.id);
+  //     console.error(error);
+  //   }
+  // };
 
   const handleSave = async () => {
     const user = session?.user;
@@ -219,7 +219,6 @@ export default function SettingModal({ onClose }: SettingModalProps) {
           <CheckModal
             content={'정말 회원 탈퇴 하시겠습니까?'}
             onClose={() => setOpenDelete(false)}
-            click={handleDeleteUser()}
           />
         </div>
       ) : null}

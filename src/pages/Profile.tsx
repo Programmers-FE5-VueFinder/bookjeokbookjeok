@@ -41,13 +41,6 @@ export type book_club = {
   owner_id: string;
 };
 
-// type book_club_member = {
-//   book_club_id: string;
-//   created_at: string;
-//   id: string;
-//   user_id: string;
-// };
-
 export default function Profile() {
   const [openSetting, setOpenSetting] = useState<boolean>(false);
   const [follower, setFollower] = useState<number>(0);
