@@ -73,6 +73,26 @@ export async function deleteBookClub(id: string) {
   await supabase.from('book_club').delete().eq('id', id);
 }
 
+/* 모집글 작성 */
+export async function createBookClubPost(
+  title: string,
+  body: string,
+  book_club_id: string,
+) {
+  const { data: newPost } = await supabase
+    .from('post')
+    .insert({
+      title: title,
+      body: body,
+      category: 'book-club',
+      book_club_id: book_club_id,
+    })
+    .select()
+    .single();
+
+  return newPost;
+}
+
 /* 북클럽 탈퇴 */
 export async function leaveBookClub(id: string) {
   await supabase.from('book_club_member').delete().eq('book_club_id', id);

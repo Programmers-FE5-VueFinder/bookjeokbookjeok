@@ -75,6 +75,10 @@ const router = createBrowserRouter([
         path: '/create-post',
         Component: CreatePost,
       },
+      {
+        path: '/create-post/:bookclub_id',
+        Component: CreatePost,
+      },
     ],
   },
   {
