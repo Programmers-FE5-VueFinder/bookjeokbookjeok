@@ -1,5 +1,5 @@
 import './quillOverride.ts';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ReactQuillEditor from './ReactQuillEditor';
 import { MdArrowBack } from 'react-icons/md';
 import { useNavigate, useParams } from 'react-router';
@@ -11,6 +11,7 @@ import BookRating from './BookRating';
 import CategorySelect from './CategorySelect';
 // import supabase from '../../../utils/supabase';
 import { createPost } from '../../../apis/post';
+import { isLoggedIn } from '../../../apis/auth.ts';
 // import { useAuthStore } from '../../../store/authStore';
 
 export default function WritePost({
@@ -20,8 +21,14 @@ export default function WritePost({
 }) {
   const navigate = useNavigate();
 
-  // const isLogin = useAuthStore((state) => state.isLogin);
-  // if (!isLogin) navigate('/');
+  useEffect(() => {
+    // const isLogIn = useAuthStore((state) => state.isLogin);
+    // const oauthLogIn = async () => {
+    //   const result = await isLoggedIn();
+    //   return result;
+    // };
+    // if (!isLogIn && oauthLogIn()) navigate('/');
+  }, []);
 
   const path = useParams();
 
