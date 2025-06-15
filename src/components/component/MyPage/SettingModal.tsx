@@ -4,19 +4,27 @@ import { FaGear } from 'react-icons/fa6';
 import ProfileImg from './ProfileImg';
 import { useProfileStore } from '../../../store/profileStore';
 import { useAuthStore } from '../../../store/authStore';
-import supabase, { STORAGE_BASE_URL } from '../../../utils/supabase';
-
-console.log('✅✅✅ SettingModal 최종 리팩토링 코드 실행됨 (버전 체크) ✅✅✅');
+import supabase from '../../../utils/supabase';
+import {
+  useProfileImgStore,
+  type UserProfile,
+} from '../../../store/profileImgStore';
+import CheckModal from '../../common/CheckModal';
 
 interface SettingModalProps {
   onClose: () => void;
 }
 
 export default function SettingModal({ onClose }: SettingModalProps) {
+  const [openDelete, setOpenDelete] = useState<boolean>(false);
+
   const { session } = useAuthStore();
+  const { profileCache, setProfileToCache } = useProfileImgStore();
+  const currentUserCache = session?.user.id
+    ? profileCache[session.user.id]
+    : undefined;
+  const globalAvatarUrl = currentUserCache?.image; // 캐시된 이미지 URL
   const {
-    Image: globalAvatarUrl,
-    setProfileImage: setGlobalProfileImage,
     setProfileName: setGlobalProfileName,
     setProfileIntro: setGlobalProfileIntro,
   } = useProfileStore();
@@ -46,6 +54,16 @@ export default function SettingModal({ onClose }: SettingModalProps) {
     }
   };
 
+  const handleDeleteUser = async () => {
+    if (session?.user.id !== undefined) {
+      const { error } = await supabase
+        .from('profile')
+        .delete()
+        .eq('id', session?.user.id);
+      console.error(error);
+    }
+  };
+
   const handleSave = async () => {
     const user = session?.user;
     if (!user) {
@@ -54,6 +72,8 @@ export default function SettingModal({ onClose }: SettingModalProps) {
     }
 
     try {
+      const updatedProfileData: UserProfile = {};
+
       if (newName !== initialName || newIntro !== initialIntro) {
         const { error: textUpdateError } = await supabase
           .from('profile')
@@ -83,15 +103,16 @@ export default function SettingModal({ onClose }: SettingModalProps) {
           .eq('id', user.id);
         if (imageUpdateError) throw imageUpdateError;
 
-        const newImageUrl = `${STORAGE_BASE_URL}${newFilePath}?t=${new Date().getTime()}`;
-        setGlobalProfileImage(newImageUrl);
-
         const { data } = supabase.storage
           .from('image')
           .getPublicUrl(newFilePath);
-        setGlobalProfileImage(data.publicUrl);
+        const publicUrlWithCacheBust = `${data.publicUrl}?t=${new Date().getTime()}`;
+        updatedProfileData.image = publicUrlWithCacheBust;
       }
 
+      if (Object.keys(updatedProfileData).length > 0) {
+        setProfileToCache(user.id, updatedProfileData);
+      }
       onClose();
     } catch (error) {
       if (error instanceof Error) {
@@ -126,7 +147,7 @@ export default function SettingModal({ onClose }: SettingModalProps) {
   }, [session?.user]);
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay">
       <div
         className="relative flex h-[567px] w-[383px] flex-col items-center rounded-xl bg-white px-[20px] py-[18px] text-center"
         onClick={(e) => e.stopPropagation()}
@@ -142,9 +163,9 @@ export default function SettingModal({ onClose }: SettingModalProps) {
         </div>
 
         <div className="relative my-[20px]">
-          <ProfileImg
-            src={previewImage || globalAvatarUrl || '/default-avatar.png'}
-          />
+          <div className="size-[100px] overflow-hidden rounded-full">
+            <ProfileImg src={previewImage || globalAvatarUrl} />
+          </div>
           <label
             htmlFor="profileImg"
             className="absolute top-0 right-1 flex size-[25px] cursor-pointer items-center justify-center rounded-full border-3 border-white bg-gray-100 text-center"
@@ -185,11 +206,23 @@ export default function SettingModal({ onClose }: SettingModalProps) {
           >
             저장하기
           </button>
-          <button className="cursor-pointer text-[12px] text-gray-300">
+          <button
+            className="cursor-pointer text-[12px] text-gray-300"
+            onClick={() => setOpenDelete(true)}
+          >
             회원탈퇴
           </button>
         </div>
       </div>
+      {openDelete ? (
+        <div>
+          <CheckModal
+            content={'정말 회원 탈퇴 하시겠습니까?'}
+            onClose={() => setOpenDelete(false)}
+            click={handleDeleteUser()}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }

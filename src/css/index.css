@@ -35,7 +35,7 @@
     @apply rounded-sm border-1 border-gray-300 pl-[10px] text-start text-[14px] placeholder-[#CDC9C9] placeholder:font-bold focus:outline-none;
   }
   .modal-overlay {
-    @apply fixed top-0 left-0 flex h-[100%] w-[100%] items-center justify-center bg-[#000000]/50;
+    @apply fixed top-0 left-0 flex h-[100%] w-[100%] items-center justify-center bg-[#000000]/50 backdrop-blur-sm;
   }
   .errorButton {
     @apply h-[40px] w-[238px] text-[16px];

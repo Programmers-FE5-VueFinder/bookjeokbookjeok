@@ -1,16 +1,18 @@
 import { useEffect, useState } from 'react';
 import SkeletonCard from '../../common/CardSkeleton2';
-import BookCard from '../../common/BookCard';
+import BookMarkCard from '../MyPage/BookMarkCard';
 import type { BookMark } from '../../../pages/Profile';
 
 export default function BookMarkArea({
   post,
   profileImage,
   profileName,
+  id,
 }: {
   post: BookMark[] | null;
   profileImage: string | null;
   profileName: string | null;
+  id: string | undefined;
 }) {
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -39,15 +41,16 @@ export default function BookMarkArea({
             post?.map((item) => {
               {
                 return (
-                  <BookCard
+                  <BookMarkCard
                     profileImage={profileImage}
                     key={item.id}
-                    body={item.body}
-                    title={item.title}
+                    body={item.book_id}
+                    title={item.id}
                     nickname={profileName!}
                     createdAt={new Date(item.created_at).toLocaleDateString(
                       'ko-KR',
                     )}
+                    id={id}
                   />
                 );
               }

@@ -1,8 +1,8 @@
 import { FaRegComment, FaRegHeart } from 'react-icons/fa';
-import type { BookCardProps } from '../../types/type';
-import ProfileImg from '../component/MyPage/ProfileImg';
+import type { BookCardProps } from '../../../types/type';
+import ProfileImg from '../../component/MyPage/ProfileImg';
 
-export default function BookCard({
+export default function BookMarkCard({
   nickname,
   // badge = '',
   title,

@@ -96,13 +96,14 @@ export default function Header() {
                   </Link>
 
                   <div className="mx-auto w-[87px] border-t border-[#E9E9E9]"></div>
-
-                  <button
-                    className="flex w-full items-center justify-center px-4 py-2 text-[16px] font-medium text-black hover:bg-gray-100"
-                    onClick={handleLogout}
-                  >
-                    로그아웃
-                  </button>
+                  <Link to={'/'}>
+                    <button
+                      className="flex w-full items-center justify-center px-4 py-2 text-[16px] font-medium text-black hover:bg-gray-100"
+                      onClick={handleLogout}
+                    >
+                      로그아웃
+                    </button>
+                  </Link>
                 </div>
               )}
             </div>

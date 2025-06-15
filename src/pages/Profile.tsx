@@ -13,8 +13,6 @@ import DiaryArea from '../components/component/MyPage/DiaryArea';
 import CommunityArea from '../components/component/MyPage/CommunityArea';
 import BookClubArea from '../components/component/MyPage/BookClubArea';
 import BookMarkArea from '../components/component/MyPage/BookMarkArea';
-import { RiUserAddFill } from 'react-icons/ri';
-import { RiUserFollowFill } from 'react-icons/ri';
 
 type Post = {
   body: string;
@@ -34,12 +32,29 @@ export type BookMark = {
   user_id: string;
 };
 
+export type book_club = {
+  created_at: string;
+  id: string;
+  info: string | null;
+  is_recruiting: boolean;
+  name: string;
+  owner_id: string;
+};
+
+// type book_club_member = {
+//   book_club_id: string;
+//   created_at: string;
+//   id: string;
+//   user_id: string;
+// };
+
 export default function Profile() {
   const [openSetting, setOpenSetting] = useState<boolean>(false);
   const [follower, setFollower] = useState<number>(0);
   const [following, setFollowing] = useState<number>(0);
   const [post, setPost] = useState<Post[] | null>([]);
   const [bookMark, setBookMark] = useState<BookMark[] | null>([]);
+  const [bookClub, setBookClub] = useState<book_club[] | null>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedBtn, setSelectedBtn] = useState<string>('다이어리');
   const [content, setContent] = useState<string>('diary');
@@ -161,9 +176,6 @@ export default function Profile() {
         let followingNumber = 0;
         const followingData = follow!.map((follower) => follower.follower_id);
 
-        // console.log(session?.user);
-        // console.log(followerData);
-
         for (let i = 0; i < followingData.length; i++) {
           if (followingData[i] === userId) {
             followingNumber += 1;
@@ -203,25 +215,41 @@ export default function Profile() {
         } else if (content === 'bookmark') {
           setPost(bookMark!);
         }
+        console.log(posts);
         console.error(error);
       };
 
       const myBookmark = async () => {
         const { data: bookmark, error } = await supabase
           .from('bookmark')
-          .select('*');
-        console.log(bookmark);
+          .select('*')
+          .eq('user_id', userId!);
         setBookMark(bookmark);
         console.error(error);
       };
+
       const myBookClub = async () => {
-        const { data: book_club, error } = await supabase
+        const { data: book_club } = await supabase
           .from('book_club')
           .select('*');
 
-          
-        console.log(book_club);
-        console.error(error);
+        const { data: book_club_member } = await supabase
+          .from('book_club_member')
+          .select('*')
+          .eq('user_id', userId!);
+
+        const clubId = book_club_member?.filter((id) => id.user_id === userId);
+        const clubIds: string[] = [];
+        if (clubId?.length !== undefined) {
+          for (let i = 0; i < clubId?.length; i++) {
+            clubIds.push(clubId[i].book_club_id);
+          }
+        }
+
+        if (book_club?.length !== undefined)
+          for (let i = 0; i < book_club?.length; i++) {
+            setBookClub(book_club?.filter((club) => club.id === clubIds[i]));
+          }
       };
 
       await Promise.all([
@@ -234,23 +262,22 @@ export default function Profile() {
     };
 
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, content]);
 
   return (
     <>
       <div>
         {/* 프로필 에리어 */}
-        <div className="relative flex h-[350px] content-center justify-center shadow shadow-gray-200">
-          <div className="flex flex-col items-center justify-center text-center">
+        <div className="relative flex h-auto content-center justify-center shadow shadow-gray-200">
+          <div className="mt-[52px] mb-[89px] flex flex-col items-center justify-center text-center">
             {/* 프로필 이미지 */}
             <div className="relative size-[100px]">
               {loading ? (
                 <ProfileSkeleton />
               ) : (
-                <ProfileImg
-                  src={avatarUrl || session?.user.user_metadata.avatar_url}
-                />
+                <div className="justify-center overflow-hidden rounded-full">
+                  <ProfileImg id={userId} />
+                </div>
               )}
               {session?.user.id === userId ? (
                 <button
@@ -263,33 +290,35 @@ export default function Profile() {
                 </button>
               ) : null}
             </div>
-            <div className="mt-[14px] mb-[8px] flex items-center gap-[6px] font-bold">
+            <div className="mt-[14px] mb-[14px] flex items-center gap-[6px] font-bold">
               <span>{profileName} 님</span>
               <div className="size-[15px] rounded-full border-1"></div>
             </div>
-            <span className="mb-[8px]">{intro}</span>
+            <span className="mb-[14px]">{intro}</span>
 
             {session?.user.id !== userId ? (
               follow ? (
                 <button
-                  className="top-0 right-1 flex cursor-pointer items-center justify-center gap-[3px] rounded-full bg-gray-200 px-[5px] py-[3px]"
+                  className="top-0 right-1 flex h-[40px] w-[200px] cursor-pointer items-center justify-center gap-[3px] bg-gray-200"
                   onClick={handleFollowing}
                 >
-                  <RiUserFollowFill />
-                  <span>팔로잉</span>
+                  <span className="text-[16px] font-semibold text-[var(--color-black)]">
+                    팔로잉
+                  </span>
                 </button>
               ) : (
                 <button
-                  className="top-0 right-1 flex cursor-pointer items-center justify-center gap-[3px] rounded-full bg-[var(--color-main)] px-[5px] py-[3px]"
+                  className="top-0 right-1 flex h-[40px] w-[200px] cursor-pointer items-center justify-center gap-[3px] bg-[var(--color-main)]"
                   onClick={handleFollowing}
                 >
-                  <RiUserAddFill />
-                  <span>팔로우</span>
+                  <span className="text-[16px] font-semibold text-[var(--color-white)]">
+                    팔로우
+                  </span>
                 </button>
               )
             ) : null}
 
-            <div className="mt-[8px] flex">
+            <div className="mt-[14px] flex">
               <div className="mr-[25px]">
                 <span className="mr-[8px] text-[16px] font-semibold">
                   팔로워
@@ -333,6 +362,7 @@ export default function Profile() {
                   avatarUrl || session?.user.user_metadata.avatar_url
                 }
                 profileName={profileName}
+                id={userId}
               />
             ) : null}
             {content === 'community' ? (
@@ -342,15 +372,17 @@ export default function Profile() {
                   avatarUrl || session?.user.user_metadata.avatar_url
                 }
                 profileName={profileName}
+                id={userId}
               />
             ) : null}
             {content === 'bookclub' ? (
               <BookClubArea
-                post={post}
+                post={bookClub}
                 profileImage={
                   avatarUrl || session?.user.user_metadata.avatar_url
                 }
                 profileName={profileName}
+                id={userId}
               />
             ) : null}
             {content === 'bookmark' ? (
@@ -360,6 +392,7 @@ export default function Profile() {
                   avatarUrl || session?.user.user_metadata.avatar_url
                 }
                 profileName={profileName}
+                id={userId}
               />
             ) : null}
           </div>

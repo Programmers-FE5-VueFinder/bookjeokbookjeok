@@ -8,10 +8,12 @@ export default function DiaryArea({
   post,
   profileImage,
   profileName,
+  id
 }: {
   post: Post[] | null;
   profileImage: string | null;
   profileName: string | null;
+  id: string | undefined
 }) {
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -50,6 +52,7 @@ export default function DiaryArea({
                       createdAt={new Date(item.created_at).toLocaleDateString(
                         'ko-KR',
                       )}
+                      id={id}
                     />
                   </Link>
                 );
