@@ -4,7 +4,7 @@ import { IoMdInformationCircleOutline } from 'react-icons/io';
 import { IoMdPerson } from 'react-icons/io';
 import { IoMdPersonAdd } from 'react-icons/io';
 import { fetchBookClub, isBookClubOwner } from '../apis/book-club';
-import { useNavigate, useParams } from 'react-router';
+import { Link, useNavigate, useParams } from 'react-router';
 import UserCard from '../components/common/UserCard';
 
 export default function BookClub() {
@@ -84,28 +84,41 @@ export default function BookClub() {
         <div className="flex flex-col items-center justify-center bg-[#FAFAFA]">
           <div className="flex w-full justify-center text-wrap">
             <div className="mx-[100px] flex w-[900px] scroll-m-[200px] flex-col">
-              {isOwner && (
-                <>
-                  <div className="mt-[20px] flex flex-row gap-2">
-                    <button className="h-[41px] w-[107px] cursor-pointer rounded hover:border hover:border-[#DEDEDE] hover:bg-[#EDEDED]">
-                      모임 정보 수정
-                    </button>
+              {isOwner ? (
+                <div className="mt-[20px] flex flex-row justify-between">
+                  <div className="flex flex-row gap-2">
+                    <Link to={`/edit-bookclub/${bookclub_id}`}>
+                      <button className="h-[41px] w-[107px] cursor-pointer rounded hover:border hover:border-[#DEDEDE] hover:bg-[#EDEDED]">
+                        클럽 정보 수정
+                      </button>
+                    </Link>
                     <button className="h-[41px] w-[107px] cursor-pointer rounded hover:border hover:border-[#DEDEDE] hover:bg-[#EDEDED]">
                       모집 글 작성
                     </button>
                   </div>
-                  <div className="mt-[40px]">
-                    <div className="clubInfo">
-                      <IoMdPersonAdd />
-                      <p>
-                        가입 신청{' '}
-                        <span className="font-bold text-[#08C818]">0</span>명
-                      </p>
-                    </div>
-                    <div>{/* 가입 신청 목록 */}</div>
+                  <button className="h-[41px] w-[82px] cursor-pointer rounded text-red-500 hover:border hover:border-[#DEDEDE] hover:bg-[#EDEDED]">
+                    클럽 삭제
+                  </button>
+                </div>
+              ) : (
+                <>
+                  <div className="mt-[20px] flex flex-row justify-end">
+                    <button className="h-[41px] w-[82px] cursor-pointer rounded text-red-500 hover:border hover:border-[#DEDEDE] hover:bg-[#EDEDED]">
+                      클럽 탈퇴
+                    </button>
                   </div>
                 </>
               )}
+              <div className="mt-[40px]">
+                <div className="clubInfo">
+                  <IoMdPersonAdd />
+                  <p>
+                    가입 신청{' '}
+                    <span className="font-bold text-[#08C818]">0</span>명
+                  </p>
+                </div>
+                <div>{/* 가입 신청 목록 */}</div>
+              </div>
 
               <div className="mt-[40px]">
                 <div className="clubInfo">
@@ -113,7 +126,7 @@ export default function BookClub() {
                   <span>클럽 정보</span>
                 </div>
                 <span
-                  dangerouslySetInnerHTML={{ __html: bookclub!.info }}
+                  dangerouslySetInnerHTML={{ __html: bookclub!.info! }}
                 ></span>
               </div>
               <div
@@ -126,13 +139,13 @@ export default function BookClub() {
                   <p>
                     클럽 멤버{' '}
                     <span className="font-bold text-[#08C818]">
-                      {bookclub!.member.length}
+                      {bookclub!.member?.length}
                     </span>
                     명
                   </p>
                 </div>
                 <div className="flex flex-row gap-5">
-                  {bookclub!.member.map((member) => (
+                  {bookclub!.member?.map((member) => (
                     <UserCard key={member.id} user={member} />
                   ))}
                 </div>
