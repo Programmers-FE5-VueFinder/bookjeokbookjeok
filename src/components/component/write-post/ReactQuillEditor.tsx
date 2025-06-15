@@ -1,24 +1,41 @@
+import './customBlot.ts';
+import './quillOverride.ts';
 import supabase from '../../../utils/supabase.ts';
-import { Size } from './quillOverride.ts';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useEffect } from 'react';
 import '../../../css/reactQuillCustom.css';
 import { formats } from './quillAttribute.ts';
+import type { BookDetail } from '../../../types/book';
 
 export default function ReactQuillEditor({
   setValue,
   value,
+  selectedBook,
 }: {
   setValue: (value: string) => void;
   value: string;
+  selectedBook: BookDetail | null;
 }) {
   const quillRef = useRef<ReactQuill | null>(null);
   const modules = useMemo(() => {
     return {
       toolbar: {
         container: [
-          [{ size: Size.whitelist }],
+          [
+            {
+              size: [
+                '10px',
+                '12px',
+                '14px',
+                '16px',
+                '18px',
+                '20px',
+                '24px',
+                '32px',
+              ],
+            },
+          ],
           ['bold', 'italic', 'underline', 'strike'],
           [{ list: 'ordered' }],
           [{ align: [] }],
@@ -72,23 +89,21 @@ export default function ReactQuillEditor({
   };
 
   //트러블 슈팅-생명주기, 라이브러리 인스턴스 생성 시기
-  // useEffect(() => {
-  //   if (!selectedBook) return;
+  useEffect(() => {
+    if (!selectedBook) return;
 
-  //   setTimeout(() => {
-  //     if (!quillRef.current) return;
-  //     try {
-  //       const editor = quillRef.current.getEditor();
-  //       console.log(editor.getContents());
-  //       const html = ReactDOMServer.renderToStaticMarkup(
-  //         <BookHTML selectedBook={selectedBook} />,
-  //       );
-  //       editor.clipboard.dangerouslyPasteHTML(0, html);
-  //     } catch (e) {
-  //       console.error('에디터가 연결 되기 전에 접근:', e);
-  //     }
-  //   }, 0);
-  // }, [selectedBook]);
+    setTimeout(() => {
+      if (!quillRef.current) return;
+      const quill = quillRef!.current!.getEditor();
+
+      quill.insertEmbed(0, 'detailBook', {
+        bookId: selectedBook.isbn,
+        imgSrc: selectedBook.cover,
+        title: selectedBook.title,
+        author: selectedBook.author.split(' (')[0],
+      });
+    }, 0);
+  }, [selectedBook]);
 
   return (
     <>
@@ -98,7 +113,7 @@ export default function ReactQuillEditor({
           value={value}
           onChange={setValue}
           modules={modules}
-          formats={formats}
+          formats={['detailBook', ...formats]}
           theme="snow"
           placeholder="내용을 입력해주세요."
         />

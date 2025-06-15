@@ -13,11 +13,15 @@ export default function CategorySelect({
     e: React.MouseEvent<HTMLLIElement, MouseEvent>,
   ) => {
     e.stopPropagation();
+
     const text = e.currentTarget.textContent as string;
+
     if (text === '다이어리') {
       setCategory('diary');
-    } else {
-      setCategory('');
+    } else if (text === '북클럽') {
+      setCategory('book_club');
+    } else if (text === '자유채널') {
+      setCategory('community');
     }
 
     setSelectText(text);

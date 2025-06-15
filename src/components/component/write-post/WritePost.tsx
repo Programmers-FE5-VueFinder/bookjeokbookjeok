@@ -1,4 +1,4 @@
-// import './quillOverride.ts';
+import './quillOverride.ts';
 import { useRef, useState } from 'react';
 import ReactQuillEditor from './ReactQuillEditor';
 import { MdArrowBack } from 'react-icons/md';
@@ -6,9 +6,11 @@ import { useNavigate, useParams } from 'react-router';
 import { MdOutlineSearch } from 'react-icons/md';
 import BookSearchModal from '../BookSearchModal';
 import type { BookDetail } from '../../../types/book';
-import BookHTML from './BookHTML';
+import SelectBookInfo from './SelectBookInfo';
 import BookRating from './BookRating';
 import CategorySelect from './CategorySelect';
+// import supabase from '../../../utils/supabase';
+import { createPost } from '../../../apis/post';
 // import { useAuthStore } from '../../../store/authStore';
 
 export default function WritePost({
@@ -17,16 +19,14 @@ export default function WritePost({
   isCreateBookClub?: boolean;
 }) {
   const navigate = useNavigate();
-  // 로그인 안 된 유저가 접근시
+
   // const isLogin = useAuthStore((state) => state.isLogin);
   // if (!isLogin) navigate('/');
 
-  //path : diary, bookclub, freetalk
   const path = useParams();
 
-  const [seletText, setSelectText] = useState('채널선택');
   const [category, setCategory] = useState(path.category);
-  const [rating, setRating] = useState<number | null>(null);
+  const [rating, setRating] = useState<number | undefined>();
   const [value, setValue] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [selectedBook, setSeletedBook] = useState<BookDetail | null>(null);
@@ -35,36 +35,51 @@ export default function WritePost({
 
   const onClose = () => setShowModal(false);
 
-  const categoryChangeHandler = (
-    e: React.MouseEvent<HTMLLIElement, MouseEvent>,
-  ) => {
-    e.stopPropagation();
-    const text = e.currentTarget.textContent as string;
-    if (text === '다이어리') {
-      setCategory('diary');
-    } else {
-      setCategory('');
-    }
-
-    setSelectText(text);
-    setCategoryToggle((toggle) => !toggle);
-  };
-
-  const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+  const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const title = titleRef.current?.value;
     const body = value.toString();
 
+    const match = body.match(/<img[^>]+src="([^"]+)"[^>]*>/);
+    const src = match ? match[1] : null;
+    console.log(src);
+
     if (!title || !body) return; // toastify로 제목이나 내용을 모두 입력해 달라는 경고문구 추가
+
+    const bookInfo = {
+      id: selectedBook!.isbn,
+      star: rating,
+    };
+    const image = 'asdasdasd';
 
     switch (category) {
       case 'diary': {
-        // diary post 생성 api
+        try {
+          if (bookInfo.id) {
+            const response = await createPost(
+              title,
+              value,
+              image,
+              category,
+              bookInfo,
+            );
+            console.log(response);
+            console.log('되는건가?');
+          } else {
+            const response = await createPost(title, value, image, category);
+            console.log(response);
+            console.log('되나?');
+          }
+        } catch (e) {
+          console.log(e);
+        }
         return;
       }
       case 'community': {
         // community post 생성 api
+        const response = await createPost(title, value, image, category);
+        console.log(response);
         return;
       }
       case 'book-club': {
@@ -95,7 +110,7 @@ export default function WritePost({
               />
 
               {selectedBook ? (
-                <BookHTML
+                <SelectBookInfo
                   setShowModal={setShowModal}
                   setSeletedBook={setSeletedBook}
                   selectedBook={selectedBook}
@@ -112,9 +127,9 @@ export default function WritePost({
               )}
               {selectedBook && <BookRating setRating={setRating} />}
               <ReactQuillEditor
-                // bodyRef={bodyRef}
                 setValue={setValue}
                 value={value}
+                selectedBook={selectedBook}
               />
             </div>
             <div className="flex h-[60px] min-h-[60px] w-[100%] justify-center border-t border-t-[#D5D5D5]">
@@ -128,7 +143,7 @@ export default function WritePost({
                 </button>
                 <button
                   type="submit"
-                  onClick={() => console.log(value)}
+                  // onClick={() => console.log(value)}
                   className="cursor-pointer rounded-[5px] bg-[#F1F1F1] px-[23px] py-[8px] text-[14px] hover:bg-[#41D94D] hover:font-semibold hover:text-[#fff]"
                 >
                   발행하기

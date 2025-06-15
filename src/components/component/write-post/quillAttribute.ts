@@ -6,8 +6,7 @@ export const fontsize = [
   '18px',
   '20px',
   '24px',
-  '30px',
-  false,
+  '32px',
 ];
 
 export const palette = [

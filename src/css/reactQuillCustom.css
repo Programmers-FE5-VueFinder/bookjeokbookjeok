@@ -65,3 +65,62 @@
   margin-right: 10px !important;
   font-size: 16px !important;
 }
+.detailBook {
+  background-color: #f8f8f8;
+  display: flex;
+  width: fit-content;
+  height: fit-content;
+  align-items: center;
+  gap: 20px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+.imageWrapper {
+  width: fit-content;
+  height: fit-content;
+}
+.imageWrapper .bookImage {
+  width: 150px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+}
+.infoWrapper {
+  color: #202020;
+  font-size: 16px;
+  height: fit-content;
+}
+.bookTitle {
+  color: #333;
+  font-weight: bold;
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+/* font size 속성 */
+/* 트러블 이슈-react quill new가 select의 option 설정 값 변경은 안 해서 개발자 도구로 css로 하나 하나 접근해서 options의 값을 변경  */
+.ql-snow .ql-picker.ql-size .ql-picker-label::before {
+  content: attr(data-value);
+}
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='10px']::before {
+  content: '10px' !important;
+}
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='12px']::before {
+  content: '12px' !important;
+}
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='14px']::before {
+  content: '14px' !important;
+}
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='16px']::before {
+  content: '16px' !important;
+}
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='18px']::before {
+  content: '18px' !important;
+}
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='20px']::before {
+  content: '20px' !important;
+}
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='24px']::before {
+  content: '24px' !important;
+}
+.ql-snow .ql-picker.ql-size .ql-picker-item[data-value='32px']::before {
+  content: '32px' !important;
+}

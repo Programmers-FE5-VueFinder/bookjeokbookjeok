@@ -1,4 +1,4 @@
-import supabase from "../utils/supabase";
+import supabase from '../utils/supabase';
 
 /* 전체 게시물 조회 */
 export async function fetchPosts(category: string = 'all') {
@@ -7,10 +7,7 @@ export async function fetchPosts(category: string = 'all') {
       case 'all':
         return await supabase.from('post').select('*');
       case 'diary':
-        return await supabase
-          .from('post')
-          .select('*')
-          .eq('category', 'diary');
+        return await supabase.from('post').select('*').eq('category', 'diary');
       case 'community':
         return await supabase
           .from('post')
@@ -24,7 +21,7 @@ export async function fetchPosts(category: string = 'all') {
     }
   } catch (e) {
     console.error(e);
-    return { data: null, error: e};
+    return { data: null, error: e };
   }
 }
 
@@ -61,7 +58,7 @@ export async function createPost(
   book?: {
     id: string;
     star?: number;
-  }[],
+  },
 ) {
   const post = await supabase
     .from('post')
@@ -70,14 +67,12 @@ export async function createPost(
     .single();
 
   if (book) {
-    for (const b of book) {
-      await supabase.from('book_tag').insert({
-        book_id: b.id,
-        star: b.star,
-        reference_category: 'newPost.data!.category',
-        reference_id: 'newPost.data!.id',
-      });
-    }
+    await supabase.from('book_tag').insert({
+      book_id: book.id,
+      star: book.star,
+      reference_category: 'newPost.data!.category',
+      reference_id: 'newPost.data!.id',
+    });
   }
 
   return post.data!.id;
