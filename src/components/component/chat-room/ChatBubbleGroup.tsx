@@ -16,7 +16,7 @@ export default function ChatBubbleGroup({
   return (
     <>
       <div className="flex w-full flex-row gap-3">
-        {!isMy && <Avatar src={user.image} />}
+        {!isMy && <Avatar src={user.image!} />}
         <div className="flex w-full flex-col gap-1">
           {isMy ? <p>&nbsp;</p> : user.name}
           {message.map((m) => (
@@ -25,7 +25,7 @@ export default function ChatBubbleGroup({
             </>
           ))}
         </div>
-        {isMy && <Avatar src={user.image} />}
+        {isMy && <Avatar src={user.image!} />}
       </div>
     </>
   );

@@ -2,7 +2,7 @@ export declare global {
   interface User {
     id: string;
     name: string | null;
-    image: string;
+    image: string | null;
     intro: string | null;
     appellation: string | null;
     created_at: string;
@@ -10,7 +10,7 @@ export declare global {
   interface Bookclub {
     id: string;
     name: string;
-    info: string;
+    info: string | null;
     is_recruiting: boolean;
     created_at: string;
     member: User[];
