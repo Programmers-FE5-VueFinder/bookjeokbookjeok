@@ -1,29 +1,20 @@
 /* react-quill custom css */
-#toolbar {
-  border: none !important;
-  padding: 0 !important;
-  width: 50%;
+.ql-toolbar {
+  width: 100%;
+  padding: 15px 0 15px 0 !important;
+  padding-left: calc((100% - 1200px) / 2) !important;
   display: flex;
   align-items: center;
-  margin-left: calc((100% - 1200px) / 2);
-}
-#categorySelect {
-  margin-right: calc((100% - 1200px) / 2);
-}
-.customSelect {
-  display: block;
-}
-.ql-size {
-  line-height: 24px;
+  border: none !important;
+  border-bottom: 1px solid #efefef !important;
 }
 .quill {
-  border-top: 1px solid #ebebeb !important;
-  padding-top: 60px;
-  height: calc(100vh - 280px);
+  flex-grow: 1;
 }
 .ql-editor {
-  padding-left: 8px;
   -ms-overflow-style: none;
+  overflow-y: scroll !important;
+  font-family: 'noto-sans-kr', sans-serif;
 }
 .ql-editor::-webkit-scrollbar {
   width: 7px;
@@ -45,18 +36,7 @@
   border: none !important;
   margin: 0 auto !important;
   width: 1200px !important;
-}
-.searchbook {
-  width: 90px !important;
-  height: 15px !important;
-  display: flex !important;
-  justify-content: center;
-  align-items: center !important;
-  border-left: 1px solid #666666 !important;
-  border-right: 1px solid #666666 !important;
-  margin-left: 10px !important;
-  margin-right: 10px !important;
-  font-size: 16px !important;
+  height: calc(60px) !important;
 }
 .ql-category {
   -o-appearance: none;
@@ -72,57 +52,7 @@
   outline: none !important;
   background-color: #f1f1f1 !important;
 }
-
-/* react-quill custom css */
-#toolbar {
-  border: none !important;
-  padding: 0 !important;
-  width: 50%;
-  display: flex;
-  align-items: center;
-  margin-left: calc((100% - 1200px) / 2);
-}
-#categorySelect {
-  margin-right: calc((100% - 1200px) / 2);
-}
-.customSelect {
-  display: block;
-}
-.ql-size {
-  line-height: 24px;
-}
-.quill {
-  border-top: 1px solid #ebebeb !important;
-  padding-top: 60px;
-  height: calc(100vh - 280px);
-}
-.ql-editor {
-  padding-left: 8px;
-  -ms-overflow-style: none;
-}
-.ql-editor::-webkit-scrollbar {
-  width: 7px;
-}
-.ql-editor::-webkit-scrollbar-track {
-  display: none;
-}
-.ql-editor::-webkit-scrollbar-thumb {
-  background-color: rgba(99, 99, 99, 0.5);
-  border-radius: 5px;
-}
-.ql-editor::-webkit-scrollbar-button {
-  display: none;
-}
-.ql-editor::placeholder {
-  color: red !important;
-}
-.ql-container {
-  border: none !important;
-  margin: 0 auto !important;
-  width: 1200px !important;
-}
-.searchbook,
-.vote {
+.ql-searchbook {
   width: 90px !important;
   height: 15px !important;
   display: flex !important;
@@ -133,19 +63,4 @@
   margin-left: 10px !important;
   margin-right: 10px !important;
   font-size: 16px !important;
-}
-.ql-category {
-  -o-appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-
-  padding: 5px 10px;
-  background-color: #f1f1f1;
-  border-radius: 5px;
-  outline: none;
-}
-.ql-category option {
-  outline: none !important;
-  background-color: #f1f1f1 !important;
 }

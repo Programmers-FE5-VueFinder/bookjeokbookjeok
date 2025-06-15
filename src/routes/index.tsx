@@ -12,6 +12,10 @@ import Notification from '../pages/Notification';
 import SearchResult from '../pages/SearchResult';
 import ChannelLayout from './layouts/ChannelLayout';
 import { fetchUserData } from './loader/auth.loader';
+import CreatePostLayout from './layouts/CreatPostLayout';
+import BookClub from '../pages/BookClub';
+import CreateBookClub from '../pages/CreateBookClub';
+import BookClubChat from '../pages/BookClubChat';
 
 const router = createBrowserRouter([
   {
@@ -41,7 +45,7 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: '/profile',
+        path: '/profile/:userId',
         Component: Profile,
       },
       // {
@@ -64,11 +68,27 @@ const router = createBrowserRouter([
         path: '/search',
         Component: SearchResult,
       },
+      {
+        path: '/create-bookclub',
+        Component: CreateBookClub,
+      },
+      {
+        path: '/bookclub/:bookclub_id',
+        Component: BookClub,
+      },
+      {
+        path: '/create-post',
+        Component: CreatePost,
+      },
     ],
   },
   {
-    path: '/create-post/:category',
-    Component: CreatePost,
+    path: '/bookclub/:bookclub_id/chat',
+    Component: BookClubChat,
+  },
+  {
+    path: '/bookclub/:bookclub_id/chat',
+    Component: BookClubChat,
   },
   {
     path: '*',

@@ -1,110 +1,100 @@
-import { useRef, useState } from 'react';
-import { useParams } from 'react-router';
+import supabase from '../../../utils/supabase.ts';
+import { Size } from './quillOverride.ts';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
+import { useRef } from 'react';
 import '../../../css/reactQuillCustom.css';
-import { IoIosArrowDown } from 'react-icons/io';
+import { formats } from './quillAttribute.ts';
 
-// const Size = Quill.import('attributors/style/size') as any;
-// Size.whitelist = fontsize;
-// Quill.register(Size, true);
-
-// const colors = Quill.import('attributors/style/color') as any;
-// Quill.register(colors, true);
-
-const CustomToolbar = ({ category }: { category: string | undefined }) => (
-  <div id="toolbar">
-    <button className="ql-bold" />
-    <button className="ql-italic" />
-    <button className="ql-underline" />
-    <button className="ql-strike" />
-    <button className="ql-image" />
-    {category === 'freetalk' && <button className="vote">투표하기</button>}
-    <select className="ql-size" defaultValue="medium">
-      <option value="small">Small</option>
-      <option value="medium">Medium</option>
-      <option value="large">Large</option>
-      <option value="huge">Huge</option>
-    </select>
-    {category === 'diary' && <button className="searchbook">도서찾기</button>}
-  </div>
-);
-
-export default function ReactQuillEditor() {
-  //path : diary, bookclub, freetalk
-  const path = useParams();
-
-  const quillRef = useRef(null);
-  const [value, setValue] = useState('');
-  const [category, setCategory] = useState(path.category);
-  const [categoryToggle, setCategoryToggle] = useState(false);
-  const [searchToggle, setSearchToggle] = useState(false);
-
-  const categoryToggleHandler = (
-    e: React.MouseEvent<HTMLLIElement, MouseEvent>,
-  ) => {
-    e.stopPropagation();
-    const text = e.target.textContent;
-
-    if (text === '다이어리') setCategory('diary');
-    if (text === '독서모임') setCategory('bookclub');
-    if (text === '자유채널') setCategory('freetalk');
-
-    setCategoryToggle(false);
-  };
-
-  const formats = ['bold', 'italic', 'underline', 'strike', 'image', 'size'];
-
+export default function ReactQuillEditor({
+  setValue,
+  value,
+}: {
+  setValue: (value: string) => void;
+  value: string;
+}) {
+  const quillRef = useRef<ReactQuill | null>(null);
   const modules = {
     toolbar: {
-      container: '#toolbar',
+      container: [
+        [{ size: Size.whitelist }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ list: 'ordered' }],
+        [{ align: [] }],
+        [{ color: [] }],
+        ['image'],
+      ],
       handlers: {
-        //custom tool handler 지정
+        image: () => {
+          imageHandler();
+        },
       },
     },
   };
+
+  const imageHandler = async () => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+
+    console.log('작동 중');
+
+    input.onchange = async () => {
+      console.log('onChange 첫 동작');
+      if (!input.files || input.files.length === 0) return;
+      const file = input.files[0];
+      const safeFileName = encodeURIComponent(file.name);
+      const fileName = `public/posts/${Date.now()}_${safeFileName}`;
+
+      console.log('onChange 중간 동작');
+
+      const { data, error } = await supabase.storage
+        .from('images')
+        .upload(fileName, file, {
+          contentType: file.type,
+          upsert: true,
+        });
+
+      if (error) {
+        console.error('Upload error:', error.message);
+        return;
+      }
+
+      console.log(data);
+
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from('images').getPublicUrl(fileName);
+
+      const quill = quillRef!.current!.getEditor();
+      const range = quill.getSelection();
+      quill.insertEmbed(range!.index, 'image', publicUrl);
+    };
+  };
+
+  //트러블 슈팅-생명주기, 라이브러리 인스턴스 생성 시기
+  // useEffect(() => {
+  //   if (!selectedBook) return;
+
+  //   setTimeout(() => {
+  //     if (!quillRef.current) return;
+  //     try {
+  //       const editor = quillRef.current.getEditor();
+  //       console.log(editor.getContents());
+  //       const html = ReactDOMServer.renderToStaticMarkup(
+  //         <BookHTML selectedBook={selectedBook} />,
+  //       );
+  //       editor.clipboard.dangerouslyPasteHTML(0, html);
+  //     } catch (e) {
+  //       console.error('에디터가 연결 되기 전에 접근:', e);
+  //     }
+  //   }, 0);
+  // }, [selectedBook]);
+
   return (
     <>
-      <div className="flex grow flex-col">
-        <div className="flex h-[50px] items-center justify-between">
-          <CustomToolbar category={category} />
-          {/* <select id="categorySelect" name="">
-            <option value="다이어리">다이어리</option>
-            <option value="독서모임">독서모임</option>
-            <option value="자유채널">자유채널</option>
-          </select> */}
-          <div
-            id="categorySelect"
-            onClick={() => setCategoryToggle(true)}
-            className="relative flex cursor-pointer items-center justify-center gap-[4px] rounded-[5px] bg-[#F1F1F1] px-[10px] py-[2px] text-[14px]"
-          >
-            채널 선택 <IoIosArrowDown />
-            {categoryToggle && (
-              <div className="bg-red absolute top-[25px] z-1 w-full rounded-br-[5px] rounded-bl-[5px] bg-[#fff]">
-                <ul>
-                  <li
-                    onClick={(e) => categoryToggleHandler(e)}
-                    className="cursor-pointer px-[10px] py-[5px] hover:bg-[#f1f1f1]"
-                  >
-                    다이어리
-                  </li>
-                  <li
-                    onClick={(e) => categoryToggleHandler(e)}
-                    className="cursor-pointer px-[10px] py-[5px] hover:bg-[#f1f1f1]"
-                  >
-                    독서모임
-                  </li>
-                  <li
-                    onClick={(e) => categoryToggleHandler(e)}
-                    className="cursor-pointer rounded-br-[4px] rounded-bl-[4px] px-[10px] py-[5px] hover:bg-[#f1f1f1]"
-                  >
-                    자유채널
-                  </li>
-                </ul>
-              </div>
-            )}
-          </div>
-        </div>
+      <div className="flex grow-1 flex-col">
         <ReactQuill
           ref={quillRef}
           value={value}
