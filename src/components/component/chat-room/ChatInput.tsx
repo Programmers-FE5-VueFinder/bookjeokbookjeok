@@ -1,6 +1,6 @@
 import { IoSend } from 'react-icons/io5';
 
-export default function ChatInput() {
+export default function ChatInput({ bookclub_id }: { bookclub_id: string }) {
   const sendMessage = () => {};
 
   return (

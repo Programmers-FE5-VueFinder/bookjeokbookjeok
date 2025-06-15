@@ -14,6 +14,15 @@ export async function isLoggedIn() {
   return !!session;
 }
 
+/* 로그인 유저 id */
+export async function fetchAuthId() {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  return user ? user.id : '';
+}
+
 /* 구글 로그인 */
 export async function googleLogin() {
   await supabase.auth.signInWithOAuth({
