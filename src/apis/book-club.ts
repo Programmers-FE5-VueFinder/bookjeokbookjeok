@@ -58,7 +58,7 @@ export async function editBookClub(
 ) {
   const book_club = await supabase
     .from('book_club')
-    .update({ id: id, name: name, info: info })
+    .update({ name: name, info: info })
     .eq('id', id)
     .select()
     .single();
@@ -67,7 +67,11 @@ export async function editBookClub(
 }
 
 /* 북클럽 삭제 */
-export async function deleteBookClub(id: string) {}
+export async function deleteBookClub(id: string) {
+  await supabase.from('book_club_chat').delete().eq('book_club_id', id);
+  await supabase.from('book_club_member').delete().eq('book_club_id', id);
+  await supabase.from('book_club').delete().eq('id', id);
+}
 
 /* 북클럽 채팅 조회 */
 export async function fetchChat(id: string) {

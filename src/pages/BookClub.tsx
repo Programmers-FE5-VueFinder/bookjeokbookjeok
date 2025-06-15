@@ -3,7 +3,11 @@ import { twMerge } from 'tailwind-merge';
 import { IoMdInformationCircleOutline } from 'react-icons/io';
 import { IoMdPerson } from 'react-icons/io';
 import { IoMdPersonAdd } from 'react-icons/io';
-import { fetchBookClub, isBookClubOwner } from '../apis/book-club';
+import {
+  deleteBookClub,
+  fetchBookClub,
+  isBookClubOwner,
+} from '../apis/book-club';
 import { Link, useNavigate, useParams } from 'react-router';
 import UserCard from '../components/common/UserCard';
 
@@ -22,6 +26,11 @@ export default function BookClub() {
   const handleContentButton = (e: React.MouseEvent<HTMLButtonElement>) => {
     const { name } = e.currentTarget;
     setSelectedBtn(name);
+  };
+
+  const handleDeleteBookclub = () => {
+    navigate('/');
+    deleteBookClub(bookclub_id!);
   };
 
   useEffect(() => {
@@ -96,7 +105,10 @@ export default function BookClub() {
                       모집 글 작성
                     </button>
                   </div>
-                  <button className="h-[41px] w-[82px] cursor-pointer rounded text-red-500 hover:border hover:border-[#DEDEDE] hover:bg-[#EDEDED]">
+                  <button
+                    className="h-[41px] w-[82px] cursor-pointer rounded text-red-500 hover:border hover:border-[#DEDEDE] hover:bg-[#EDEDED]"
+                    onClick={handleDeleteBookclub}
+                  >
                     클럽 삭제
                   </button>
                 </div>
