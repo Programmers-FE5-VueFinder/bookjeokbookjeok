@@ -5,22 +5,44 @@ import ChatInput from '../components/component/chat-room/ChatInput';
 import { useParams } from 'react-router';
 import { fetchChat } from '../apis/book-club';
 import { fetchAuthId } from '../apis/auth';
+import supabase from '../utils/supabase';
 
 export default function BookClubChat() {
   const [isLoading, setIsLoading] = useState(true);
 
   const bookclub_id = useParams().bookclub_id!;
-  const [myId, setMyId] = useState();
-  const [chats, setChats] = useState<Chat[]>();
+  const [myId, setMyId] = useState('');
+  const [chats, setChats] = useState<Chat[]>([]);
 
   useEffect(() => {
     const fetchChats = async () => {
-      setChats(await fetchChat(bookclub_id));
+      setChats((await fetchChat(bookclub_id)) ?? []);
       setMyId(await fetchAuthId());
       setIsLoading(false);
     };
     fetchChats();
-  }, [bookclub_id]);
+
+    const channel = supabase
+      .channel(`${bookclub_id}-chat`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'book_club_chat',
+          filter: `book_club_id=eq.${bookclub_id}`,
+        },
+        async () => {
+          const newChats = await fetchChat(bookclub_id);
+          setChats(newChats ?? []);
+        },
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel); // cleanup
+    };
+  }, [bookclub_id, chats]);
 
   console.log(chats);
 

@@ -12,7 +12,7 @@ export default function UserCard({
       <div className="flex h-[211px] w-[160px] flex-col items-center gap-2">
         <Avatar
           sx={{ width: 80, height: 80 }}
-          src={user.image}
+          src={user.image!}
           className="cursor-pointer shadow-[0px_3px_7px_rgba(0,0,0,0.25)]"
         />
         <p className="cursor-pointer font-medium">{user.name}</p>
