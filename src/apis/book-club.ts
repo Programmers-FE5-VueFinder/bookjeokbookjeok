@@ -58,7 +58,7 @@ export async function editBookClub(
 ) {
   const book_club = await supabase
     .from('book_club')
-    .update({ name: name, info: info })
+    .update({ id: id, name: name, info: info })
     .eq('id', id)
     .select()
     .single();
