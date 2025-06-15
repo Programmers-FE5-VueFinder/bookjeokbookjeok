@@ -13,7 +13,7 @@ export declare global {
     info: string | null;
     is_recruiting: boolean;
     created_at: string;
-    member: User[];
+    member: User[] | null;
   }
   interface BookclubMember {
     id: string;

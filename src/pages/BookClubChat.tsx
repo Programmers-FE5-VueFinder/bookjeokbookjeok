@@ -3,7 +3,7 @@ import ChatContent from '../components/component/chat-room/ChatContent';
 import ChatHeader from '../components/component/chat-room/ChatHeader';
 import ChatInput from '../components/component/chat-room/ChatInput';
 import { useParams } from 'react-router';
-import { fetchChat } from '../apis/book-club';
+import { fetchBookClub, fetchChat } from '../apis/book-club';
 import { fetchAuthId } from '../apis/auth';
 import supabase from '../utils/supabase';
 
@@ -13,6 +13,14 @@ export default function BookClubChat() {
   const bookclub_id = useParams().bookclub_id!;
   const [myId, setMyId] = useState('');
   const [chats, setChats] = useState<Chat[]>([]);
+  const [bookclub, setBookclub] = useState<Bookclub>();
+
+  useEffect(() => {
+    const fetchBookClubInfo = async () => {
+      setBookclub(await fetchBookClub(bookclub_id));
+    };
+    fetchBookClubInfo();
+  });
 
   useEffect(() => {
     const fetchChats = async () => {
@@ -44,14 +52,15 @@ export default function BookClubChat() {
     };
   }, [bookclub_id, chats]);
 
-  console.log(chats);
-
   if (isLoading) return <>로딩중..</>;
   return (
     <>
       <div className="flex h-screen w-screen justify-center">
         <div className="h-[100%] w-[80%] max-w-[1200px]">
-          <ChatHeader />
+          <ChatHeader
+            memberCount={bookclub!.member?.length ?? 0}
+            bookclubName={bookclub!.name}
+          />
           <ChatContent chats={chats} myId={myId} />
           <ChatInput bookclub_id={bookclub_id} />
         </div>
