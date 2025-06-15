@@ -1,7 +1,16 @@
+import { useRef } from 'react';
 import { IoSend } from 'react-icons/io5';
+import { sendChat } from '../../../apis/book-club';
 
 export default function ChatInput({ bookclub_id }: { bookclub_id: string }) {
-  const sendMessage = () => {};
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const sendMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    sendChat(bookclub_id, inputRef.current!.value);
+    inputRef.current!.value = '';
+  };
 
   return (
     <>
@@ -20,6 +29,7 @@ export default function ChatInput({ bookclub_id }: { bookclub_id: string }) {
       >
         <input
           type="text"
+          ref={inputRef}
           placeholder="의견을 남겨주세요"
           className="h-[80px] w-[100%] rounded-full pr-25 pl-10 text-2xl leading-[80px] placeholder-[#ADADAD] shadow-[0_0_4px_rgba(0,0,0,0.25)] focus:outline-[#08C818]"
         ></input>

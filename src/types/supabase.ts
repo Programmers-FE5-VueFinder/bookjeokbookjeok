@@ -115,7 +115,7 @@ export type Database = {
           created_at?: string;
           id?: string;
           message: string;
-          user_id: string;
+          user_id?: string;
         };
         Update: {
           book_club_id?: string;
