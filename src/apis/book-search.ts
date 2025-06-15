@@ -4,9 +4,6 @@ const TTBKey = import.meta.env.VITE_TTB_KEY;
 
 const baseParams = {
   ttbkey: TTBKey,
-  Cover: 'Big',
-  MaxResults: 10,
-  start: 1,
   SearchTarget: 'Book',
   output: 'JS',
   Version: '20131101',
@@ -17,6 +14,9 @@ export const searchBooks = async (query: string) => {
   const params = {
     ...baseParams,
     Query: query,
+    MaxResults: 10,
+    Cover: 'Big',
+    start: 1,
     QueryType: 'Title',
   };
 
@@ -59,4 +59,3 @@ export const getBestsellerBooks = async () => {
 // Small : 작은 크기 : 너비 75px
 // Mini : 매우 작은 크기 : 너비 65px
 // None : 없음
-
