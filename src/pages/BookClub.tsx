@@ -7,6 +7,7 @@ import {
   deleteBookClub,
   fetchBookClub,
   isBookClubOwner,
+  leaveBookClub,
 } from '../apis/book-club';
 import { Link, useNavigate, useParams } from 'react-router';
 import UserCard from '../components/common/UserCard';
@@ -31,6 +32,11 @@ export default function BookClub() {
   const handleDeleteBookclub = () => {
     navigate('/');
     deleteBookClub(bookclub_id!);
+  };
+
+  const handleLeaveBookclub = () => {
+    navigate('/');
+    leaveBookClub(bookclub_id!);
   };
 
   useEffect(() => {
@@ -115,7 +121,10 @@ export default function BookClub() {
               ) : (
                 <>
                   <div className="mt-[20px] flex flex-row justify-end">
-                    <button className="h-[41px] w-[82px] cursor-pointer rounded text-red-500 hover:border hover:border-[#DEDEDE] hover:bg-[#EDEDED]">
+                    <button
+                      className="h-[41px] w-[82px] cursor-pointer rounded text-red-500 hover:border hover:border-[#DEDEDE] hover:bg-[#EDEDED]"
+                      onClick={handleLeaveBookclub}
+                    >
                       클럽 탈퇴
                     </button>
                   </div>

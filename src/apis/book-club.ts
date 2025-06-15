@@ -73,6 +73,11 @@ export async function deleteBookClub(id: string) {
   await supabase.from('book_club').delete().eq('id', id);
 }
 
+/* 북클럽 탈퇴 */
+export async function leaveBookClub(id: string) {
+  await supabase.from('book_club_member').delete().eq('book_club_id', id);
+}
+
 /* 북클럽 채팅 조회 */
 export async function fetchChat(id: string) {
   const { data: chat } = await supabase
