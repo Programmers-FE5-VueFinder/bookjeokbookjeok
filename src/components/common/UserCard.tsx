@@ -1,4 +1,5 @@
 import Avatar from '@mui/material/Avatar';
+import { Link } from 'react-router';
 
 export default function UserCard({
   isRecruiting,
@@ -10,12 +11,16 @@ export default function UserCard({
   return (
     <>
       <div className="flex h-[211px] w-[160px] flex-col items-center gap-2">
-        <Avatar
-          sx={{ width: 80, height: 80 }}
-          src={user.image!}
-          className="cursor-pointer shadow-[0px_3px_7px_rgba(0,0,0,0.25)]"
-        />
-        <p className="cursor-pointer font-medium">{user.name}</p>
+        <Link to={`/profile/${user.id}`}>
+          <Avatar
+            sx={{ width: 80, height: 80 }}
+            src={user.image!}
+            className="cursor-pointer shadow-[0px_3px_7px_rgba(0,0,0,0.25)]"
+          />
+        </Link>
+        <Link to={`/profile/${user.id}`}>
+          <p className="cursor-pointer font-medium">{user.name}</p>
+        </Link>
         {isRecruiting ? (
           <div className="flex w-full flex-row justify-center gap-2">
             <button className="h-[30px] w-[60px] cursor-pointer rounded bg-[#08C818] pb-[2px] font-medium text-white">
