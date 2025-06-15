@@ -115,7 +115,7 @@ export type Database = {
           created_at?: string;
           id?: string;
           message: string;
-          user_id: string;
+          user_id?: string;
         };
         Update: {
           book_club_id?: string;
@@ -439,6 +439,7 @@ export type Database = {
         Row: {
           body: string;
           book_club_id: string | null;
+          book_id: string | null;
           category: string;
           created_at: string;
           id: string;
@@ -449,6 +450,7 @@ export type Database = {
         Insert: {
           body: string;
           book_club_id?: string | null;
+          book_id?: string | null;
           category: string;
           created_at?: string;
           id?: string;
@@ -459,6 +461,7 @@ export type Database = {
         Update: {
           body?: string;
           book_club_id?: string | null;
+          book_id?: string | null;
           category?: string;
           created_at?: string;
           id?: string;
@@ -472,6 +475,13 @@ export type Database = {
             columns: ['book_club_id'];
             isOneToOne: false;
             referencedRelation: 'book_club';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'post_book_id_fkey';
+            columns: ['book_id'];
+            isOneToOne: false;
+            referencedRelation: 'book';
             referencedColumns: ['id'];
           },
           {
@@ -530,13 +540,6 @@ export type Database = {
           user_id?: string;
         };
         Relationships: [
-          {
-            foreignKeyName: 'Review_user_fkey';
-            columns: ['user_id'];
-            isOneToOne: false;
-            referencedRelation: 'profile';
-            referencedColumns: ['id'];
-          },
           {
             foreignKeyName: 'review_user_id_fkey';
             columns: ['user_id'];

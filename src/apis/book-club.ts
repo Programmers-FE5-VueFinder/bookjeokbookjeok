@@ -91,3 +91,10 @@ export async function fetchChat(id: string) {
 
   return chat;
 }
+
+/* 북클럽 채팅 전송 */
+export async function sendChat(id: string, message: string) {
+  await supabase
+    .from('book_club_chat')
+    .insert({ book_club_id: id, message: message });
+}
