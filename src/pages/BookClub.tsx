@@ -106,9 +106,11 @@ export default function BookClub() {
                         클럽 정보 수정
                       </button>
                     </Link>
-                    <button className="h-[41px] w-[107px] cursor-pointer rounded hover:border hover:border-[#DEDEDE] hover:bg-[#EDEDED]">
-                      모집 글 작성
-                    </button>
+                    <Link to={`/create-post/${bookclub_id}`}>
+                      <button className="h-[41px] w-[107px] cursor-pointer rounded hover:border hover:border-[#DEDEDE] hover:bg-[#EDEDED]">
+                        모집 글 작성
+                      </button>
+                    </Link>
                   </div>
                   <button
                     className="h-[41px] w-[82px] cursor-pointer rounded text-red-500 hover:border hover:border-[#DEDEDE] hover:bg-[#EDEDED]"
