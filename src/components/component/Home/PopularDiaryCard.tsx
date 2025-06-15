@@ -47,7 +47,7 @@ export default function PopularDiaryCard ({ genre, title, content }: PopularDiar
       
         <div className="flex flex-col gap-y-[10px]">
             <h2 className="text-[16px] font-semibold text-[#06BE00]">{genreData.label}</h2>
-            <h2 className="text-[16px] font-semibold">{content?.split('. ')[0]}.</h2> {/* 일단 한 문장만 추출하도록 했음 */}
+            <h2 className="text-[16px] font-semibold">{content?.split('. ')[0]}.</h2> {/* 일단 첫 문장만 추출하도록 했음 */}
             <h1 className="text-[20[px] font-semibold">{title}</h1>
         </div>
     </div>

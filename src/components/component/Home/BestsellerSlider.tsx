@@ -1,17 +1,19 @@
 // 아래 @ts 주석 지우지 말아주세요!
 // @ts-expect-error Swiper autoplay CSS module is missing in types
 import 'swiper/css';
-
 import type SwiperCore from 'swiper';
 import { Autoplay } from 'swiper/modules';
+import BookPage from '../book-detail/BookPage';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { useState, useEffect, useRef } from 'react';
-import type { Bestsellers } from '../../../types/type';
+import type { BookDetail } from '../../../types/book';
 import { getBestsellerBooks } from '../../../apis/book-search';
 import { MdArrowBackIosNew, MdArrowForwardIos } from "react-icons/md";
 
 export default function BestsellerSlider () {
-  const [bestsellers, setBestsellers] = useState<Bestsellers[]>([]);
+  const [bestsellers, setBestsellers] = useState<BookDetail[]>([]);
+  const [selectedBook, setSelectedBook] = useState<BookDetail | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);  
   const [currentIndex, setCurrentIndex] = useState(1);
   const swiperRef = useRef<SwiperCore | null>(null);
 
@@ -58,7 +60,13 @@ export default function BestsellerSlider () {
               className="flex justify-center group"
             >
               {/* <p className="mt-2 text-center font-medium truncate">{book.title}</p> */}
-              <div className="flex flex-col items-center cursor-pointer relative">
+              <div 
+                className="flex flex-col items-center cursor-pointer relative"
+                onClick={() => {
+                  setSelectedBook(book);
+                  setIsModalOpen(true);
+                }}
+              >
                 <img
                   src={book.cover}
                   alt={book.title}
@@ -78,22 +86,29 @@ export default function BestsellerSlider () {
 
       {/* slide pagination */}
       <div className="flex justify-center">
-            <div className="flex justify-between w-[135px] h-[25px] text-[20px] font-medium mt-[30px]">
-              <button 
-                onClick={() => swiperRef.current?.slidePrev()}
-                className="flex justify-center items-center w-[25px] h-[25px] rounded-[5px] bg-[#FFFFFF]/50 cursor-pointer"
-              >
-                <MdArrowBackIosNew className="w-[16px]"/>
-              </button>
-              <h3 className="text-[20px] font-medium">{currentIndex} / {bestsellers.length}</h3>
-              <button 
-                onClick={() => swiperRef.current?.slideNext()}
-                className="flex justify-center items-center w-[25px] h-[25px] rounded-[5px] bg-[#FFFFFF]/50 cursor-pointer"
-              >
-                <MdArrowForwardIos className="w-[16px]"/>
-              </button>
-            </div>
-          </div>
+        <div className="flex justify-between w-[135px] h-[25px] text-[20px] font-medium mt-[30px]">
+          <button 
+            onClick={() => swiperRef.current?.slidePrev()}
+            className="flex justify-center items-center w-[25px] h-[25px] rounded-[5px] bg-[#FFFFFF]/50 cursor-pointer"
+          >
+            <MdArrowBackIosNew className="w-[16px]"/>
+          </button>
+          <h3 className="text-[20px] font-medium">{currentIndex} / {bestsellers.length}</h3>
+          <button 
+            onClick={() => swiperRef.current?.slideNext()}
+            className="flex justify-center items-center w-[25px] h-[25px] rounded-[5px] bg-[#FFFFFF]/50 cursor-pointer"
+          >
+            <MdArrowForwardIos className="w-[16px]"/>
+          </button>
+        </div>
+      </div>
+      {selectedBook && (
+        <BookPage
+          isOpen={isModalOpen}
+          closeModal={() => setIsModalOpen(false)}
+          bookDetail={selectedBook}
+        />
+      )}
     </div>
   );
 }

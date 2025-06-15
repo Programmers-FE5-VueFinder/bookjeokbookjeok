@@ -1,4 +1,5 @@
 import supabase from "../utils/supabase";
+import type { APIDiaryPost, Book } from "../types/type";
 
 /* 전체 게시물 조회 */
 export async function fetchPosts(category: string = 'all') {
@@ -122,31 +123,7 @@ export async function deletePost(id: string) {
   await supabase.from('post').delete().eq('id', id);
 }
 
-
-
 /* 금주의 인기 다이어리 */
-interface Book {
-  id: string;
-  categoryName: string | null;
-  title: string;
-  description: string | null;
-}
-
-interface Like {
-  id: string;
-  user_id: string;
-  reference_category: string;
-  reference_id: string;
-  created_at: string;
-}
-
-interface APIDiaryPost {
-  id: string;
-  category: string;
-  like: Like[];
-  book: Book | null;
-}
-
 export async function fetchPopularDiaries(): Promise<APIDiaryPost[]> {
   const { data, error } = await supabase
     .from('post')
@@ -163,7 +140,7 @@ export async function fetchPopularDiaries(): Promise<APIDiaryPost[]> {
     `)
     .eq('category', 'diary')
     .order('created_at', { ascending: false })
-    .limit(50); // 충분한 데이터를 확보하기 위해 limit을 10 → 50으로 조정
+    .limit(50); // limit 10 → 50으로 조정
 
   if (error || !data) {
     console.error('Failed to fetch popular diaries:', error);
@@ -198,6 +175,8 @@ export async function fetchPopularDiaries(): Promise<APIDiaryPost[]> {
   console.log('categoryName별 좋아요 최고 다이어리:', topPosts);
 
   return topPosts;
+}
+
 export async function getBookPost(bookId: string, from: number, to: number) {
   const { data, error } = await supabase
     .from('post')

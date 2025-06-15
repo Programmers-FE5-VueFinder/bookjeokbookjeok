@@ -261,7 +261,7 @@ export default function Home() {
                 key={post.id}
                 genre={post.book.categoryName}
                 title={post.book.title}
-                content={post.book.description}
+                content={post.book.subInfo?.subTitle ? post.book.subInfo?.subTitle : post.book.description}
               />
             ))
           )}
