@@ -9,6 +9,7 @@ import { IoMdClose } from 'react-icons/io';
 type ConsentKey = 'use' | 'personal' | 'marketing';
 
 export default function SignUpModal() {
+  // const [checkValid, setCheckValid] = useState(null);
   const [checked, setChecked] = useState(false);
   const [consent, setConsent] = useState({
     use: false,

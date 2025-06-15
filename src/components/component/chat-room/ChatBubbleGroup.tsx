@@ -3,11 +3,11 @@ import Avatar from '@mui/material/Avatar';
 
 export default function ChatBubbleGroup({
   isMy,
-  name,
+  user,
   message,
 }: {
   isMy: boolean;
-  name: string;
+  user: User;
   message: {
     message: string;
     time: string;
@@ -16,16 +16,16 @@ export default function ChatBubbleGroup({
   return (
     <>
       <div className="flex w-full flex-row gap-3">
-        {!isMy && <Avatar />}
+        {!isMy && <Avatar src={user.image} />}
         <div className="flex w-full flex-col gap-1">
-          {isMy ? <p>&nbsp;</p> : name}
+          {isMy ? <p>&nbsp;</p> : user.name}
           {message.map((m) => (
             <>
               <ChatBubble isMy={isMy} message={m.message} time={m.time} />
             </>
           ))}
         </div>
-        {isMy && <Avatar />}
+        {isMy && <Avatar src={user.image} />}
       </div>
     </>
   );

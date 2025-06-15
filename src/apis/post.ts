@@ -39,7 +39,6 @@ export async function fetchPostDetail(id: string) {
       category,
       like(*),
       comment(*),
-      vote(*),
       created_at
     `,
     )
@@ -51,29 +50,36 @@ export async function fetchPostDetail(id: string) {
 
 /* 게시물 생성 */
 export async function createPost(
+  user_id: string,
   title: string,
   body: string,
   image: string | null = null,
   category: 'diary' | 'community' | 'book_club',
-  book?: {
-    id: string;
-    star?: number;
-  },
+  book_id: string,
+  book_club_id?: string,
 ) {
   const post = await supabase
     .from('post')
-    .insert({ title: title, body: body, image: image, category: category })
+    .insert({
+      user_id: user_id,
+      title: title,
+      body: body,
+      image: image,
+      category: category,
+      book_id: book_id,
+      book_club_id: book_club_id,
+    })
     .select()
     .single();
 
-  if (book) {
-    await supabase.from('book_tag').insert({
-      book_id: book.id,
-      star: book.star,
-      reference_category: 'newPost.data!.category',
-      reference_id: 'newPost.data!.id',
-    });
-  }
+  // if (book) {
+  //   await supabase.from('book_tag').insert({
+  //     book_id: book.id,
+  //     star: book.star,
+  //     reference_category: 'newPost.data!.category',
+  //     reference_id: 'newPost.data!.id',
+  //   });
+  // }
 
   return post.data!.id;
 }
@@ -115,4 +121,30 @@ export async function deletePost(id: string) {
   await supabase.from('comment').delete().eq('post_id', id);
   await supabase.from('book_tag').delete().eq('reference_id', id);
   await supabase.from('post').delete().eq('id', id);
+}
+
+export async function getBookPost(bookId: string, from: number, to: number) {
+  const { data, error } = await supabase
+    .from('post')
+    .select(
+      `
+      id,
+      title,
+      body,
+      created_at,
+      user_id,
+      profile (
+        name,
+        image
+      )
+    `,
+    )
+    .eq('book_id', bookId)
+    .order('created_at', { ascending: false })
+    .range(from, to);
+  if (error) {
+    console.error('게시글  가져오기 실패:', error.message);
+    return [];
+  }
+  return data;
 }

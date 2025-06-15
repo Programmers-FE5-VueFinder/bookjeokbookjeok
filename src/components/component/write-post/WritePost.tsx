@@ -9,10 +9,11 @@ import type { BookDetail } from '../../../types/book';
 import SelectBookInfo from './SelectBookInfo';
 import BookRating from './BookRating';
 import CategorySelect from './CategorySelect';
-// import supabase from '../../../utils/supabase';
-import { createPost } from '../../../apis/post';
-import { isLoggedIn } from '../../../apis/auth.ts';
-// import { useAuthStore } from '../../../store/authStore';
+// import { createPost } from '../../../apis/post';
+import { useAuthStore } from '../../../store/authStore';
+import { fetchAuthId } from '../../../apis/auth.ts';
+import { createBookClub } from '../../../apis/book-club.ts';
+import supabase from '../../../utils/supabase';
 
 export default function WritePost({
   isCreateBookClub,
@@ -20,25 +21,31 @@ export default function WritePost({
   isCreateBookClub?: boolean;
 }) {
   const navigate = useNavigate();
-
-  useEffect(() => {
-    // const isLogIn = useAuthStore((state) => state.isLogin);
-    // const oauthLogIn = async () => {
-    //   const result = await isLoggedIn();
-    //   return result;
-    // };
-    // if (!isLogIn && oauthLogIn()) navigate('/');
-  }, []);
-
   const path = useParams();
-
   const [category, setCategory] = useState(path.category);
   const [rating, setRating] = useState<number | undefined>();
   const [value, setValue] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [selectedBook, setSeletedBook] = useState<BookDetail | null>(null);
-
   const titleRef = useRef<HTMLInputElement>(null);
+
+  const isLogIn = useAuthStore((state) => state.isLogin);
+  const session = useAuthStore((state) => state.session);
+
+  //id 갑 가져오기
+  let userId: string;
+  async function as() {
+    userId = await fetchAuthId();
+  }
+  as();
+
+  // useEffect(() => {
+  //   //비로그인 후원 메인으로 리다이렉트
+  //   setTimeout(() => {
+  //     console.log(isLogIn);
+  //     console.log(session);
+  //   }, 0);
+  // }, []);
 
   const onClose = () => setShowModal(false);
 
@@ -47,10 +54,11 @@ export default function WritePost({
 
     const title = titleRef.current?.value;
     const body = value.toString();
+    const id = String(Date.now());
 
+    //정규식으로 썸네일 뽑기
     const match = body.match(/<img[^>]+src="([^"]+)"[^>]*>/);
-    const src = match ? match[1] : null;
-    console.log(src);
+    const image = match ? match[1] : null;
 
     if (!title || !body) return; // toastify로 제목이나 내용을 모두 입력해 달라는 경고문구 추가
 
@@ -58,26 +66,25 @@ export default function WritePost({
       id: selectedBook!.isbn,
       star: rating,
     };
-    const image = 'asdasdasd';
+
+    const post = {
+      title: title,
+      body: body,
+      user_id: userId, // Supabase Auth의 user.id
+      image: image, // 이미지 없으면 null 또는 빈 문자열
+      category: 'diary', // 선택적으로 사용할 수 있음
+      // created_at: Date.now(),
+      // book_id: bookInfo.id,
+    };
+
+    console.log(image, userId, bookInfo.id);
 
     switch (category) {
       case 'diary': {
         try {
-          if (bookInfo.id) {
-            const response = await createPost(
-              title,
-              value,
-              image,
-              category,
-              bookInfo,
-            );
-            console.log(response);
-            console.log('되는건가?');
-          } else {
-            const response = await createPost(title, value, image, category);
-            console.log(response);
-            console.log('되나?');
-          }
+          const { data, error } = await supabase.from('post').insert([post]);
+          console.log(data);
+          console.log(error);
         } catch (e) {
           console.log(e);
         }
@@ -85,8 +92,6 @@ export default function WritePost({
       }
       case 'community': {
         // community post 생성 api
-        const response = await createPost(title, value, image, category);
-        console.log(response);
         return;
       }
       case 'book-club': {
@@ -94,7 +99,8 @@ export default function WritePost({
         return;
       }
       default: {
-        // book-club 생성 api
+        const bookclub_id = await createBookClub(title, body);
+        navigate(`/bookclub/${bookclub_id}`);
       }
     }
   };
