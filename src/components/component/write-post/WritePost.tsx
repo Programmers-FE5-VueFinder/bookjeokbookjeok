@@ -1,5 +1,5 @@
 // import './quillOverride.ts';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ReactQuillEditor from './ReactQuillEditor';
 import { IoIosArrowDown } from 'react-icons/io';
 import { MdArrowBack } from 'react-icons/md';
@@ -9,7 +9,11 @@ import { FaStar } from 'react-icons/fa';
 import BookSearchModal from '../BookSearchModal';
 import type { BookDetail } from '../../../types/book';
 import BookHTML from './BookHTML';
-import { createBookClub } from '../../../apis/book-club';
+import {
+  createBookClub,
+  editBookClub,
+  fetchBookClub,
+} from '../../../apis/book-club';
 
 export default function WritePost({
   isCreateBookClub,
@@ -18,6 +22,7 @@ export default function WritePost({
 }) {
   //path : diary, bookclub, freetalk
   const path = useParams();
+  const bookclubId = path.bookclub_id;
   const navigate = useNavigate();
 
   const [seletText, setSelectText] = useState('채널선택');
@@ -56,6 +61,11 @@ export default function WritePost({
 
     if (!title || !body) return; // toastify로 제목이나 내용을 모두 입력해 달라는 경고문구 추가
 
+    /* 북클럽 수정 */
+    if (bookclubId) {
+      editBookClub(bookclubId, title, body);
+    }
+
     switch (category) {
       case 'diary': {
         // diary post 생성 api
@@ -75,6 +85,17 @@ export default function WritePost({
       }
     }
   };
+
+  useEffect(() => {
+    if (bookclubId) {
+      const setBookClubInfo = async () => {
+        const bookclub = await fetchBookClub(bookclubId);
+        titleRef!.current!.value = bookclub.name;
+        setValue(bookclub.info!);
+      };
+      setBookClubInfo();
+    }
+  }, [bookclubId]);
 
   return (
     <>
