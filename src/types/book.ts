@@ -26,3 +26,14 @@ export interface BookDetail {
     itemPage: number;
   };
 }
+
+export interface Review {
+  id: string;
+  review: string;
+  date: string;
+  rating: number;
+  author: {
+    name: string;
+    image: string | null;
+  };
+}

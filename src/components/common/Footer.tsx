@@ -14,9 +14,15 @@ export default function Footer() {
             <span>강하영</span>
             <span>이준호</span>
           </div>
-          <button>
-            <FaGithub className="text-[30px] text-[#fff]" />
-          </button>
+          <Link
+            to={
+              'https://github.com/Programmers-FE5-VueFinder/bookjeokbookjeok/tree/main'
+            }
+          >
+            <button className="cursor-pointer">
+              <FaGithub className="text-[30px] text-[#fff]" />
+            </button>
+          </Link>
         </div>
       </footer>
     </>

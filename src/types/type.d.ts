@@ -56,4 +56,44 @@ export interface PostDetail extends Post {
     }
     like: PostDetailResponse['like'];
     comment: PostDetailResponse['comment'];
+};
+
+export interface PopularDiaryCardProps {
+    genre: string | null;  
+    title: string;
+    content: string | null | undefined;
+};
+
+interface DiaryPost {
+  id: string;
+  category: string;
+  like: Like[];
+  book: Book;
 }
+
+/* 금주의 인기 다이어리 */
+interface Book {
+  id: string;
+  categoryName: string | null;
+  title: string;
+  description: string | null;
+  subInfo?: {
+    subTitle: string;
+  }
+}
+
+interface Like {
+  id: string;
+  user_id: string;
+  reference_category: string;
+  reference_id: string;
+  created_at: string;
+}
+
+interface APIDiaryPost {
+  id: string;
+  category: string;
+  like: Like[];
+  book: Book | null;
+}
+
