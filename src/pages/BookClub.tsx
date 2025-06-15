@@ -47,7 +47,6 @@ export default function BookClub() {
     };
     fetchBookclub();
   }, [bookclub_id]);
-  console.log(bookclub);
 
   useEffect(() => {
     if (selectedBtn === '클럽 멤버') {
