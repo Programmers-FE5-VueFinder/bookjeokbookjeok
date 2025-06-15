@@ -287,8 +287,22 @@ export default function Profile() {
               <span>{profileName} 님</span>
               <div className="size-[15px] rounded-full border-1"></div>
             </div>
-            <span className="mb-[14px]">{intro}</span>
+            <span>{intro}</span>
 
+            <div className="mt-[14px] mb-[14px] flex">
+              <div className="mr-[25px]">
+                <span className="mr-[8px] text-[16px] font-semibold">
+                  팔로워
+                </span>
+                <span className="text-[16px]">{follower}</span>
+              </div>
+              <div>
+                <span className="mr-[8px] text-[16px] font-semibold">
+                  팔로잉
+                </span>
+                <span className="text-[16px]">{following}</span>
+              </div>
+            </div>
             {session?.user.id !== userId ? (
               follow ? (
                 <button
@@ -310,21 +324,6 @@ export default function Profile() {
                 </button>
               )
             ) : null}
-
-            <div className="mt-[14px] flex">
-              <div className="mr-[25px]">
-                <span className="mr-[8px] text-[16px] font-semibold">
-                  팔로워
-                </span>
-                <span className="text-[16px]">{follower}</span>
-              </div>
-              <div>
-                <span className="mr-[8px] text-[16px] font-semibold">
-                  팔로잉
-                </span>
-                <span className="text-[16px]">{following}</span>
-              </div>
-            </div>
           </div>
           {/* 버튼 에리어 */}
           <div className="absolute bottom-0 flex h-[40px] w-full content-center items-center justify-center">
