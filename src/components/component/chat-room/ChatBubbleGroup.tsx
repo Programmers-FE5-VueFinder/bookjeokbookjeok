@@ -10,6 +10,7 @@ export default function ChatBubbleGroup({
   isMy: boolean;
   user: User;
   message: {
+    id: string;
     message: string;
     time: string;
   }[];
@@ -25,9 +26,12 @@ export default function ChatBubbleGroup({
         <div className="flex w-full flex-col gap-1">
           {isMy ? <p>&nbsp;</p> : user.name}
           {message.map((m) => (
-            <>
-              <ChatBubble isMy={isMy} message={m.message} time={m.time} />
-            </>
+            <ChatBubble
+              isMy={isMy}
+              message={m.message}
+              time={m.time}
+              key={m.id}
+            />
           ))}
         </div>
         {isMy && (

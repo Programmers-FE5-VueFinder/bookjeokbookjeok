@@ -16,19 +16,19 @@ export default function BookClubChat() {
   const [bookclub, setBookclub] = useState<Bookclub>();
 
   useEffect(() => {
-    const fetchBookClubInfo = async () => {
-      setBookclub(await fetchBookClub(bookclub_id));
-    };
-    fetchBookClubInfo();
-  }, [bookclub_id]);
-
-  useEffect(() => {
-    const fetchChats = async () => {
-      setChats((await fetchChat(bookclub_id)) ?? []);
-      setMyId(await fetchAuthId());
+    const fetchAll = async () => {
+      const [bookclubData, chatData, authId] = await Promise.all([
+        fetchBookClub(bookclub_id),
+        fetchChat(bookclub_id),
+        fetchAuthId(),
+      ]);
+      setBookclub(bookclubData);
+      setChats(chatData ?? []);
+      setMyId(authId);
       setIsLoading(false);
     };
-    fetchChats();
+
+    fetchAll();
 
     const channel = supabase
       .channel(`${bookclub_id}-chat`)
@@ -48,9 +48,9 @@ export default function BookClubChat() {
       .subscribe();
 
     return () => {
-      supabase.removeChannel(channel); // cleanup
+      supabase.removeChannel(channel);
     };
-  }, [bookclub_id, chats]);
+  }, [bookclub_id]);
 
   if (isLoading) return <>로딩중..</>;
   return (

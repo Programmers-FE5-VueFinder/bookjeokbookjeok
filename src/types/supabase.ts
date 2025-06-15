@@ -518,7 +518,15 @@ export type Database = {
           intro?: string | null;
           name?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'profile_id_fkey1';
+            columns: ['id'];
+            isOneToOne: true;
+            referencedRelation: 'profile';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       review: {
         Row: {
