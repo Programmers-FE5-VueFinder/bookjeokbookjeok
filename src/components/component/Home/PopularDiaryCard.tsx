@@ -1,4 +1,10 @@
+import type { PopularDiaryCardProps } from "../../../types/type";
+
 const genreImageMap: Record<string, { image: string; label: string }> = {
+  '국내도서>인문학>교양 인문학': {
+    image: "/images/home_humanities_illust.png",
+    label: "인문학",
+  },
   novel: {
     image: "/images/home_novel_illust.png",
     label: "소설",
@@ -19,10 +25,12 @@ const genreImageMap: Record<string, { image: string; label: string }> = {
 
 export default function PopularDiaryCard ({ genre, title, content }: PopularDiaryCardProps) {
 
-  const genreData = genreImageMap[genre] || {
-    image: "",
-    label: "기타",
-  }
+  const genreData = genre && genreImageMap[genre]
+  ? genreImageMap[genre]
+  : {
+      image: "",
+      label: "기타",
+    };
 
   return (
     <div 
@@ -39,7 +47,7 @@ export default function PopularDiaryCard ({ genre, title, content }: PopularDiar
       
         <div className="flex flex-col gap-y-[10px]">
             <h2 className="text-[16px] font-semibold text-[#06BE00]">{genreData.label}</h2>
-            <h2 className="text-[16px] font-semibold">{content}</h2>
+            <h2 className="text-[16px] font-semibold">{content?.split('. ')[0]}.</h2> {/* 일단 한 문장만 추출하도록 했음 */}
             <h1 className="text-[20[px] font-semibold">{title}</h1>
         </div>
     </div>

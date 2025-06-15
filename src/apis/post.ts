@@ -42,7 +42,8 @@ export async function fetchPostDetail(id: string) {
       category,
       like(*),
       comment(*),
-      created_at
+      created_at,
+      book(*)
     `,
     )
     .eq('id', id)
@@ -119,4 +120,82 @@ export async function deletePost(id: string) {
   await supabase.from('comment').delete().eq('post_id', id);
   await supabase.from('book_tag').delete().eq('reference_id', id);
   await supabase.from('post').delete().eq('id', id);
+}
+
+
+
+/* 금주의 인기 다이어리 */
+interface Book {
+  id: string;
+  categoryName: string | null;
+  title: string;
+  description: string | null;
+}
+
+interface Like {
+  id: string;
+  user_id: string;
+  reference_category: string;
+  reference_id: string;
+  created_at: string;
+}
+
+interface APIDiaryPost {
+  id: string;
+  category: string;
+  like: Like[];
+  book: Book | null;
+}
+
+export async function fetchPopularDiaries(): Promise<APIDiaryPost[]> {
+  const { data, error } = await supabase
+    .from('post')
+    .select(`
+      id,
+      category,
+      like(*),
+      book (
+        id,
+        categoryName,
+        title,
+        description
+      )
+    `)
+    .eq('category', 'diary')
+    .order('created_at', { ascending: false })
+    .limit(50); // 충분한 데이터를 확보하기 위해 limit을 10 → 50으로 조정
+
+  if (error || !data) {
+    console.error('Failed to fetch popular diaries:', error);
+    return [];
+  }
+
+  // 1. book이 null인 데이터 제거 + 배열일 경우 첫 요소만 추출
+  const adapted = data
+    .filter(post => post.book !== null)
+    .map(post => ({
+      ...post,
+      book: Array.isArray(post.book) ? post.book[0] : post.book,
+    })) as APIDiaryPost[];
+
+  // 2. categoryName별로 like 수가 가장 높은 post만 추출
+  const topPostsMap = new Map<string, APIDiaryPost>();
+
+  adapted.forEach(post => {
+    const categoryName = (post.book as Book).categoryName ?? 'Unknown';
+    const currentTop = topPostsMap.get(categoryName);
+
+    if (
+      !currentTop ||
+      (post.like?.length ?? 0) > (currentTop.like?.length ?? 0)
+    ) {
+      topPostsMap.set(categoryName, post);
+    }
+  });
+
+  const topPosts = Array.from(topPostsMap.values());
+
+  console.log('categoryName별 좋아요 최고 다이어리:', topPosts);
+
+  return topPosts;
 }

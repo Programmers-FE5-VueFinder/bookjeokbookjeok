@@ -4,39 +4,67 @@ import home_login from "../assets/images/home_login.png";
 import home_search_man from "../assets/images/home_search_man.png";
 import home_star_shine from "../assets/images/home_star_shine.png";
 import { MdArrowBackIosNew, MdArrowForwardIos } from "react-icons/md";
-import home_start_shine3 from "../assets/images/home_star_shine_x3.png";
 import home_reading_book from "../assets/images/home_reading_book.png";
 import home_main_banner1 from "../assets/images/home_main_banner1.png";
+import home_main_banner2 from "../assets/images/home_main_banner2.png";
+import home_main_banner3 from "../assets/images/home_main_banner3.png";
+import home_main_banner4 from "../assets/images/home_main_banner4.png";
+import home_start_shine3 from "../assets/images/home_star_shine_x3.png";
+import home_reading_girl from "../assets/images/home_reading_girl.png";
 
 import LoginModal from "./LoginModal";
-import { useState } from "react";
+import { isLoggedIn } from "../apis/auth";
+import { useNavigate } from "react-router";
+import { useState, useEffect } from "react";
+import type { DiaryPost } from "../types/type";
 import BestsellerSlider from "../components/component/Home/BestsellerSlider";
 import PopularDiaryCard from "../components/component/Home/PopularDiaryCard";
+import { fetchPopularDiaries } from "../apis/post";
 
 const slides = [
   {
     title: "BOOK\nCLUB",
     description: "함께 읽고 이야기하며\n새로운 관점을 만나보세요",
     imgSrc: home_main_banner1,
+    bgColor: '#FDFF98',
+    boxClassName: 'flex justify-end mt-auto mr-[25px]',
+    className: "flex selfitems-end w-[470px] h-auto",
   },
   {
-    title: "READ\nTOGETHER",
-    description: "다른 이들과 함께하는 독서는\n더욱 즐거워요",
-    imgSrc: home_main_banner1, // 추후 내용 변경
+    title: "READ\nDIARY",
+    description: "읽고 쓰고 나누며,\n이야기의 숲을 가꿔보세요",
+    imgSrc: home_main_banner2, 
+    bgColor: '#D2EAFF',
+    boxClassName: 'flex justify-end mt-auto mr-[30px]',
+    className: "w-[530px] h-auto",
   },
   {
-    title: "SHARE\nCOMMUNITY",
-    description: "자신의 생각을\n여러 사람들과 나누어보세요",
-    imgSrc: home_main_banner1, // 추후 내용 변경
+    title: "BOOK\nCOMMUNITY",
+    description: "새로운 생각의 싹,\n북적북적과 함께 틔워보세요",
+    imgSrc: home_main_banner3, 
+    bgColor: '#FFE8B2',
+    boxClassName: 'flex justify-center mt-auto mr-[25px]',
+    className: "w-[370px] h-auto",
+  },
+  {
+    title: "BOOK\nDIARY",
+    description: "북적북적에서,\n나만의 이야기꽃을 피워보세요",
+    imgSrc: home_main_banner4, 
+    bgColor: '#CCE9FF',
+    boxClassName: 'flex justify-end mt-auto',
+    className: "flex justify-end w-[470px] h-auto",
   },
 ]
 
 export default function Home() {
-  // const [diaries, setDiaries] = useState<PopularDiaryCardProps[]>([]); api 호출 시 사용 예정
+  const [isLoading, setIsLoading] = useState(true);
+  const [diaries, setDiaries] = useState<DiaryPost[]>([]);
+  const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isLoggedInUser, setIsLoggedInUser] = useState<boolean | null>(null);
 
-  const handelOpenLoginModal = () => {
+  const handeleOpenLoginModal = () => {
     setIsLoginModalOpen(true);
   }
 
@@ -52,18 +80,49 @@ export default function Home() {
     setCurrentSlide((prev) => prev === 0 ? slides.length - 1 : prev - 1);
   };
 
-  // 다이어리 api 호출할 예정
+  // 금주의 인기 다이어리 api 호출
+  useEffect(() => {
+    let isMounted = true;
+  
+    const getPopularDiaries = async () => {
+      try {
+        const data = await fetchPopularDiaries();
+        if (isMounted) {
+          setDiaries(data as DiaryPost[]);
+        }
+      } catch (error) {
+        console.error("인기 다이어리 가져오기 실패", error);
+      } finally {
+        if (isMounted) setIsLoading(false);
+      }
+    };
+  
+    getPopularDiaries();
+  
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+  
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      const loggedIn = await isLoggedIn();
+      setIsLoggedInUser(loggedIn);
+    };
+    checkLoginStatus();
+  }, []);
 
 
-
-
-
+  
   return (
-    <div className="flex justify-center mx-auto w-[1220px] py-[40px] gap-x-[10px]">
+    <div className="flex justify-center mx-auto w-[1220px] h-fit py-[40px] gap-x-[10px]">
       {/* left side */}
-      <div className="flex w-[590px] h-[894px]">
-        <div className="w-full h-[894px]">
-          <div className="flex flex-col w-[590px] h-[840px] rounded-[20px] pt-[37px] pl-[37px] pr-[25px] bg-[#FDFF98]">
+      <div className="flex w-[590px] h-fit">
+        <div className="w-full h-fit">
+          <div
+            className="flex flex-col w-[590px] h-[840px] rounded-[20px] pt-[37px] pl-[37px]"
+            style={{ backgroundColor: slides[currentSlide].bgColor}}
+          >
             <div className="flex flex-col gap-y-[20px]">
               <img 
                 src={home_start_shine3} 
@@ -74,67 +133,93 @@ export default function Home() {
               <h2 className="text-[24px] font-medium whitespace-pre-line">{slides[currentSlide].description}</h2>
             </div>
 
-            <div className="flex justify-end mt-auto">
+            <div className={slides[currentSlide].boxClassName}>
               <img 
                 src={slides[currentSlide].imgSrc} 
                 alt="main_banner" 
-                className="flex justify-end w-[470px] h-auto"
+                className={slides[currentSlide].className} 
               />
             </div>
-
           </div>
 
           <div className="flex justify-center">
             <div className="flex justify-between w-[135px] h-[25px] text-[20px] font-medium mt-[30px]">
               <button 
                 onClick={prevSlide}
-                className="flex justify-center items-center w-[25px] h-[25px] rounded-[5px] bg-[#F5F4F4] cursor-pointer"
+                className="flex justify-center items-center w-[25px] h-[25px] rounded-[5px] bg-[#CDC8C8]/20 cursor-pointer"
               >
-                <MdArrowBackIosNew className="w-[18px]"/>
+                <MdArrowBackIosNew className="w-[16px]"/>
               </button>
               <h3 className="text-[20px] font-medium">{currentSlide + 1} / {slides.length}</h3>
               <button 
                 onClick={nextSlide}
-                className="flex justify-center items-center w-[25px] h-[25px] rounded-[5px] bg-[#F5F4F4] cursor-pointer"
+                className="flex justify-center items-center w-[25px] h-[25px] rounded-[5px] bg-[#CDC8C8]/20 cursor-pointer"
               >
-                <MdArrowForwardIos className="w-[18px]"/>
+                <MdArrowForwardIos className="w-[16px]"/>
               </button>
             </div>
           </div>
         </div>
       </div>
 
-
-
-      {/* rigth side */}
-      <div className="flex flex-col items-center w-[600px] h-[894px] overflow-y-auto scroll-hidden">
+      {/* right side */}
+      <div className="flex flex-col items-center w-[600px] h-[840px] overflow-y-auto scroll-hidden">
         {/* section 1 */}
         <section className="flex flex-col gap-y-[15px]">
-          <div 
-            className="flex justify-between w-[590px] h-[130px] px-[26px] pt-[18px] bg-[#00FF84] rounded-[20px]"
+
+          {isLoggedInUser === false && (
+            <div 
+              className="flex justify-between w-[590px] h-[130px] px-[26px] pt-[18px] bg-[#00FF84] rounded-[20px]"
+              style={{
+                boxShadow: '0px 0px 10px rgba(0, 114, 59, 0.25)',
+              }}  
+            >
+              <div>
+                <h2 className="text-[20px] font-semibold leading-[24px]">로그인 하고 북적북적의<br/>모든 서비스를 이용해보세요</h2>
+                <button 
+                  className="w-[65px] h-[25px] mt-[17px] bg-[#FFFFFF]/50 text-[16px] text-[#3E3C3C] font-semibold rounded-[20px] cursor-pointer transition-transform duration-200 hover:scale-105 hover:shadow-sm"
+                  onClick={handeleOpenLoginModal}
+                >
+                  로그인
+                </button>
+
+                {isLoginModalOpen && <LoginModal onClose={handleCloseLoginModal} />}
+              </div>
+
+              <img 
+                src={home_login} 
+                alt="home_login" 
+                className="w-[170px] h-auto"
+              />
+            </div>
+          )}
+
+          {isLoggedInUser === true && (
+            <div 
+            className="flex justify-between w-[590px] h-[130px] px-[26px] pt-[18px] bg-[#70B5FF] rounded-[20px]"
             style={{
-              boxShadow: '0px 0px 10px rgba(0, 114, 59, 0.25)',
+              boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)',
             }}  
           >
             <div>
-              <h2 className="text-[20px] font-semibold leading-[24px]">로그인 하고 북적북적의<br/>모든 서비스를 이용해보세요</h2>
+              <h2 className="text-[20px] font-semibold leading-[24px] text-[#202020]">환영합니다!<br/>오늘도 즐거운 독서 되세요</h2>
               <button 
-                className="w-[65px] h-[25px] mt-[17px] bg-[#80FFC2] text-[16px] text-black font-semibold rounded-[20px] cursor-pointer"
-                onClick={handelOpenLoginModal}
+                className="flex items-center justify-center w-[100px] h-[30px] p-2 mt-[17px] bg-[#F1F1F1]/50 text-[16px] text-[#2C2C2C] font-semibold rounded-[20px] cursor-pointer"
+                onClick={() => navigate('/channel/diary')}
               >
-                로그인
+                책 둘러보기
               </button>
-
-              {isLoginModalOpen && <LoginModal onClose={handleCloseLoginModal} />}
             </div>
-
-            <img 
-              src={home_login} 
-              alt="home_loing" 
-              className="w-[170px] h-auto"
-            />
-
+            
+            <div className="self-end">
+              <img 
+                src={home_reading_girl} 
+                alt="home_reading_girl" 
+                className="w-[163px] h-[130px]"
+              />
+            </div>
           </div>
+          )}
 
           <div 
             className="flex justify-between  w-[590px] h-[130px] px-[26px] bg-white rounded-[20px] border border-[#00FF84]"
@@ -168,14 +253,20 @@ export default function Home() {
 
         {/* section 3 */}
         <div className="flex flex-col gap-y-[15px] cursor-pointer">
-          {/* {diaries.map((item, idx) => (
-            <PopularDiaryCard 
-              key={idx}
-              genre={item.genre}
-              title={item.title}
-              content={item.content}
-            />
-          ))} */}
+          {isLoading ? (
+            <p className="text-gray-500 text-sm">로딩 중입니다...</p>
+          ) : (
+            diaries.map((post) => (
+              <PopularDiaryCard
+                key={post.id}
+                genre={post.book.categoryName}
+                title={post.book.title}
+                content={post.book.description}
+              />
+            ))
+          )}
+
+
           <PopularDiaryCard 
             genre="novel"
             title="설국"
@@ -215,10 +306,9 @@ export default function Home() {
           </div>
         </section>
 
-
         {/* section 5 */}
         <section>
-          <div className="flex gap-x-[47px] w-[590px] h-[186px] mb-[57px] bg-[#00FF84] rounded-[10px] pl-[23px] mt-[20px]">
+          <div className="flex gap-x-[47px] w-[590px] h-[186px] mb-[0px] bg-[#00FF84] rounded-[10px] pl-[23px] mt-[20px]">
             <div>  
               <img 
                 src={home_star_shine} 
@@ -232,13 +322,9 @@ export default function Home() {
               src={home_reading_book} 
               alt="reading_book" 
             />
-
           </div>
         </section>
-      
       </div>
-
-
     </div>
   );
 }

@@ -58,10 +58,10 @@ export interface PostDetail extends Post {
     comment: PostDetailResponse['comment'];
 };
 
-type PopularDiaryCardProps = {
-    genre: string;  
+export interface PopularDiaryCardProps {
+    genre: string | null;  
     title: string;
-    content: string;
+    content: string | null;
 };
 
 type Bestsellers = {
@@ -70,4 +70,23 @@ type Bestsellers = {
   cover: string;
   isbn13?: string;
 };
+
+interface Book {
+  id: string;
+  title: string;
+  description: string;
+  categoryName: string | null;
+}
+
+interface Like {
+  id: string;
+  user_id: string;
+}
+
+interface DiaryPost {
+  id: string;
+  category: string;
+  like: Like[];
+  book: Book;
+}
 
