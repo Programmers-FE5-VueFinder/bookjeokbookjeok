@@ -1,0 +1,154 @@
+import supabase from '../utils/supabase';
+
+export async function checkBookExists(bookId: string): Promise<boolean> {
+  const { data, error } = await supabase
+    .from('book')
+    .select('id')
+    .eq('id', bookId)
+    .maybeSingle();
+
+  if (error) return false;
+  return data !== null;
+}
+
+async function checkReviewExists(reviewId: string): Promise<boolean> {
+  const { data, error } = await supabase
+    .from('review')
+    .select('id')
+    .eq('id', reviewId)
+    .single();
+
+  if (error) return false;
+  return data !== null;
+}
+
+export async function createReview(body: string) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) throw new Error('유저 인증 실패');
+  const { data, error } = await supabase
+    .from('review')
+    .insert([{ body, user_id: user.id }])
+    .select();
+
+  if (error) throw error;
+  return data[0];
+}
+
+export async function tagBookWithReview({
+  bookId,
+  reviewId,
+  star,
+}: {
+  bookId: string;
+  reviewId: string;
+  star: number;
+}) {
+  const bookExists = await checkBookExists(bookId);
+  if (!bookExists) throw new Error('유효하지 않은 bookId 입니다.');
+
+  const reviewExists = await checkReviewExists(reviewId);
+  if (!reviewExists) throw new Error('유효하지 않은 reviewId 입니다.');
+
+  const { data, error } = await supabase
+    .from('book_tag')
+    .insert([
+      {
+        book_id: bookId,
+        reference_id: reviewId,
+        reference_category: 'review',
+        star: star,
+      },
+    ])
+    .select();
+
+  if (error) throw error;
+  return data[0];
+}
+
+export async function submitReview({
+  bookId,
+  body,
+  star,
+}: {
+  bookId: string;
+  body: string;
+  star: number;
+}) {
+  const review = await createReview(body);
+
+  const bookTag = await tagBookWithReview({
+    bookId,
+    reviewId: review.id,
+    star,
+  });
+
+  return { review, bookTag };
+}
+
+export async function fetchReviewsWithStars(
+  bookId: string,
+  from: number,
+  to: number,
+) {
+  const { data: tags, error: tagError } = await supabase
+    .from('book_tag')
+    .select('*')
+    .eq('book_id', bookId)
+    .eq('reference_category', 'review')
+    .order('created_at', { ascending: false })
+    .range(from, to);
+
+  if (tagError) throw tagError;
+  if (!tags.length) return [];
+
+  const reviewIds = tags.map((tag) => tag.reference_id);
+
+  const { data: reviews, error: reviewError } = await supabase
+    .from('review')
+    .select(
+      `
+    id,
+    body,
+    created_at,
+    user_id,
+    profile:user_id (
+      name,
+      image
+    )
+  `,
+    )
+    .in('id', reviewIds);
+
+  if (reviewError) throw reviewError;
+
+  return tags.map((tag) => {
+    const review = reviews.find((r) => r.id === tag.reference_id);
+    return {
+      id: tag.id,
+      review: review?.body ?? '',
+      date: review?.created_at ?? '',
+      rating: tag.star ?? 0,
+      author: {
+        name: review?.profile?.name ?? '알 수 없음',
+        image: review?.profile?.image ?? null,
+      },
+    };
+  });
+}
+
+export async function getBookStars(bookId: string) {
+  const { data, error } = await supabase
+    .from('book_tag')
+    .select('star')
+    .eq('book_id', bookId);
+
+  if (error) {
+    console.error('별점 가져오기 실패:', error.message);
+    return [];
+  }
+
+  return data.map((item) => item.star);
+}
