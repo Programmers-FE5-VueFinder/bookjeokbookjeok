@@ -20,7 +20,7 @@ export default function BookClubChat() {
       setBookclub(await fetchBookClub(bookclub_id));
     };
     fetchBookClubInfo();
-  });
+  }, [bookclub_id]);
 
   useEffect(() => {
     const fetchChats = async () => {
