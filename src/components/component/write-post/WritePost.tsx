@@ -64,6 +64,8 @@ export default function WritePost({
     /* 북클럽 수정 */
     if (bookclubId) {
       editBookClub(bookclubId, title, body);
+      navigate(`/bookclub/${bookclubId}`);
+      return;
     }
 
     switch (category) {
