@@ -30,9 +30,9 @@ export declare global {
   interface Alarm {
     id: string;
     type: string;
-    object_id: string;
+    object_id: string | null;
     user_id: string;
-    sender: User;
+    sender?: User;
     is_read: boolean;
     created_at: string;
     objectName: string;

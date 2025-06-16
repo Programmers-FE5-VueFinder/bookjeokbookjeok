@@ -50,7 +50,8 @@ export default function Header() {
 
       const realimeAlarm = async () => {
         const authId = await fetchAuthId();
-        setAlarms((await fetchAlarmList()) ?? []);
+        const fetchAlarms = await fetchAlarmList();
+        setAlarms(fetchAlarms ? fetchAlarms : []);
 
         channel = supabase
           .channel(`${authId}-alarm`)
@@ -63,7 +64,8 @@ export default function Header() {
               filter: `user_id=eq.${authId}`,
             },
             async () => {
-              setAlarms((await fetchAlarmList()) ?? []);
+              const fetchAlarms = await fetchAlarmList();
+              setAlarms(fetchAlarms ? fetchAlarms : []);
             },
           )
           .subscribe();
