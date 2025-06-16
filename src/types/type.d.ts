@@ -1,62 +1,65 @@
 export interface Post {
-    id: string;
-    title: string;
-    body: string;
-    image?: string | null;
-    category: string;
-    created_at: string;
-};
+  id: string;
+  title: string;
+  body: string;
+  image?: string | null;
+  category: string;
+  created_at: string;
+}
 
 export interface BookCardProps {
-    nickname: string;
-    badge?: string;
-    title: string;
-    body: string;
-    image?: string | null;
-    likes?: number;
-    comments?: number;
-    createdAt: string;
-    profileImage: string | null;
-};
+  nickname: string;
+  badge?: string;
+  title: string;
+  body: string | null;
+  image?: string | null;
+  likes?: number;
+  comments?: number;
+  createdAt: string;
+  profileImage: string | null;
+  id: string | undefined;
+  book_id?: string | null;
+  category?: string;
+}
 
 export interface PostDetailResponse {
-    profile: {
-      id: string;
-      name: string;
-      image: string | null;
-      intro: string | null;
-      appellation: string | null;
-      created_at: string;
-    };
-    like: Array<{
-      id: string;
-      created_at: string;
-      user_id: string; 
-      reference_category: string
-      reference_id: string; 
-    }>;
-    comment: Array<{
-      id: string;
-      post_id: string;
-      user_id: string;
-      body: string;
-      created_at: string;
-    }>;
-    // vote: any[]; 
-};
+  profile: {
+    id: string;
+    name: string;
+    image: string | null;
+    intro: string | null;
+    appellation: string | null;
+    created_at: string;
+  };
+  like: Array<{
+    id: string;
+    created_at: string;
+    user_id: string;
+    reference_category: string;
+    reference_id: string;
+  }>;
+  comment: Array<{
+    id: string;
+    post_id: string;
+    user_id: string;
+    body: string;
+    created_at: string;
+  }>;
+  // vote: any[];
+}
 
 export interface PostDetail extends Post {
-    profile: {
-        id: string;
-        name: string;
-        image: string | null;
-        intro: string | null;
-        appellation: string | null;
-        created_at: string;
-    }
-    like: PostDetailResponse['like'];
-    comment: PostDetailResponse['comment'];
-};
+  profile: {
+    id: string;
+    name: string;
+    image: string | null;
+    intro: string | null;
+    appellation: string | null;
+    created_at: string;
+  };
+  like: PostDetailResponse['like'];
+  comment: PostDetailResponse['comment'];
+}
 
 export interface PopularDiaryCardProps {
     genre: string | null;  
@@ -81,7 +84,6 @@ interface Book {
     subTitle: string;
   }
 }
-
 interface Like {
   id: string;
   user_id: string;
@@ -89,7 +91,6 @@ interface Like {
   reference_id: string;
   created_at: string;
 }
-
 interface APIDiaryPost {
   id: string;
   category: string;
@@ -97,3 +98,9 @@ interface APIDiaryPost {
   book: Book | null;
 }
 
+type Bestsellers = {
+  title: string;
+  author: string;
+  cover: string;
+  isbn13?: string;
+};

@@ -8,10 +8,7 @@ export async function fetchPosts(category: string = 'all') {
       case 'all':
         return await supabase.from('post').select('*');
       case 'diary':
-        return await supabase
-          .from('post')
-          .select('*')
-          .eq('category', 'diary');
+        return await supabase.from('post').select('*').eq('category', 'diary');
       case 'community':
         return await supabase
           .from('post')
@@ -25,7 +22,7 @@ export async function fetchPosts(category: string = 'all') {
     }
   } catch (e) {
     console.error(e);
-    return { data: null, error: e};
+    return { data: null, error: e };
   }
 }
 

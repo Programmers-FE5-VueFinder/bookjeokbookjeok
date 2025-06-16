@@ -15,6 +15,7 @@ export default function Header() {
   const setLogin = useAuthStore((state) => state.setLogin);
   const setLogout = useAuthStore((state) => state.setLogout);
   const navigate = useNavigate();
+  const { session } = useAuthStore();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -25,20 +26,20 @@ export default function Header() {
     setLogout();
     navigate('/')
   };
-
+  
   // 로그인 상태 관리는 zustand로 대체, logout만 auth.ts 사용
   useEffect(() => {
     const syncSession = async () => {
-        const { data: { session }} = await supabase.auth.getSession();
-        if (session) {
-          setLogin(session);
-        } else {
-          setLogout();
-        }
+      const { data: { session }} = await supabase.auth.getSession();
+      if (session) {
+        setLogin(session);
+      } else {
+        setLogout();
+      }
     };
     syncSession();
   }, [setLogin, setLogout]);
-
+  // console.log('로그인?: ', isLogin)
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -65,16 +66,19 @@ export default function Header() {
           <Link to={'/channel/diary'}>다이어리</Link>
           <Link to={'/channel/book_club'}>북클럽</Link>
           <Link to={'/channel/community'}>자유채널</Link>
-          <Link to={'/create-post'}>글작성</Link>
+          <Link to={'/create-post/diary'}>글작성</Link>
         </nav>
 
         <div className="flex space-x-4" ref={dropdownRef}>
           <Link to={'/search'}>
             <SearchIcon className="text-black" />
           </Link>
-          <Link to={'/notification'}>
-            <NotificationsOutlinedIcon className="text-black" />
-          </Link>
+
+          {isLogin && (
+            <Link to={'/notification'}>
+              <NotificationsOutlinedIcon className="text-black" />
+            </Link>
+          )}
 
           {isLogin ? (
             <div className="relative">
@@ -85,7 +89,7 @@ export default function Header() {
               {isDropdownOpen && (
                 <div className="absolute right-0 z-50 mt-2 w-[100px] rounded-[5px] border border-[#E9E9E9] bg-white shadow-md">
                   <Link
-                    to="/profile"
+                    to={`/profile/${session?.user.id}`}
                     className="flex w-full items-center justify-center px-4 py-2 text-center text-[16px] font-medium text-black hover:bg-gray-100"
                     onClick={() => {
                       setIsDropdownOpen(false);
@@ -95,13 +99,14 @@ export default function Header() {
                   </Link>
 
                   <div className="mx-auto w-[87px] border-t border-[#E9E9E9]"></div>
-
-                  <button
-                    className="flex w-full items-center justify-center px-4 py-2 text-[16px] font-medium text-black hover:bg-gray-100"
-                    onClick={handleLogout}
-                  >
-                    로그아웃
-                  </button>
+                  <Link to={'/'}>
+                    <button
+                      className="flex w-full items-center justify-center px-4 py-2 text-[16px] font-medium text-black hover:bg-gray-100"
+                      onClick={handleLogout}
+                    >
+                      로그아웃
+                    </button>
+                  </Link>
                 </div>
               )}
             </div>

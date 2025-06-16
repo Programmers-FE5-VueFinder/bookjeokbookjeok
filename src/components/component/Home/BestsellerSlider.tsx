@@ -8,7 +8,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { useState, useEffect, useRef } from 'react';
 import type { BookDetail } from '../../../types/book';
 import { getBestsellerBooks } from '../../../apis/book-search';
-import { MdArrowBackIosNew, MdArrowForwardIos } from "react-icons/md";
+import { MdArrowBackIosNew, MdArrowForwardIos } from 'react-icons/md';
 
 export default function BestsellerSlider () {
   const [bestsellers, setBestsellers] = useState<BookDetail[]>([]);
@@ -23,16 +23,21 @@ export default function BestsellerSlider () {
         const bestsellers = await getBestsellerBooks();
         setBestsellers(bestsellers);
       } catch (error) {
-        console.error("베스트셀러 책 데이터를 불러오는 데 실패했습니다.", error);
+        console.error(
+          '베스트셀러 책 데이터를 불러오는 데 실패했습니다.',
+          error,
+        );
       }
     };
     fetchBestsellers();
   }, []);
 
   return (
-    <div className="w-full max-w-3xl mx-auto">
-      <h1 className="text-xl font-semibold text-center mb-4">
-        {bestsellers.length > 0 ? bestsellers[currentIndex -1]?.title : 'Best Sellers'}
+    <div className="mx-auto w-full max-w-3xl">
+      <h1 className="mb-4 text-center text-xl font-semibold">
+        {bestsellers.length > 0
+          ? bestsellers[currentIndex - 1]?.title
+          : 'Best Sellers'}
       </h1>
       <Swiper
         modules={[Autoplay]}

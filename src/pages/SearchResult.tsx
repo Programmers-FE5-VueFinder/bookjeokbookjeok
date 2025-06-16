@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { IoSearch } from 'react-icons/io5';
 import { twMerge } from 'tailwind-merge';
-import BookCard from '../components/common/BookCard';
-import UserCard from '../components/common/UserCard';
+// import BookCard from '../components/common/BookCard';
+// import UserCard from '../components/common/UserCard';
 
 export default function SearchResult() {
   const buttonName = ['통합 검색', '게시물', '사용자'];
@@ -53,10 +53,10 @@ export default function SearchResult() {
             <span className="textT2">사용자</span>
             <div className="flex flex-col items-center justify-center">
               <div className="mt-[26px] grid gap-[28px] md:grid-cols-2 lg:grid-cols-4">
-                <UserCard />
+                {/* <UserCard /> */}
+                {/* <BookCard />
                 <BookCard />
-                <BookCard />
-                <BookCard />
+                <BookCard /> */}
               </div>
             </div>
           </div>
@@ -64,13 +64,13 @@ export default function SearchResult() {
             <span className="textT2">게시물</span>
             <div className="flex flex-col items-center justify-center">
               <div className="mt-[26px] grid gap-[28px] md:grid-cols-2 lg:grid-cols-4">
+                {/* <BookCard />
                 <BookCard />
                 <BookCard />
                 <BookCard />
                 <BookCard />
                 <BookCard />
-                <BookCard />
-                <BookCard />
+                <BookCard /> */}
               </div>
             </div>
           </div>

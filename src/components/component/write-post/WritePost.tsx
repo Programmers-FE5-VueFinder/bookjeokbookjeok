@@ -1,11 +1,9 @@
 // import './quillOverride.ts';
 import { useEffect, useRef, useState } from 'react';
 import ReactQuillEditor from './ReactQuillEditor';
-import { IoIosArrowDown } from 'react-icons/io';
 import { MdArrowBack } from 'react-icons/md';
 import { useNavigate, useParams } from 'react-router';
 import { MdOutlineSearch } from 'react-icons/md';
-import { FaStar } from 'react-icons/fa';
 import BookSearchModal from '../BookSearchModal';
 import type { BookDetail } from '../../../types/book';
 import BookHTML from './BookHTML';
@@ -15,44 +13,32 @@ import {
   editBookClub,
   fetchBookClub,
 } from '../../../apis/book-club';
+import CategorySelect from './CategorySelect';
+import BookRating from './BookRating';
 
 export default function WritePost({
   isCreateBookClub,
 }: {
   isCreateBookClub?: boolean;
 }) {
+  // 로그인 안 된 유저가 접근시
+  // const isLogin = useAuthStore((state) => state.isLogin);
+  // if (!isLogin) navigate('/');
+
   //path : diary, bookclub, freetalk
   const path = useParams();
   const bookclubId = path.bookclub_id;
   const navigate = useNavigate();
 
-  const [seletText, setSelectText] = useState('채널선택');
   const [category, setCategory] = useState(path.category);
-  const [categoryToggle, setCategoryToggle] = useState(false);
-  const [rating, setRating] = useState(0);
+  const [rating, setRating] = useState<number | null>(null);
   const [value, setValue] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [selectedBook, setSeletedBook] = useState<BookDetail | null>(null);
 
   const titleRef = useRef<HTMLInputElement>(null);
 
-  const ratings = [1, 2, 3, 4, 5];
   const onClose = () => setShowModal(false);
-
-  const categoryToggleHandler = (
-    e: React.MouseEvent<HTMLLIElement, MouseEvent>,
-  ) => {
-    e.stopPropagation();
-    const text = e.currentTarget.textContent as string;
-    if (text === '다이어리') {
-      setCategory('diary');
-    } else {
-      setCategory('');
-    }
-
-    setSelectText(text);
-    setCategoryToggle((toggle) => !toggle);
-  };
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -108,34 +94,7 @@ export default function WritePost({
     <>
       <main className="flex h-screen">
         <div className="flex grow-1 flex-col">
-          {!bookclubId && (
-            <div
-              id="categorySelect"
-              onClick={() => setCategoryToggle((toggle) => !toggle)}
-              style={{ marginLeft: 'calc((100% - 1200px) / 2)' }}
-              className="ml-[calc(1300px - 1200px)] relative mt-[15px] flex w-fit cursor-pointer items-center justify-center gap-[4px] rounded-[5px] bg-[#F1F1F1] px-[10px] py-[2px] text-[14px]"
-            >
-              {seletText} <IoIosArrowDown />
-              {categoryToggle && (
-                <div className="absolute top-[25px] z-1 w-full rounded-br-[5px] rounded-bl-[5px] bg-[#fff]">
-                  <ul className="shadow-[0_0_5px_rgba(0,0,0,0.25)]">
-                    <li
-                      onClick={(e) => categoryToggleHandler(e)}
-                      className="cursor-pointer px-[10px] py-[5px] hover:bg-[#f1f1f1]"
-                    >
-                      다이어리
-                    </li>
-                    <li
-                      onClick={(e) => categoryToggleHandler(e)}
-                      className="cursor-pointer rounded-br-[4px] rounded-bl-[4px] px-[10px] py-[5px] hover:bg-[#f1f1f1]"
-                    >
-                      자유채널
-                    </li>
-                  </ul>
-                </div>
-              )}
-            </div>
-          )}
+          {!bookclubId && <CategorySelect setCategory={setCategory} />}
           <form
             className="w-ful flex grow-1 flex-col justify-between"
             onSubmit={submitHandler}
@@ -147,6 +106,7 @@ export default function WritePost({
                 placeholder={`${isCreateBookClub ? '클럽 이름을 입력해주세요.' : '제목을 입력해주세요.'}`}
                 className="h-fir mx-auto my-[20px] block w-[1200px] max-w-[1200px] pl-[5px] text-[24px] text-[#666666]"
               />
+
               {selectedBook ? (
                 <BookHTML
                   setShowModal={setShowModal}
@@ -163,33 +123,8 @@ export default function WritePost({
                   도서 검색
                 </button>
               )}
-              {selectedBook && (
-                <div
-                  style={{ marginLeft: 'calc((100% - 1200px) / 2)' }}
-                  className="mt-[15px] flex w-fit gap-[5px]"
-                >
-                  {ratings.map((num) => {
-                    return (
-                      <button className="cursor-pointer">
-                        <FaStar
-                          key={num}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setRating(num);
-                          }}
-                          // onMouseEnter={}
-                          className="text-[#DFDFDF] hover:text-[#FFCC00]"
-                        />
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
-              <ReactQuillEditor
-                // bodyRef={bodyRef}
-                setValue={setValue}
-                value={value}
-              />
+              {selectedBook && <BookRating setRating={setRating} />}
+              <ReactQuillEditor setValue={setValue} value={value} />
             </div>
             <div className="flex h-[60px] min-h-[60px] w-[100%] justify-center border-t border-t-[#D5D5D5]">
               <div className="flex h-[100%] w-[1200px] items-center justify-between">
@@ -205,7 +140,7 @@ export default function WritePost({
                   onClick={() => console.log(value)}
                   className="cursor-pointer rounded-[5px] bg-[#F1F1F1] px-[23px] py-[8px] text-[14px] hover:bg-[#41D94D] hover:font-semibold hover:text-[#fff]"
                 >
-                  저장하기
+                  발행하기
                 </button>
               </div>
             </div>
