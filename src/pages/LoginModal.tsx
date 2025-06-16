@@ -17,7 +17,7 @@ export default function LoginModal({ onClose, onOpenSignUp }: LoginModalProps) {
       >
         <button
           onClick={onClose}
-          className="absolute top-2 right-3 text-xl text-gray-500"
+          className="absolute top-2 right-3 cursor-pointer text-xl text-gray-500"
         >
           &times;
         </button>
