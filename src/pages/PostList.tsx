@@ -1,9 +1,10 @@
 import clsx from 'clsx';
-import { fetchPostDetail, fetchPosts } from '../apis/post';
-import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router';
+import { useEffect, useState, useMemo } from 'react';
 import BookCard from '../components/common/BookCard';
 import type { Post, PostDetail } from '../types/type';
+import { fetchPostDetail, fetchPosts } from '../apis/post';
+import SkeletonCard from '../components/common/CardSkeleton2';
 
 const sortOptionsMap: Record<string, string[]> = {
   diary: ['최신글', '인기글', '팔로잉'],
@@ -23,16 +24,6 @@ export default function PostList() {
     book_club: '북클럽',
     community: '자유채널',
   };
-
-  // const sortedPosts = [...posts].sort((a, b) => {
-  //   if (selectedSort === '최신글') {
-  //     return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-  //   }
-  //   if (selectedSort === '인기글') {
-  //     // return b.likes - a.likes;
-  //   }
-  //   return 0;
-  // })
 
   const channelName = channelId
     ? channelNames[channelId] || '알 수 없는 채널'
@@ -54,17 +45,13 @@ export default function PostList() {
         setLoading(false);
         return;
       }
-
-      if (result.data) {
-        console.log('백엔드 응답 데이터:', result.data);
-      }
-
+      // if (result.data) {
+      //   console.log('백엔드 응답 데이터:', result.data);
+      // }
       const detailPosts: PostDetail[] = await Promise.all(
         result.data.map(async (post: Post) => {
           const detail = await fetchPostDetail(post.id);
-
-          console.log('Post Detail 응답 데이터:', detail);
-
+          // console.log('Post Detail 응답 데이터:', detail);
           return {
             ...post,
             profile: detail?.profile ?? {
@@ -80,17 +67,29 @@ export default function PostList() {
           };
         }),
       );
+      
       setPosts(detailPosts);
       setLoading(false);
     };
-
+    
     loadPosts();
-
+    
     const options = sortOptionsMap[channelId ?? ''];
     if (options && options.length > 0) {
       setSelectedSort(options[0]);
     }
   }, [channelId]);
+  
+  // // 인기글 정렬
+  const sortedPosts = useMemo(() => {
+    if (selectedSort === '인기글') {
+      return [...posts].sort((a, b) => b.like.length - a.like.length);
+    }
+    // 최신글(기본)
+    return [...posts].sort(
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+    );
+  }, [posts, selectedSort]);
 
   return (
     <>
@@ -123,15 +122,15 @@ export default function PostList() {
           )}
         </div>
 
-        <div className="my-[132px] w-[1200px] bg-red-50">
+        <div className="my-[132px] w-[1200px]">
           {loading ? (
-            <div>로딩중...</div>
-          ) : posts.length === 0 ? (
+            <SkeletonCard />
+          ) : sortedPosts.length === 0 ? (
             <div>게시글이 없습니다.</div>
           ) : (
             // 카드 컴포
             <div className="grid h-fit w-[1200px] grid-cols-4 gap-[28px]">
-              {posts.map((post) => (
+              {sortedPosts.map((post) => (
                 <Link
                   key={post.id}
                   to={`/channel/${post.category}/post/${post.id}`}
@@ -145,6 +144,7 @@ export default function PostList() {
                     profileImage={post.profile.image}
                     likes={post.like.length}
                     comments={post.comment.length}
+                    id={post.profile.id}
                     createdAt={new Date(post.created_at).toLocaleDateString()}
                   />
                 </Link>
@@ -154,9 +154,9 @@ export default function PostList() {
         </div>
       </div>
 
-      <Link to={`/channel/${params.channelId}/post/1`}>
+      {/* <Link to={`/channel/${params.channelId}/post/1`}>
         {params.channelId}채널 1번글
-      </Link>
+      </Link> */}
     </>
   );
 }
