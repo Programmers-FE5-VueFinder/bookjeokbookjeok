@@ -14,18 +14,27 @@ export default function Login({ onClose }: LoginProps) {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSupabaseLogin = async () => {
+    setErrorMessage('');
+
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
-
-    if (error) {
-      alert('로그인에 실패했습니다: ' + error.message);
+    if (email.length === 0) {
+      setErrorMessage('이메일을 입력해 주세요');
       return;
     }
-
+    if (password.length === 0) {
+      setErrorMessage('비밀번호를 입력해 주세요');
+      return;
+    }
+    if (error) {
+      setErrorMessage('아이디 또는 비밀번호가 올바르지 않습니다.');
+      return;
+    }
     onClose();
   };
   const goToSignUp = () => {
@@ -42,7 +51,10 @@ export default function Login({ onClose }: LoginProps) {
         <input
           type="email"
           value={email}
-          onChange={(e) => setEmail(e.target.value.trim())}
+          onChange={(e) => {
+            setEmail(e.target.value.trim());
+            setErrorMessage('');
+          }}
           placeholder="이메일을 입력해 주세요."
           className="h-[45px] w-[340px] rounded-[5px] border border-[#EBEBEB] pl-[5px] text-[14px]"
         ></input>
@@ -50,9 +62,17 @@ export default function Login({ onClose }: LoginProps) {
           type="password"
           placeholder="비밀번호를 입력해 주세요."
           value={password}
-          onChange={(e) => setPassword(e.target.value.trim())}
+          onChange={(e) => {
+            setPassword(e.target.value.trim());
+            setErrorMessage('');
+          }}
           className="h-[45px] w-[340px] rounded-[5px] border border-[#EBEBEB] pl-[5px] text-[14px]"
         ></input>
+        {errorMessage && (
+          <div className="pl-[2px] text-[13px] text-[#FF3333]">
+            {errorMessage}
+          </div>
+        )}
         <button
           onClick={handleSupabaseLogin}
           className="h-[45px] w-[340px] cursor-pointer rounded-[5px] border bg-[#08C818] text-[14px] font-semibold text-[#fff]"
