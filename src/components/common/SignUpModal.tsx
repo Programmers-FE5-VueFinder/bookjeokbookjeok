@@ -5,6 +5,8 @@ import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { IoMdCheckmark } from 'react-icons/io';
 import { IoMdClose } from 'react-icons/io';
+import supabase from '../../utils/supabase';
+import { isEmailDuplicated, isNameDuplicated } from '../../apis/profile';
 
 type ConsentKey = 'use' | 'personal' | 'marketing';
 
@@ -19,6 +21,7 @@ export default function SignUpModal() {
   });
   const background = useRef(null);
   const closeButton = useRef(null);
+  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
   const handleConsentClick = (type: ConsentKey) => {
     setConsent((prev) => {
@@ -60,7 +63,7 @@ export default function SignUpModal() {
     register,
     handleSubmit,
     formState: { isSubmitting, isSubmitted, errors },
-  } = useForm();
+  } = useForm({ mode: 'onChange' });
 
   return (
     <>
@@ -89,7 +92,47 @@ export default function SignUpModal() {
             <form
               noValidate
               onSubmit={handleSubmit(async (data) => {
-                console.log(data);
+                if (!consent.use || !consent.personal) {
+                  setCheckValid(true);
+                  return;
+                }
+
+                const { name, email, password } = data;
+
+                const { data: signUpData, error: signUpError } =
+                  await supabase.auth.signUp({
+                    email,
+                    password,
+                    options: {
+                      data: {
+                        name: name,
+                      },
+                    },
+                  });
+
+                if (signUpError) {
+                  console.error('회원가입 실패:', signUpError.message);
+                  return;
+                }
+
+                const userId = signUpData.user?.id;
+
+                if (!userId) {
+                  console.error('회원가입은 되었지만 사용자 ID가 없습니다.');
+                  return;
+                }
+
+                const { error: profileError } = await supabase
+                  .from('profile')
+                  .upsert([{ id: userId, name: name, email: email }]);
+
+                if (profileError) {
+                  console.error('프로필 저장 실패:', profileError.message);
+                  return;
+                }
+
+                console.log('회원가입 성공');
+                setView(false); // 모달 닫기
               })}
               className="flex w-full flex-col gap-[10px] text-[#333]"
             >
@@ -103,8 +146,24 @@ export default function SignUpModal() {
                 {...register('name', {
                   required: '이름을 입력해 주세요',
                   pattern: {
-                    value: /^[가-힣]{2,5}$/,
-                    message: '2자 이상 5자이하 한글로 작성해 주세요.',
+                    value: /^[A-Za-z가-힣0-9]{2,10}$/,
+                    message:
+                      '2자 이상 10자 이하로 작성해주세요. 특수문자는 불가능합니다.',
+                  },
+                  setValueAs: (value) => value.trim(),
+                  validate: (value) => {
+                    return new Promise((resolve) => {
+                      if (debounceTimer.current) {
+                        clearTimeout(debounceTimer.current);
+                      }
+
+                      debounceTimer.current = setTimeout(async () => {
+                        const duplicated = await isNameDuplicated(value);
+                        resolve(
+                          duplicated ? '이미 사용 중인 이름입니다.' : true,
+                        );
+                      }, 300);
+                    });
                   },
                 })}
                 aria-invalid={
@@ -131,6 +190,21 @@ export default function SignUpModal() {
                     value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
                     message: '이메일 형식에 맞지 않습니다',
                   },
+                  setValueAs: (value) => value.trim(),
+                  validate: (value) => {
+                    return new Promise((resolve) => {
+                      if (debounceTimer.current) {
+                        clearTimeout(debounceTimer.current);
+                      }
+
+                      debounceTimer.current = setTimeout(async () => {
+                        const duplicated = await isEmailDuplicated(value);
+                        resolve(
+                          duplicated ? '이미 사용 중인 이메일입니다.' : true,
+                        );
+                      }, 300);
+                    });
+                  },
                 })}
                 aria-invalid={
                   isSubmitted ? (errors.email ? 'true' : 'false') : undefined
@@ -148,7 +222,7 @@ export default function SignUpModal() {
                 className="flex items-center gap-[5px] font-bold text-[#333]"
               >
                 비밀번호
-                <Tooltip title="비밀번호는 8자 이상 16자 이하, 영문과 숫자, 특수문자를 포함하여 입력해주세요.">
+                <Tooltip title="비밀번호는 8자 이상 16자 이하, 영문 대소문자, 숫자, 특수문자를 포함하여 입력해주세요.">
                   <div className="size-[16px] items-center justify-center rounded-full border-1 text-center text-[10px]">
                     ?
                   </div>
@@ -163,10 +237,12 @@ export default function SignUpModal() {
                   minLength: {
                     value: 8,
                     message:
-                      '2자 이상 10자 이하의 한글, 영문, 숫자만 입력해주세요.',
+                      '8자리 이상 16자리 이하의 비밀번호를 입력해주세요.',
                   },
+                  setValueAs: (value) => value.trim(),
                   pattern: {
-                    value: /^[A-Za-z가-힣0-9]{2,10}$/,
+                    value:
+                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+~`\-={}[\]:;"'<>,.?/\\]).{8,16}$/,
                     message: '비밀번호 형식에 맞지 않습니다.',
                   },
                 })}
