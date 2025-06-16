@@ -2,6 +2,8 @@ import { useNavigate } from 'react-router';
 import { kakaoLogin } from '../apis/auth';
 import { googleLogin } from '../apis/auth';
 import kakaoLogo from '../assets/images/kakaoLogo.png';
+import supabase from '../utils/supabase';
+import { useState } from 'react';
 
 interface LoginProps {
   onClose: () => void;
@@ -10,6 +12,22 @@ interface LoginProps {
 export default function Login({ onClose }: LoginProps) {
   const navigate = useNavigate();
 
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSupabaseLogin = async () => {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      alert('로그인에 실패했습니다: ' + error.message);
+      return;
+    }
+
+    onClose();
+  };
   const goToSignUp = () => {
     onClose();
     navigate('/signup');
@@ -23,15 +41,22 @@ export default function Login({ onClose }: LoginProps) {
       <div className="relative flex flex-col gap-y-[15px]">
         <input
           type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value.trim())}
           placeholder="이메일을 입력해 주세요."
           className="h-[45px] w-[340px] rounded-[5px] border border-[#EBEBEB] pl-[5px] text-[14px]"
         ></input>
         <input
           type="password"
           placeholder="비밀번호를 입력해 주세요."
+          value={password}
+          onChange={(e) => setPassword(e.target.value.trim())}
           className="h-[45px] w-[340px] rounded-[5px] border border-[#EBEBEB] pl-[5px] text-[14px]"
         ></input>
-        <button className="h-[45px] w-[340px] cursor-pointer rounded-[5px] border bg-[#08C818] text-[14px] font-semibold text-[#fff]">
+        <button
+          onClick={handleSupabaseLogin}
+          className="h-[45px] w-[340px] cursor-pointer rounded-[5px] border bg-[#08C818] text-[14px] font-semibold text-[#fff]"
+        >
           로그인
         </button>
 
