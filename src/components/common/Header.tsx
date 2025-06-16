@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { logout } from '../../apis/auth';
+import { fetchAuthId, logout } from '../../apis/auth';
 import supabase from '../../utils/supabase';
 import LoginModal from '../../pages/LoginModal';
 import { useEffect, useRef, useState } from 'react';
@@ -46,12 +46,38 @@ export default function Header() {
 
   useEffect(() => {
     if (isLogin) {
-      const fetchAlarms = async () => {
+      let channel: ReturnType<typeof supabase.channel> | null = null;
+
+      const realimeAlarm = async () => {
+        const authId = await fetchAuthId();
         setAlarms((await fetchAlarmList()) ?? []);
+
+        channel = supabase
+          .channel(`${authId}-alarm`)
+          .on(
+            'postgres_changes',
+            {
+              event: 'UPDATE',
+              schema: 'public',
+              table: 'notification',
+              filter: `user_id=eq.${authId}`,
+            },
+            async () => {
+              setAlarms((await fetchAlarmList()) ?? []);
+            },
+          )
+          .subscribe();
       };
-      fetchAlarms();
+      realimeAlarm();
+
+      return () => {
+        if (channel) {
+          supabase.removeChannel(channel);
+        }
+      };
     }
   }, [isLogin]);
+  console.log(alarms);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {

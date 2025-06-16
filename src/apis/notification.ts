@@ -88,3 +88,8 @@ export async function getObjectName(
 
   return objectName;
 }
+
+/* 알림 읽음 처리 */
+export async function readAlarm(id: string) {
+  await supabase.from('notification').update({ is_read: true }).eq('id', id);
+}
