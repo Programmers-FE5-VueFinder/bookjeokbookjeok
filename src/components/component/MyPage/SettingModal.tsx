@@ -9,6 +9,7 @@ import {
   useProfileImgStore,
   type UserProfile,
 } from '../../../store/profileImgStore';
+import { toast } from 'react-toastify';
 
 interface SettingModalProps {
   onClose: () => void;
@@ -62,21 +63,23 @@ export default function SettingModal({ onClose }: SettingModalProps) {
     let prof: number | undefined = 0;
     if (name !== undefined) {
       setValidate(valName.test(name));
-      if (valName.test(name)) {
+      setPass(false);
+      if (valName.test(name) === true) {
         try {
           const { data: profile } = await supabase
             .from('profile')
             .select('*')
             .eq('name', name);
           prof = profile?.length;
+          console.log(prof);
+          if (prof === 0) {
+            setPass(true);
+          } else {
+            setPass(false);
+          }
         } catch (error) {
           console.error(error);
         }
-      }
-      if (prof === 0) {
-        setPass(true);
-      } else {
-        setPass(false);
       }
       isShow(true);
     }
@@ -101,6 +104,7 @@ export default function SettingModal({ onClose }: SettingModalProps) {
             .from('profile')
             .update({ name: newName, intro: newIntro })
             .eq('id', user.id);
+          toast.success('변경되었습니다');
           if (textUpdateError) throw textUpdateError;
           setGlobalProfileName(newName);
           setGlobalProfileIntro(newIntro);
@@ -143,7 +147,7 @@ export default function SettingModal({ onClose }: SettingModalProps) {
         }
       }
     } else {
-      alert('변경하지 못했습니다');
+      toast.error('다시 시도해주세요');
     }
   };
 
