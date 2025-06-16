@@ -2,16 +2,22 @@ import { RxDotsVertical } from 'react-icons/rx';
 import FollowButton from './FollowButton';
 import EditSelectBox from './EditSelectBox';
 import { useState } from 'react';
+import { type Dispatch, type SetStateAction } from 'react';
+
 export default function PostHeader({
   title,
   name,
   time,
   category,
+  setter,
+  active,
 }: {
   title: string;
   name: string;
   time: string;
   category: string;
+  setter: Dispatch<SetStateAction<{ show: boolean; active: boolean }>>;
+  active: boolean;
 }) {
   const [selectBoxShow, setSelectBoxShow] = useState(false);
 
@@ -38,7 +44,11 @@ export default function PostHeader({
                   className="relative"
                 >
                   <RxDotsVertical className="cursor-pointer" />
-                  <EditSelectBox selectBoxShow={selectBoxShow} />
+                  <EditSelectBox
+                    selectBoxShow={selectBoxShow}
+                    setter={setter}
+                    active={active}
+                  />
                 </div>
               </div>
             </div>

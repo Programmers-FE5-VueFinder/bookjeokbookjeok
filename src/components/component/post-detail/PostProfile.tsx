@@ -9,7 +9,7 @@ export default function PostProfile({ profile }: { profile: Profile }) {
         <div className="flex items-center gap-[10px]">
           <img
             src={image as string}
-            className="h-[40px] w-[40px] cursor-pointer rounded-[100px]"
+            className="h-[50px] w-[50px] cursor-pointer rounded-[100px]"
           ></img>
           <span className="h-full cursor-pointer text-[20px] leading-[33px] font-semibold text-[#333]">
             {profile.name}

@@ -8,10 +8,15 @@ import { fetchPostDetail } from '../apis/post';
 import type { PostDetail } from '../types/post';
 import getElapsedTime from '../utils/format-time';
 import '../css/reactQuillCustom.css';
+import CheckModal from '../components/common/CheckModal';
 
 export default function PostDetail() {
   const path = useParams();
   const [content, setContent] = useState<PostDetail | undefined>(undefined);
+  const [modalStatus, setModalStatus] = useState({
+    show: false,
+    active: false,
+  });
   const [loading, setLoading] = useState(false);
 
   console.log(path.postId); //postId
@@ -28,8 +33,15 @@ export default function PostDetail() {
 
   return (
     loading && (
-      <main className="flex flex-col items-center">
+      <main className="relative flex flex-col items-center">
+        <CheckModal
+          message="게시물을 삭제 하시겠습니까?"
+          setter={setModalStatus}
+          show={modalStatus.show}
+        />
         <PostHeader
+          setter={setModalStatus}
+          active={modalStatus.active}
           title={content!.title}
           name={content!.profile.name}
           category={content!.category}

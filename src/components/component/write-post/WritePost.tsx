@@ -56,7 +56,6 @@ export default function WritePost({
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     const title = titleRef.current?.value;
     const body = value.toString();
 
