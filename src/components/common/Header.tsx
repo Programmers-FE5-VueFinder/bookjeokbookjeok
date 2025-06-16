@@ -1,7 +1,7 @@
-import { Link } from 'react-router';
 import { logout } from '../../apis/auth';
 import supabase from '../../utils/supabase';
 import LoginModal from '../../pages/LoginModal';
+import { Link, useNavigate } from 'react-router';
 import { useEffect, useRef, useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
 
@@ -14,6 +14,7 @@ export default function Header() {
   const isLogin = useAuthStore((state) => state.isLogin);
   const setLogin = useAuthStore((state) => state.setLogin);
   const setLogout = useAuthStore((state) => state.setLogout);
+  const navigate = useNavigate();
   const { session } = useAuthStore();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -23,14 +24,13 @@ export default function Header() {
   const handleLogout = async () => {
     await logout();
     setLogout();
+    navigate('/')
   };
-
+  
   // 로그인 상태 관리는 zustand로 대체, logout만 auth.ts 사용
   useEffect(() => {
     const syncSession = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      const { data: { session }} = await supabase.auth.getSession();
       if (session) {
         setLogin(session);
       } else {
@@ -39,7 +39,7 @@ export default function Header() {
     };
     syncSession();
   }, [setLogin, setLogout]);
-
+  // console.log('로그인?: ', isLogin)
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -73,9 +73,12 @@ export default function Header() {
           <Link to={'/search'}>
             <SearchIcon className="text-black" />
           </Link>
-          <Link to={'/notification'}>
-            <NotificationsOutlinedIcon className="text-black" />
-          </Link>
+
+          {isLogin && (
+            <Link to={'/notification'}>
+              <NotificationsOutlinedIcon className="text-black" />
+            </Link>
+          )}
 
           {isLogin ? (
             <div className="relative">
