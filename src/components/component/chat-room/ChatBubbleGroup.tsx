@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 import ChatBubble from './ChatBubble';
-import Avatar from '@mui/material/Avatar';
+// import Avatar from '@mui/material/Avatar';
+import ProfileImage from '../MyPage/ProfileImg';
 
 export default function ChatBubbleGroup({
   isMy,
@@ -20,7 +21,10 @@ export default function ChatBubbleGroup({
       <div className="flex w-full flex-row gap-3">
         {!isMy && (
           <Link to={`/profile/${user.id}`}>
-            <Avatar src={user.image!} />
+            <div className="size-[50px] rounded-full">
+              <ProfileImage id={user.id} />
+            </div>
+            {/* <Avatar src={user.image!} /> */}
           </Link>
         )}
         <div className="flex w-full flex-col gap-1">
@@ -36,7 +40,10 @@ export default function ChatBubbleGroup({
         </div>
         {isMy && (
           <Link to={`/profile/${user.id}`}>
-            <Avatar src={user.image!} />
+            <div className="size-[50px] rounded-full">
+              <ProfileImage id={user.id} />
+            </div>
+            {/* <Avatar src={user.image!} /> */}
           </Link>
         )}
       </div>

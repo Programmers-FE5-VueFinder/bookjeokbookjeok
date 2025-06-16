@@ -28,7 +28,7 @@ export default function BookMarkArea({
     <>
       <div className="relative items-center justify-center">
         {loading ? null : post?.length === 0 ? (
-          <div className="min-h-[calc(100vh-770px)]">
+          <div className="min-h-[calc(100vh-1570px)]">
             <div className="absolute top-[47%] left-0 w-[261px] text-center">
               <span className="textT1">북마크한 도서가 없습니다.</span>
             </div>

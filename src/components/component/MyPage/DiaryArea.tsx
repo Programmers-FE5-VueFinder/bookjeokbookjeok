@@ -16,6 +16,7 @@ export default function DiaryArea({
   id: string | undefined;
 }) {
   const [loading, setLoading] = useState<boolean>(false);
+  // const [img, setImg] = useState();
 
   useEffect(() => {
     setLoading(true);
