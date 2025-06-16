@@ -58,7 +58,7 @@ export async function editBookClub(
 ) {
   const book_club = await supabase
     .from('book_club')
-    .update({ name: name, info: info })
+    .update({ id: id, name: name, info: info })
     .eq('id', id)
     .select()
     .single();
@@ -68,18 +68,34 @@ export async function editBookClub(
 
 /* 북클럽 삭제 */
 export async function deleteBookClub(id: string) {
-  const post = await supabase
-    .from('post')
-    .select('id')
-    .eq('book_club_id', id)
-    .single();
-
-  await supabase.from('like').delete().eq('post_id', post.data!.id);
-  await supabase.from('comment').delete().eq('post_id', post.data!.id);
-  await supabase.from('post').delete().eq('book_club_id', id);
   await supabase.from('book_club_chat').delete().eq('book_club_id', id);
   await supabase.from('book_club_member').delete().eq('book_club_id', id);
   await supabase.from('book_club').delete().eq('id', id);
+}
+
+/* 모집글 작성 */
+export async function createBookClubPost(
+  title: string,
+  body: string,
+  book_club_id: string,
+) {
+  const { data: newPost } = await supabase
+    .from('post')
+    .insert({
+      title: title,
+      body: body,
+      category: 'book-club',
+      book_club_id: book_club_id,
+    })
+    .select()
+    .single();
+
+  return newPost;
+}
+
+/* 북클럽 탈퇴 */
+export async function leaveBookClub(id: string) {
+  await supabase.from('book_club_member').delete().eq('book_club_id', id);
 }
 
 /* 북클럽 채팅 조회 */
@@ -90,4 +106,11 @@ export async function fetchChat(id: string) {
     .eq('book_club_id', id);
 
   return chat;
+}
+
+/* 북클럽 채팅 전송 */
+export async function sendChat(id: string, message: string) {
+  await supabase
+    .from('book_club_chat')
+    .insert({ book_club_id: id, message: message });
 }

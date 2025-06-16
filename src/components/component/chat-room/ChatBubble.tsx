@@ -1,3 +1,5 @@
+import getElapsedTime from '../../../utils/format-time';
+
 export default function ChatBubble({
   isMy,
   message,
@@ -15,7 +17,9 @@ export default function ChatBubble({
             {message}
           </div>
         )}
-        <div className="self-end text-sm text-[#A8A8A8]">{time}</div>
+        <div className="self-end text-sm text-[#A8A8A8]">
+          {getElapsedTime(time)}
+        </div>
         {isMy && (
           <div className="max-w-[50%] rounded-l-xl rounded-br-xl bg-[#08C81830] p-[20px] text-base break-all text-[#333333]">
             {message}
