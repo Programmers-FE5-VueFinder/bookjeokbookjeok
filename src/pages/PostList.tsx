@@ -1,6 +1,6 @@
 import clsx from 'clsx';
 import { fetchPostDetail, fetchPosts } from '../apis/post';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Link, useParams } from 'react-router';
 import BookCard from '../components/common/BookCard';
 import type { Post, PostDetail } from '../types/type';
@@ -50,9 +50,7 @@ export default function PostList() {
       const detailPosts: PostDetail[] = await Promise.all(
         result.data.map(async (post: Post) => {
           const detail = await fetchPostDetail(post.id);
-
           // console.log('Post Detail 응답 데이터:', detail);
-
           return {
             ...post,
             profile: detail?.profile ?? {
@@ -68,25 +66,29 @@ export default function PostList() {
           };
         }),
       );
-
-      // 인기글 정렬
-      const sorted = selectedSort === '인기글' 
-        ? [...detailPosts].sort((a, b) => b.like.length - a.like.length)
-        : [...detailPosts].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-
-      console.log(sorted);
-
-      setPosts(sorted);
+      
+      setPosts(detailPosts);
       setLoading(false);
     };
-
+    
     loadPosts();
-
+    
     const options = sortOptionsMap[channelId ?? ''];
     if (options && options.length > 0) {
       setSelectedSort(options[0]);
     }
-  }, [channelId, selectedSort]);
+  }, [channelId]);
+  
+  // // 인기글 정렬
+  const sortedPosts = useMemo(() => {
+    if (selectedSort === '인기글') {
+      return [...posts].sort((a, b) => b.like.length - a.like.length);
+    }
+    // 최신글(기본)
+    return [...posts].sort(
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+    );
+  }, [posts, selectedSort]);
 
   return (
     <>
@@ -122,12 +124,12 @@ export default function PostList() {
         <div className="my-[132px] w-[1200px]">
           {loading ? (
             <div>로딩중...</div>
-          ) : posts.length === 0 ? (
+          ) : sortedPosts.length === 0 ? (
             <div>게시글이 없습니다.</div>
           ) : (
             // 카드 컴포
             <div className="grid h-fit w-[1200px] grid-cols-4 gap-[28px]">
-              {posts.map((post) => (
+              {sortedPosts.map((post) => (
                 <Link
                   key={post.id}
                   to={`/channel/${post.category}/post/${post.id}`}
@@ -150,9 +152,9 @@ export default function PostList() {
         </div>
       </div>
 
-      <Link to={`/channel/${params.channelId}/post/1`}>
+      {/* <Link to={`/channel/${params.channelId}/post/1`}>
         {params.channelId}채널 1번글
-      </Link>
+      </Link> */}
     </>
   );
 }
