@@ -94,7 +94,7 @@ export default function WritePost({
     <>
       <main className="flex h-screen">
         <div className="flex grow-1 flex-col">
-          {!isCreateBookClub && <CategorySelect setCategory={setCategory} />}
+          {!bookclubId && <CategorySelect setCategory={setCategory} />}
           <form
             className="w-ful flex grow-1 flex-col justify-between"
             onSubmit={submitHandler}

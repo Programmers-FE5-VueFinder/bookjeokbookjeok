@@ -44,12 +44,6 @@ export default function CategorySelect({
               </li>
               <li
                 onClick={(e) => categoryChangeHandler(e)}
-                className="cursor-pointer px-[10px] py-[5px] hover:bg-[#f1f1f1]"
-              >
-                독서모임
-              </li>
-              <li
-                onClick={(e) => categoryChangeHandler(e)}
                 className="cursor-pointer rounded-br-[4px] rounded-bl-[4px] px-[10px] py-[5px] hover:bg-[#f1f1f1]"
               >
                 자유채널
