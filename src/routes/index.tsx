@@ -80,6 +80,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/create-post/:category',
+    loader: fetchUserData,
     Component: CreatePost,
   },
   {

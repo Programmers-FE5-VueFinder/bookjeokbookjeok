@@ -11,7 +11,7 @@ import BookRating from './BookRating';
 import CategorySelect from './CategorySelect';
 // import { createPost } from '../../../apis/post';
 import { useAuthStore } from '../../../store/authStore';
-import { fetchAuthId, isLoggedIn } from '../../../apis/auth.ts';
+import { fetchAuthId } from '../../../apis/auth.ts';
 import { createBookClub } from '../../../apis/book-club.ts';
 import supabase from '../../../utils/supabase';
 
@@ -36,12 +36,11 @@ export default function WritePost({
   as();
 
   const isLogIn = useAuthStore((state) => state.isLogin);
-  // const session = useAuthStore((state) => state.session);
+  const session = useAuthStore((state) => state.session);
+
   useEffect(() => {
-    if (!isLogIn) {
-      navigate('/');
-    }
-  }, [isLogIn]);
+    if (!isLogIn) navigate('/');
+  }, []);
 
   const onClose = () => setShowModal(false);
 
@@ -65,7 +64,7 @@ export default function WritePost({
     const post = {
       title: title,
       body: body,
-      user_id: userId, // Supabase Auth의 user.id
+      user_id: session?.user.id, // Supabase Auth의 user.id
       image: image, // 이미지 없으면 null 또는 빈 문자열
       category: 'diary', // 선택적으로 사용할 수 있음
       // created_at: Date.now(),
