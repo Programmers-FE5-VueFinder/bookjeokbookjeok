@@ -2,7 +2,7 @@ import supabase from '../../../utils/supabase.ts';
 import { Size } from './quillOverride.ts';
 import ReactQuill from 'react-quill-new';
 import 'react-quill-new/dist/quill.snow.css';
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import '../../../css/reactQuillCustom.css';
 import { formats } from './quillAttribute.ts';
 
@@ -14,23 +14,25 @@ export default function ReactQuillEditor({
   value: string;
 }) {
   const quillRef = useRef<ReactQuill | null>(null);
-  const modules = {
-    toolbar: {
-      container: [
-        [{ size: Size.whitelist }],
-        ['bold', 'italic', 'underline', 'strike'],
-        [{ list: 'ordered' }],
-        [{ align: [] }],
-        [{ color: [] }],
-        ['image'],
-      ],
-      handlers: {
-        image: () => {
-          imageHandler();
+  const modules = useMemo(() => {
+    return {
+      toolbar: {
+        container: [
+          [{ size: Size.whitelist }],
+          ['bold', 'italic', 'underline', 'strike'],
+          [{ list: 'ordered' }],
+          [{ align: [] }],
+          [{ color: [] }],
+          ['image'],
+        ],
+        handlers: {
+          image: () => {
+            imageHandler();
+          },
         },
       },
-    },
-  };
+    };
+  }, []);
 
   const imageHandler = async () => {
     const input = document.createElement('input');
@@ -38,16 +40,11 @@ export default function ReactQuillEditor({
     input.setAttribute('accept', 'image/*');
     input.click();
 
-    console.log('작동 중');
-
     input.onchange = async () => {
-      console.log('onChange 첫 동작');
       if (!input.files || input.files.length === 0) return;
       const file = input.files[0];
       const safeFileName = encodeURIComponent(file.name);
       const fileName = `public/posts/${Date.now()}_${safeFileName}`;
-
-      console.log('onChange 중간 동작');
 
       const { data, error } = await supabase.storage
         .from('images')
@@ -56,12 +53,12 @@ export default function ReactQuillEditor({
           upsert: true,
         });
 
+      console.log(data);
+
       if (error) {
         console.error('Upload error:', error.message);
         return;
       }
-
-      console.log(data);
 
       const {
         data: { publicUrl },
@@ -70,6 +67,7 @@ export default function ReactQuillEditor({
       const quill = quillRef!.current!.getEditor();
       const range = quill.getSelection();
       quill.insertEmbed(range!.index, 'image', publicUrl);
+      quill.setSelection(range!.index + 1);
     };
   };
 

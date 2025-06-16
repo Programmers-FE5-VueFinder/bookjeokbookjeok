@@ -25,8 +25,8 @@ import PopularDiaryCardSkeleton from "../components/component/Home/PopularDiaryC
 
 const slides = [
   {
-    title: "BOOK\nCLUB",
-    description: "함께 읽고 이야기하며\n새로운 관점을 만나보세요",
+    title: 'BOOK\nCLUB',
+    description: '함께 읽고 이야기하며\n새로운 관점을 만나보세요',
     imgSrc: home_main_banner1,
     bgColor: '#FDFF98',
     boxClassName: 'flex justify-end mt-auto mr-[25px]',
@@ -56,7 +56,7 @@ const slides = [
     boxClassName: 'flex justify-end mt-auto',
     className: "flex justify-end w-[470px] h-auto",
   },
-]
+];
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
@@ -68,18 +68,18 @@ export default function Home() {
 
   const handeleOpenLoginModal = () => {
     setIsLoginModalOpen(true);
-  }
+  };
 
   const handleCloseLoginModal = () => {
     setIsLoginModalOpen(false);
-  }
+  };
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => prev === 0 ? slides.length - 1 : prev - 1);
+    setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
   };
 
   // 금주의 인기 다이어리 api 호출
@@ -116,13 +116,17 @@ export default function Home() {
             style={{ backgroundColor: slides[currentSlide].bgColor}}
           >
             <div className="flex flex-col gap-y-[20px]">
-              <img 
-                src={home_start_shine3} 
+              <img
+                src={home_start_shine3}
                 alt="star_shine"
-                className="w-[39px] h-auto"
+                className="h-auto w-[39px]"
               />
-              <h1 className="text-[36px] font-semibold whitespace-pre-line">{slides[currentSlide].title}</h1>
-              <h2 className="text-[24px] font-medium whitespace-pre-line">{slides[currentSlide].description}</h2>
+              <h1 className="text-[36px] font-semibold whitespace-pre-line">
+                {slides[currentSlide].title}
+              </h1>
+              <h2 className="text-[24px] font-medium whitespace-pre-line">
+                {slides[currentSlide].description}
+              </h2>
             </div>
 
             <div className={slides[currentSlide].boxClassName}>
@@ -135,15 +139,17 @@ export default function Home() {
           </div>
 
           <div className="flex justify-center">
-            <div className="flex justify-between w-[135px] h-[25px] text-[20px] font-medium mt-[30px]">
-              <button 
+            <div className="mt-[30px] flex h-[25px] w-[135px] justify-between text-[20px] font-medium">
+              <button
                 onClick={prevSlide}
                 className="flex justify-center items-center w-[25px] h-[25px] rounded-[5px] bg-[#CDC8C8]/20 cursor-pointer"
               >
                 <MdArrowBackIosNew className="w-[16px]"/>
               </button>
-              <h3 className="text-[20px] font-medium">{currentSlide + 1} / {slides.length}</h3>
-              <button 
+              <h3 className="text-[20px] font-medium">
+                {currentSlide + 1} / {slides.length}
+              </h3>
+              <button
                 onClick={nextSlide}
                 className="flex justify-center items-center w-[25px] h-[25px] rounded-[5px] bg-[#CDC8C8]/20 cursor-pointer"
               >
@@ -214,9 +220,7 @@ export default function Home() {
           </div>
           )}
 
-          <div 
-            className="flex justify-between  w-[590px] h-[130px] px-[26px] bg-white rounded-[20px] border border-[#00FF84]"
-          >
+          <div className="flex h-[130px] w-[590px] justify-between rounded-[20px] border border-[#00FF84] bg-white px-[26px]">
             <div className="py-[18px]">
               <h2 className="text-[20px] font-semibold text-[#06BE00] leading-[24px]">독서 다이어리를 작성하시고<br/>읽고 느낀 것들을 글로 남겨보세요</h2>
               <h3 className="text-[14px] font-semibold mt-[13px]">함께 읽고, 함께 나누며 독서의 여운을 더 깊게 남겨보세요</h3>
@@ -233,13 +237,9 @@ export default function Home() {
         </section>
 
         {/* section 2 */}
-        <section className="w-[393px] h-fit my-[40px]">
-          <div className="flex flex-col gap-y-[9px] items-center">
-            <img
-              src={home_fire} 
-              alt="fire" 
-              className="w-auto h-[47px]"
-            />
+        <section className="my-[40px] h-fit w-[393px]">
+          <div className="flex flex-col items-center gap-y-[9px]">
+            <img src={home_fire} alt="fire" className="h-[47px] w-auto" />
             <h2 className="text-[20px] font-semibold">금주의 인기 다이어리</h2>
           </div>
         </section>
@@ -268,17 +268,17 @@ export default function Home() {
             title="설국"
             content="접경의 긴 터널을 빠져나오자, 설국이었다"
           />
-          <PopularDiaryCard 
+          <PopularDiaryCard
             genre="education"
             title="코딩 자율학습 html + css + 자바스크립트"
             content="누구나 쉽게 배우는 코딩!!"
           />
-          <PopularDiaryCard 
+          <PopularDiaryCard
             genre="development"
             title="설득의 능력"
             content="말의 힘!"
           />
-          <PopularDiaryCard 
+          <PopularDiaryCard
             genre="humanities"
             title="초역 부처의 말"
             content="염세에서 배우는 불교의 가르침"
@@ -287,17 +287,19 @@ export default function Home() {
 
         {/* section 4 */}
         <section>
-          <div className="flex justify-center items-center text-[20px] font-semibold pl-[38px]">
-            <h1 className="text-[#333333]">지금! 주목 받는 <span className="text-[#08C818]">베스트셀러</span></h1> 
-            <img 
-              src={home_search_man} 
+          <div className="flex items-center justify-center pl-[38px] text-[20px] font-semibold">
+            <h1 className="text-[#333333]">
+              지금! 주목 받는 <span className="text-[#08C818]">베스트셀러</span>
+            </h1>
+            <img
+              src={home_search_man}
               alt="search_man"
-              className="w-[319px] h-auto" 
+              className="h-auto w-[319px]"
             />
           </div>
 
           {/* 베스트셀러 슬라이드 */}
-          <div className="flex flex-col items-center w-[590px] h-fit py-[27px] rounded-[20px] bg-[#FFF5AA]">
+          <div className="flex h-fit w-[590px] flex-col items-center rounded-[20px] bg-[#FFF5AA] py-[27px]">
             <BestsellerSlider />
           </div>
         </section>
@@ -311,7 +313,11 @@ export default function Home() {
                 alt="star_shine" 
                 className="mt-[36px] mb-[22px]"
               />
-              <h1 className="text-[20px] font-semibold">북적북적과 함께<br />건강한 독서 습관 만들어보세요!</h1>
+              <h1 className="text-[20px] font-semibold">
+                북적북적과 함께
+                <br />
+                건강한 독서 습관 만들어보세요!
+              </h1>
             </div>
 
             <img 
@@ -324,4 +330,3 @@ export default function Home() {
     </div>
   );
 }
- 

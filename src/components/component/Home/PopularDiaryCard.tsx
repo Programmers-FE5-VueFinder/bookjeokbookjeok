@@ -6,25 +6,25 @@ const genreImageMap: Record<string, { image: string; label: string }> = {
     label: "인문학",
   },
   novel: {
-    image: "/images/home_novel_illust.png",
-    label: "소설",
+    image: '/images/home_novel_illust.png',
+    label: '소설',
   },
   education: {
-    image: "/images/home_edu_illust.png",
-    label: "교육",
+    image: '/images/home_edu_illust.png',
+    label: '교육',
   },
   development: {
-    image: "/images/home_dev_illust.png",
-    label: "자기 개발",
+    image: '/images/home_dev_illust.png',
+    label: '자기 개발',
   },
   humanities: {
-    image: "/images/home_humanities_illust.png",
-    label: "인문",
+    image: '/images/home_humanities_illust.png',
+    label: '인문',
   },
-}
+};
 
-export default function PopularDiaryCard ({ genre, title, content }: PopularDiaryCardProps) {
-
+  
+export default function PopularDiaryCard({genre, title, content}: PopularDiaryCardProps) {
   const genreData = genre && genreImageMap[genre]
   ? genreImageMap[genre]
   : {
@@ -33,11 +33,11 @@ export default function PopularDiaryCard ({ genre, title, content }: PopularDiar
     };
 
   return (
-    <div 
-        className="flex w-[590px] h-[150px] rounded-[20px] px-[8px] py-[10px]"
-        style={{
-            boxShadow: '0px 0px 4px rgba(0, 141, 16, 0.3)',
-        }}  
+    <div
+      className="flex h-[150px] w-[590px] rounded-[20px] px-[8px] py-[10px]"
+      style={{
+        boxShadow: '0px 0px 4px rgba(0, 141, 16, 0.3)',
+      }}
     >
         <img 
             src={genreData.image} 
