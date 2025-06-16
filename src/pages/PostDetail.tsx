@@ -3,7 +3,7 @@ import Comment from '../components/component/post-detail/Comment';
 import CommentInput from '../components/component/post-detail/CommentInput';
 import PostHeader from '../components/component/post-detail/PostHeader';
 import PostProfile from '../components/component/post-detail/PostProfile';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { fetchPostDetail } from '../apis/post';
 import type { PostDetail } from '../types/post';
 
@@ -11,11 +11,13 @@ export default function PostDetail() {
   const path = useParams();
   const [content, setContent] = useState<PostDetail | undefined>(undefined);
   console.log(path.postId);
-  useLayoutEffect(() => {
+
+  useEffect(() => {
     async function postDetail() {
       const response = await fetchPostDetail(path.postId as string);
       console.log(response);
       setContent(response);
+      console.log('console.');
     }
     postDetail();
   }, []);
@@ -26,7 +28,7 @@ export default function PostDetail() {
       {/* 본문 */}
       {/* https://velog.io/@nemo/string-to-jsx */}
       <div
-        dangerouslySetInnerHTML={{ __html: content.body }}
+        // dangerouslySetInnerHTML={{ __html: content!.body }}
         className="h-[700px] pt-[80px] pb-[100px]"
       ></div>
       {/* 본문 */}
