@@ -25,12 +25,9 @@ const genreImageMap: Record<string, { image: string; label: string }> = {
 
   
 export default function PopularDiaryCard({genre, title, content}: PopularDiaryCardProps) {
-  const genreData = genre && genreImageMap[genre]
-  ? genreImageMap[genre]
-  : {
-      image: "",
-      label: "기타",
-    };
+  const genreData = genre && genreImageMap[genre];
+
+  if (!genreData) return null; // 장르가 유효하지 않으면 렌더링 안 함
 
   return (
     <div

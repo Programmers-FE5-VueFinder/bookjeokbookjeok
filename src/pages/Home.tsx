@@ -166,12 +166,7 @@ export default function Home() {
         <section className="flex flex-col gap-y-[15px]">
 
           {isLogin === false && (
-            <div 
-              className="flex justify-between w-[590px] h-[130px] px-[26px] pt-[18px] bg-[#00FF84] rounded-[20px]"
-              style={{
-                boxShadow: '0px 0px 10px rgba(0, 114, 59, 0.25)',
-              }}  
-            >
+            <div className="flex justify-between w-[590px] h-[130px] px-[26px] pt-[18px] bg-[#00FF84] rounded-[20px]">
               {/* 로그인 배너 */}
               <div>
                 <h2 className="text-[20px] font-semibold leading-[24px]">로그인 하고 북적북적의<br/>모든 서비스를 이용해보세요</h2>
