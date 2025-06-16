@@ -189,12 +189,7 @@ export default function Home() {
           )}
 
           {isLogin === true && (
-            <div 
-            className="flex justify-between w-[590px] h-[130px] px-[26px] pt-[18px] bg-[#70B5FF] rounded-[20px]"
-            style={{
-              boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)',
-            }}  
-          >
+            <div className="flex justify-between w-[590px] h-[130px] px-[26px] pt-[18px] bg-[#70B5FF] rounded-[20px]">
             <div>
               <h2 className="text-[20px] font-semibold leading-[24px] text-[#202020]">환영합니다!<br/>오늘도 즐거운 독서 되세요</h2>
               <button 
