@@ -18,8 +18,6 @@ export default function CategorySelect({
 
     if (text === '다이어리') {
       setCategory('diary');
-    } else if (text === '북클럽') {
-      setCategory('book_club');
     } else if (text === '자유채널') {
       setCategory('community');
     }
@@ -45,12 +43,6 @@ export default function CategorySelect({
                 className="cursor-pointer px-[10px] py-[5px] hover:bg-[#f1f1f1]"
               >
                 다이어리
-              </li>
-              <li
-                onClick={(e) => categoryChangeHandler(e)}
-                className="cursor-pointer px-[10px] py-[5px] hover:bg-[#f1f1f1]"
-              >
-                독서모임
               </li>
               <li
                 onClick={(e) => categoryChangeHandler(e)}

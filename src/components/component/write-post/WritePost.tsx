@@ -2,18 +2,17 @@ import './quillOverride.ts';
 import { useEffect, useRef, useState } from 'react';
 import ReactQuillEditor from './ReactQuillEditor';
 import { MdArrowBack } from 'react-icons/md';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate } from 'react-router';
 import { MdOutlineSearch } from 'react-icons/md';
 import BookSearchModal from '../BookSearchModal';
 import type { BookDetail } from '../../../types/book';
 import SelectBookInfo from './SelectBookInfo';
 import BookRating from './BookRating';
 import CategorySelect from './CategorySelect';
-// import { createPost } from '../../../apis/post';
 import { useAuthStore } from '../../../store/authStore';
-import { fetchAuthId } from '../../../apis/auth.ts';
 import { createBookClub } from '../../../apis/book-club.ts';
 import supabase from '../../../utils/supabase';
+import Toastfy from '../../common/Toastfy.tsx';
 
 export default function WritePost({
   isCreateBookClub,
@@ -21,19 +20,12 @@ export default function WritePost({
   isCreateBookClub?: boolean;
 }) {
   const navigate = useNavigate();
-  const path = useParams();
-  const [category, setCategory] = useState(path.category);
+  const [category, setCategory] = useState('diary');
   const [rating, setRating] = useState<number | undefined>();
   const [value, setValue] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [selectedBook, setSeletedBook] = useState<BookDetail | null>(null);
   const titleRef = useRef<HTMLInputElement>(null);
-
-  let userId: string;
-  async function as() {
-    userId = await fetchAuthId();
-  }
-  as();
 
   const isLogIn = useAuthStore((state) => state.isLogin);
   const session = useAuthStore((state) => state.session);
@@ -54,7 +46,11 @@ export default function WritePost({
     const match = body.match(/<img[^>]+src="([^"]+)"[^>]*>/);
     const image = match ? match[1] : null;
 
-    if (!title || !body) return; // toastify로 제목이나 내용을 모두 입력해 달라는 경고문구 추가
+    if (!title || !body) {
+      if (!title) Toastfy('error', '제목을 작성 해주세요');
+      if (body === '<p><br></p>') Toastfy('error', '본문을 작성 해주세요');
+      return;
+    }
 
     const bookInfo = {
       id: selectedBook!.isbn,
@@ -64,32 +60,36 @@ export default function WritePost({
     const post = {
       title: title,
       body: body,
-      user_id: session?.user.id, // Supabase Auth의 user.id
-      image: image, // 이미지 없으면 null 또는 빈 문자열
-      category: 'diary', // 선택적으로 사용할 수 있음
-      // created_at: Date.now(),
-      // book_id: bookInfo.id,
+      user_id: session?.user.id,
+      image: image,
+      category: category,
     };
-
-    console.log(image, userId, bookInfo.id);
 
     switch (category) {
       case 'diary': {
         try {
-          const { data, error } = await supabase.from('post').insert([post]);
-          console.log(data);
-          console.log(error);
+          const response = await supabase.from('post').insert([post]);
+          console.log(response);
+          // if (bookInfo.id) {
+          //   await supabase.from('book_tag').insert({
+          //     book_id: bookInfo.id,
+          //     star: bookInfo.star,
+          //     reference_category: 'newPost.data!.category',
+          //     reference_id: 'newPost.data!.id',
+          //   });
+          // }
+          navigate('/');
         } catch (e) {
           console.log(e);
+          Toastfy('error', '작성에 실패했습니다');
         }
         return;
       }
       case 'community': {
+        const response = await supabase.from('post').insert([post]);
+        console.log(response);
+        navigate('/');
         // community post 생성 api
-        return;
-      }
-      case 'book-club': {
-        // book-club post 생성 api
         return;
       }
       default: {
@@ -116,7 +116,7 @@ export default function WritePost({
                 className="h-fir mx-auto my-[20px] block w-[1200px] max-w-[1200px] pl-[5px] text-[24px] text-[#666666]"
               />
 
-              {selectedBook ? (
+              {selectedBook && category === 'diary' ? (
                 <SelectBookInfo
                   setShowModal={setShowModal}
                   setSeletedBook={setSeletedBook}
@@ -134,6 +134,7 @@ export default function WritePost({
               )}
               {selectedBook && <BookRating setRating={setRating} />}
               <ReactQuillEditor
+                category={category}
                 setValue={setValue}
                 value={value}
                 selectedBook={selectedBook}
@@ -150,7 +151,6 @@ export default function WritePost({
                 </button>
                 <button
                   type="submit"
-                  // onClick={() => console.log(value)}
                   className="cursor-pointer rounded-[5px] bg-[#F1F1F1] px-[23px] py-[8px] text-[14px] hover:bg-[#41D94D] hover:font-semibold hover:text-[#fff]"
                 >
                   발행하기

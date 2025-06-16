@@ -9,10 +9,12 @@ import { formats } from './quillAttribute.ts';
 import type { BookDetail } from '../../../types/book';
 
 export default function ReactQuillEditor({
+  category,
   setValue,
   value,
   selectedBook,
 }: {
+  category: string;
   setValue: (value: string) => void;
   value: string;
   selectedBook: BookDetail | null;
@@ -93,7 +95,7 @@ export default function ReactQuillEditor({
     if (!selectedBook) return;
 
     setTimeout(() => {
-      if (!quillRef.current) return;
+      if (!quillRef.current || category !== 'community') return;
       const quill = quillRef!.current!.getEditor();
 
       quill.insertEmbed(0, 'detailBook', {
