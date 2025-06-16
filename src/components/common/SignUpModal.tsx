@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { IoMdCheckmark } from 'react-icons/io';
 import { IoMdClose } from 'react-icons/io';
 import supabase from '../../utils/supabase';
+import { isEmailDuplicated, isNameDuplicated } from '../../apis/profile';
 
 type ConsentKey = 'use' | 'personal' | 'marketing';
 
@@ -27,34 +28,6 @@ export default function SignUpModal() {
       return { ...prev, [type]: !prev[type] };
     });
     setChecked(false);
-  };
-
-  const isNameDuplicated = async (name: string) => {
-    const { data, error } = await supabase
-      .from('profile')
-      .select('id')
-      .eq('name', name);
-
-    if (error) {
-      console.error('중복 확인 실패:', error.message);
-      return false;
-    }
-
-    return data.length > 0;
-  };
-
-  const isEmailDuplicated = async (email: string) => {
-    const { data, error } = await supabase
-      .from('profile')
-      .select('id')
-      .eq('email', email);
-
-    if (error) {
-      console.error('이메일 중복 확인 실패:', error.message);
-      return false;
-    }
-
-    return data.length > 0;
   };
 
   const handleCheckValid = () => {
