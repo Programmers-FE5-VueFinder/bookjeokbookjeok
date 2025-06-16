@@ -1,6 +1,7 @@
 import { kakaoLogin } from '../apis/auth';
 import { googleLogin } from '../apis/auth';
 import kakaoLogo from '../assets/images/kakaoLogo.png';
+import { useAuthStore } from '../store/authStore';
 import supabase from '../utils/supabase';
 import { useState } from 'react';
 
@@ -13,11 +14,12 @@ export default function Login({ onClose, onOpenSignUp }: LoginProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const setLogin = useAuthStore((state) => state.setLogin);
 
   const handleSupabaseLogin = async () => {
     setErrorMessage('');
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -33,7 +35,10 @@ export default function Login({ onClose, onOpenSignUp }: LoginProps) {
       setErrorMessage('아이디 또는 비밀번호가 올바르지 않습니다.');
       return;
     }
-    onClose();
+    if (data.session) {
+      setLogin(data.session);
+      onClose();
+    }
   };
   const goToSignUp = () => {
     onClose();
