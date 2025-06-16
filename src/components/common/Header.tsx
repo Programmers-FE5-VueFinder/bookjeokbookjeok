@@ -83,7 +83,10 @@ export default function Header() {
 
           {isLogin ? (
             <div className="relative">
-              <button onClick={() => setIsDropdownOpen((prev) => !prev)}>
+              <button
+                onClick={() => setIsDropdownOpen((prev) => !prev)}
+                className="cursor-pointer"
+              >
                 <MdOutlinePersonOutline size={24} className="text-black" />
               </button>
 
