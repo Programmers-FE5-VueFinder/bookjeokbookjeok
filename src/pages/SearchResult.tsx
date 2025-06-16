@@ -6,6 +6,7 @@ import UserCard from '../components/common/UserCard';
 // import BookCard from '../components/common/BookCard';
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import UserCardSkeleton from '../components/common/UserCardSkeleton';
+// import type { Post } from '../types/type';
 
 export default function SearchResult() {
   const [users, setUsers] = useState<User[]>([]);
@@ -13,9 +14,34 @@ export default function SearchResult() {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedBtn, setSelectedBtn] = useState<string>('통합 검색');
   
-  // const [searchKeyword, setSearchKeyword] = useState('');
-  // const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+  // const [filteredPosts, setFilteredPosts] = useState<Post[]>([]); 
 
+
+  const handleSearch = () => {
+    const keyword = searchKeyword.trim().toLowerCase();
+
+    // 사용자 필터링
+    const filteredU = users.filter(user => 
+      user.name?.toLowerCase().includes(keyword) ||
+      user.intro?.toLowerCase().includes(keyword)
+    );
+
+    // 게시물 필터링
+    // const filteredP = dummyPosts.filter(post => 
+    //   post.title.toLowerCase().includes(keyword) ||
+    //   post.body.toLowerCase().includes(keyword)
+    // );
+
+    setFilteredUsers(filteredU);
+    // setFilteredPosts(filteredP);
+  };
+  
+  const handleContentButton = (e: React.MouseEvent<HTMLButtonElement>) => {
+    const { name } = e.currentTarget;
+    setSelectedBtn(name);
+  };
 
   useEffect(() => {
     const getUsers = async () => {
@@ -23,6 +49,7 @@ export default function SearchResult() {
       try {
         const fetchUsers = await fetchUser();
         setUsers(fetchUsers || []);
+        setFilteredUsers(fetchUsers || []);
       } catch (error) {
         console.error('유저 불러오기 실패:', error);
       } finally {
@@ -31,11 +58,6 @@ export default function SearchResult() {
     };
     getUsers();
   }, []);
-
-  const handleContentButton = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const { name } = e.currentTarget;
-    setSelectedBtn(name);
-  };
 
   return (
     <>
@@ -47,9 +69,25 @@ export default function SearchResult() {
               type="text"
               className="h-[60px] w-[687px] rounded-sm pl-[23px]"
               placeholder="검색어를 입력해 주세요"
+              value={searchKeyword}
+              onChange={(e) => {
+                const value = e.target.value;
+                setSearchKeyword(value);
+                if (value.trim() === '') {
+                  setFilteredUsers(users); 
+                } else {
+                  setFilteredUsers(users); 
+                }
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleSearch();
+              }}
             />
 
-            <button className="absolute top-[32.5%] right-5 cursor-pointer justify-center">
+            <button 
+              className="absolute top-[32.5%] right-5 cursor-pointer justify-center"
+              onClick={handleSearch}
+            >
               <IoSearch className="size-[22px]" />
             </button>
           </div>
@@ -95,7 +133,9 @@ export default function SearchResult() {
                     ? Array.from({ length: 6 }).map((_, idx) => (
                         <UserCardSkeleton key={idx} />
                       ))
-                    : users.map((user) => (
+                    : (searchKeyword ? filteredUsers : users)
+                      .slice(0, selectedBtn === '통합 검색' ? 6 : undefined)
+                      .map((user) => (
                         <UserCard key={user.id} user={user} />
                       ))}
                 </div>
