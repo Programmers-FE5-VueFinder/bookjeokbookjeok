@@ -1,10 +1,12 @@
 import clsx from 'clsx';
+<<<<<<< HEAD
 // import { fetchPosts } from '../apis/post';
+=======
+import { fetchPostDetail, fetchPosts } from '../apis/post';
+>>>>>>> 681ffea94aa00ebf3b37dba7ec2d52ef2a081cc4
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router';
 import BookCard from '../components/common/BookCard';
-
-import { fetchPosts, fetchPostDetail } from '../apis/post';
 import type { Post, PostDetail } from '../types/type';
 
 const sortOptionsMap: Record<string, string[]> = {
@@ -22,7 +24,11 @@ export default function PostList() {
 
   const channelNames: { [key: string]: string } = {
     diary: '다이어리',
+<<<<<<< HEAD
     book_club: '독서모임',
+=======
+    book_club: '북클럽',
+>>>>>>> 681ffea94aa00ebf3b37dba7ec2d52ef2a081cc4
     community: '자유채널',
   };
 
@@ -98,22 +104,31 @@ export default function PostList() {
     <>
       <div className="mx-auto w-full max-w-[1200px] px-4">
         <h1 className="my-[80px] text-[32px] font-bold">{channelName}</h1>
-
-        <div className="flex gap-x-[10px]">
-          {sortOptions.map((option) => (
-            <button
-              key={option}
-              onClick={() => setSelectedSort(option)}
-              className={clsx(
-                'flex h-[34px] w-[100px] items-center justify-center rounded-[20px] border-none px-4 py-2 text-[16px]',
-                selectedSort === option
-                  ? 'bg-[#08C818] font-bold text-[#FFFFFF]'
-                  : 'bg-[#F3F1F1] font-bold text-[#333333] hover:bg-gray-300',
-              )}
+        <div className="flex justify-between">
+          <div className="flex gap-x-[10px]">
+            {sortOptions.map((option) => (
+              <button
+                key={option}
+                onClick={() => setSelectedSort(option)}
+                className={clsx(
+                  'flex h-[34px] w-[100px] items-center justify-center rounded-[20px] border-none px-4 py-2 text-[16px]',
+                  selectedSort === option
+                    ? 'bg-[#08C818] font-bold text-[#FFFFFF]'
+                    : 'bg-[#F3F1F1] font-bold text-[#333333] hover:bg-gray-300',
+                )}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+          {channelName === '북클럽' && (
+            <Link
+              to={`/create-bookclub`}
+              className="flex h-[34px] w-[140px] cursor-pointer items-center justify-center rounded-full bg-[#F3F1F1] text-[16px] font-bold text-[#333333] hover:bg-gray-300"
             >
-              {option}
-            </button>
-          ))}
+              북클럽 만들기
+            </Link>
+          )}
         </div>
 
         <div className="my-[132px] w-[1200px] bg-red-50">

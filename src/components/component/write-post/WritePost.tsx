@@ -1,5 +1,5 @@
 // import './quillOverride.ts';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import ReactQuillEditor from './ReactQuillEditor';
 import { MdArrowBack } from 'react-icons/md';
 import { useNavigate, useParams } from 'react-router';
@@ -7,22 +7,28 @@ import { MdOutlineSearch } from 'react-icons/md';
 import BookSearchModal from '../BookSearchModal';
 import type { BookDetail } from '../../../types/book';
 import BookHTML from './BookHTML';
-import BookRating from './BookRating';
+import {
+  createBookClub,
+  createBookClubPost,
+  editBookClub,
+  fetchBookClub,
+} from '../../../apis/book-club';
 import CategorySelect from './CategorySelect';
-// import { useAuthStore } from '../../../store/authStore';
+import BookRating from './BookRating';
 
 export default function WritePost({
   isCreateBookClub,
 }: {
   isCreateBookClub?: boolean;
 }) {
-  const navigate = useNavigate();
   // 로그인 안 된 유저가 접근시
   // const isLogin = useAuthStore((state) => state.isLogin);
   // if (!isLogin) navigate('/');
 
   //path : diary, bookclub, freetalk
   const path = useParams();
+  const bookclubId = path.bookclub_id;
+  const navigate = useNavigate();
 
   const [category, setCategory] = useState(path.category);
   const [rating, setRating] = useState<number | null>(null);
@@ -34,13 +40,20 @@ export default function WritePost({
 
   const onClose = () => setShowModal(false);
 
-  const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+  const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const title = titleRef.current?.value;
     const body = value.toString();
 
     if (!title || !body) return; // toastify로 제목이나 내용을 모두 입력해 달라는 경고문구 추가
+
+    /* 북클럽 수정 */
+    if (bookclubId) {
+      editBookClub(bookclubId, title, body);
+      navigate(`/bookclub/${bookclubId}`);
+      return;
+    }
 
     switch (category) {
       case 'diary': {
@@ -52,14 +65,30 @@ export default function WritePost({
         return;
       }
       case 'book-club': {
-        // book-club post 생성 api
+        createBookClubPost(title, body, bookclubId!);
         return;
       }
       default: {
-        // book-club 생성 api
+        const bookclub_id = await createBookClub(title, body);
+        navigate(`/bookclub/${bookclub_id}`);
       }
     }
   };
+
+  useEffect(() => {
+    if (bookclubId) {
+      if (isCreateBookClub) {
+        const setBookClubInfo = async () => {
+          const bookclub = await fetchBookClub(bookclubId);
+          titleRef!.current!.value = bookclub.name;
+          setValue(bookclub.info!);
+        };
+        setBookClubInfo();
+      } else {
+        setCategory('book-club');
+      }
+    }
+  }, [bookclubId, isCreateBookClub]);
 
   return (
     <>
@@ -95,11 +124,7 @@ export default function WritePost({
                 </button>
               )}
               {selectedBook && <BookRating setRating={setRating} />}
-              <ReactQuillEditor
-                // bodyRef={bodyRef}
-                setValue={setValue}
-                value={value}
-              />
+              <ReactQuillEditor setValue={setValue} value={value} />
             </div>
             <div className="flex h-[60px] min-h-[60px] w-[100%] justify-center border-t border-t-[#D5D5D5]">
               <div className="flex h-[100%] w-[1200px] items-center justify-between">

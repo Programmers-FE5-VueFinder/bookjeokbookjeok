@@ -40,7 +40,7 @@
     @apply h-[40px] w-[238px] text-[16px];
   }
   .clubInfo {
-    @apply mb-[30px] flex items-center gap-[5px];
+    @apply my-[30px] flex items-center gap-[5px];
   }
 }
 
@@ -65,6 +65,12 @@ select::-ms-expand {
   background-color: #ababab;
 }
 
+.custom-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.custom-scrollbar {
+  -ms-overflow-style: none;
+}
 /* 스크롤바 숨김 */
 .scroll-hidden {
   overflow-y: scroll;
@@ -73,4 +79,8 @@ select::-ms-expand {
 
 .scroll-hidden::-webkit-scrollbar {
   display: none; /* Chrome, Safari */
+}
+
+.custom-progress {
+  background-color: #08c818 !important;
 }
