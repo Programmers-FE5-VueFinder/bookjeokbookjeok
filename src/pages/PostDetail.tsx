@@ -12,7 +12,7 @@ export default function PostDetail() {
   const [content, setContent] = useState<PostDetail | undefined>(undefined);
   const [loading, setLoading] = useState(false);
 
-  console.log(path.postId);
+  console.log(path.postId); //postId
 
   useEffect(() => {
     async function postDetail() {
