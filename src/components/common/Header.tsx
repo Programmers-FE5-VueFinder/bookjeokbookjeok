@@ -87,7 +87,12 @@ export default function Header() {
             <SearchIcon className="text-black" />
           </Link>
           <div onClick={() => setIsAlarmModalOpen(true)} className="relative">
-            <NotificationsOutlinedIcon className="cursor-pointer text-black" />
+            <div className="relative">
+              <NotificationsOutlinedIcon className="cursor-pointer text-black" />
+              {alarms.length > 0 && (
+                <div className="absolute top-0 right-0 h-[8px] w-[8px] rounded-full bg-red-500" />
+              )}
+            </div>
             {isAlarmModalOpen && (
               <AlarmModal
                 onClose={() => setIsAlarmModalOpen(false)}
