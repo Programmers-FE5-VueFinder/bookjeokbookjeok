@@ -8,6 +8,7 @@ import { useAuthStore } from '../../store/authStore';
 import SearchIcon from '@mui/icons-material/Search';
 import { MdOutlinePersonOutline } from 'react-icons/md';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
+import SignUpModal from './SignUpModal';
 
 export default function Header() {
   // const session = useAuthStore((state) => state.session); 나중에 프로필 받아올 때 사용
@@ -16,8 +17,11 @@ export default function Header() {
   const setLogout = useAuthStore((state) => state.setLogout);
   const { session } = useAuthStore();
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeModal, setActiveModal] = useState<'login' | 'signup' | null>(
+    null,
+  );
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const handleLogout = async () => {
@@ -109,9 +113,18 @@ export default function Header() {
             </div>
           ) : (
             <>
-              <button onClick={() => setIsModalOpen(true)}>로그인</button>
-              {isModalOpen && (
-                <LoginModal onClose={() => setIsModalOpen(false)} />
+              <button onClick={() => setActiveModal('login')}>로그인</button>
+              {activeModal === 'login' && (
+                <LoginModal
+                  onClose={() => setActiveModal(null)}
+                  onOpenSignUp={() => setActiveModal('signup')}
+                />
+              )}
+              {activeModal === 'signup' && (
+                <SignUpModal
+                  onClose={() => setActiveModal(null)}
+                  onBackToLogin={() => setActiveModal('login')}
+                />
               )}
             </>
           )}

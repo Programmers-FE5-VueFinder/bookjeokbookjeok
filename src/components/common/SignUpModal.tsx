@@ -8,8 +8,15 @@ import { IoMdClose } from 'react-icons/io';
 
 type ConsentKey = 'use' | 'personal' | 'marketing';
 
-export default function SignUpModal() {
-  const [view, setView] = useState(true);
+interface SignUpModalProps {
+  onClose: () => void;
+  onBackToLogin: () => void;
+}
+
+export default function SignUpModal({
+  onClose,
+  onBackToLogin,
+}: SignUpModalProps) {
   const [checkValid, setCheckValid] = useState<boolean | null>(null);
   const [checked, setChecked] = useState(false);
   const [consent, setConsent] = useState({
@@ -64,10 +71,10 @@ export default function SignUpModal() {
 
   return (
     <>
-      {view && (
+      {
         <div
           ref={background}
-          onClick={() => setView(false)}
+          onClick={onClose}
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
         >
           <div
@@ -76,7 +83,7 @@ export default function SignUpModal() {
           >
             <div
               ref={closeButton}
-              onClick={() => setView(false)}
+              onClick={onClose}
               className="absolute top-[11px] right-[12px] flex cursor-pointer items-center justify-center text-[#333]"
             >
               <IoMdClose />
@@ -258,14 +265,17 @@ export default function SignUpModal() {
 
               <div className="mt-[10px] flex justify-center gap-[10px] text-[12px]">
                 <span className="text-[#6E6E6E]">이미 회원이신가요?</span>
-                <button className="cursor-pointer text-[#08C818]">
+                <button
+                  onClick={onBackToLogin}
+                  className="cursor-pointer text-[#08C818]"
+                >
                   로그인
                 </button>
               </div>
             </form>
           </div>
         </div>
-      )}
+      }
     </>
   );
 }

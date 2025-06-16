@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router';
 import { kakaoLogin } from '../apis/auth';
 import { googleLogin } from '../apis/auth';
 import kakaoLogo from '../assets/images/kakaoLogo.png';
@@ -7,11 +6,10 @@ import { useState } from 'react';
 
 interface LoginProps {
   onClose: () => void;
+  onOpenSignUp: () => void;
 }
 
-export default function Login({ onClose }: LoginProps) {
-  const navigate = useNavigate();
-
+export default function Login({ onClose, onOpenSignUp }: LoginProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
@@ -39,7 +37,7 @@ export default function Login({ onClose }: LoginProps) {
   };
   const goToSignUp = () => {
     onClose();
-    navigate('/signup');
+    onOpenSignUp();
   };
 
   return (
