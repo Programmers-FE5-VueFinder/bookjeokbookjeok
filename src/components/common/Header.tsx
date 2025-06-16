@@ -113,7 +113,12 @@ export default function Header() {
             </div>
           ) : (
             <>
-              <button onClick={() => setActiveModal('login')}>로그인</button>
+              <button
+                onClick={() => setActiveModal('login')}
+                className="cursor-pointer"
+              >
+                로그인
+              </button>
               {activeModal === 'login' && (
                 <LoginModal
                   onClose={() => setActiveModal(null)}
