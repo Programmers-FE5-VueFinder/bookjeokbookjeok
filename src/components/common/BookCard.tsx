@@ -46,10 +46,10 @@ export default function BookCard({
             </div>
           </div>
 
-          <div className="w-[253px] h-[40px] line-clamp-1 bg-red-200 flex items-center mt-[4px] truncate text-[16px] font-bold">
+          <div className="w-[253px] h-[40px] line-clamp-1 flex items-center mt-[4px] truncate text-[16px] font-bold">
             <span>{title}</span>
           </div>
-          <div className="w-auto h-[55px] my-[8px] text-[16px] bg-amber-400 line-clamp-2">
+          <div className="w-auto h-[55px] my-[8px] text-[16px] line-clamp-2">
             {body}
           </div>
 
@@ -57,8 +57,8 @@ export default function BookCard({
 
           {/* 좋아요, 댓글 */}
 
-          <div className="flex justify-between w-[254px] h-[30px] mb-[7px] bg-amber-200 bottom-0">
-              <div className="bg-red-200 flex items-center w-fit gap-x-[8px]">
+          <div className="flex justify-between w-[254px] h-[30px] mb-[7px]">
+              <div className="flex items-center w-fit gap-x-[8px]">
                 <div className="flex items-center space-x-1">
                   <FaHeart fontSize="small" color="#353535" />
                   <span className="text-[#353535]">{likes}</span>
@@ -68,7 +68,7 @@ export default function BookCard({
                   <span className="text-[#353535]">{comments}</span>
                 </div>
               </div>
-              <div className="flex items-center bg-blue-200">{createdAt}</div>
+              <div className="flex items-center">{createdAt}</div>
             </div>
         </div>
       </div>
