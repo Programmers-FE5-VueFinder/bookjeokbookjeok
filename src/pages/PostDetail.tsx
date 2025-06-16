@@ -1,14 +1,34 @@
-import Comment from '../components/component/post-detail.tsx/Comment';
-import CommentInput from '../components/component/post-detail.tsx/CommentInput';
-import PostHeader from '../components/component/post-detail.tsx/PostHeader';
-import PostProfile from '../components/component/post-detail.tsx/PostProfile';
+import { useParams } from 'react-router';
+import Comment from '../components/component/post-detail/Comment';
+import CommentInput from '../components/component/post-detail/CommentInput';
+import PostHeader from '../components/component/post-detail/PostHeader';
+import PostProfile from '../components/component/post-detail/PostProfile';
+import { useEffect, useLayoutEffect, useState } from 'react';
+import { fetchPostDetail } from '../apis/post';
+import type { PostDetail } from '../types/post';
 
 export default function PostDetail() {
+  const path = useParams();
+  const [content, setContent] = useState<PostDetail | undefined>(undefined);
+  console.log(path.postId);
+  useLayoutEffect(() => {
+    async function postDetail() {
+      const response = await fetchPostDetail(path.postId as string);
+      console.log(response);
+      setContent(response);
+    }
+    postDetail();
+  }, []);
+
   return (
     <main className="flex flex-col items-center">
       <PostHeader />
       {/* 본문 */}
-      <div className="h-[700px] pt-[80px] pb-[100px]"></div>
+      {/* https://velog.io/@nemo/string-to-jsx */}
+      <div
+        dangerouslySetInnerHTML={{ __html: content.body }}
+        className="h-[700px] pt-[80px] pb-[100px]"
+      ></div>
       {/* 본문 */}
       <PostProfile />
       <div className="flex h-[110px] w-[1200px] items-center">

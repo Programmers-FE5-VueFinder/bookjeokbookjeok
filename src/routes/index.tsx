@@ -12,7 +12,7 @@ import Notification from '../pages/Notification';
 import SearchResult from '../pages/SearchResult';
 import ChannelLayout from './layouts/ChannelLayout';
 import { fetchUserData } from './loader/auth.loader';
-import CreatePostLayout from './layouts/CreatPostLayout';
+// import CreatePostLayout from './layouts/CreatPostLayout';
 import BookClub from '../pages/BookClub';
 import CreateBookClub from '../pages/CreateBookClub';
 import BookClubChat from '../pages/BookClubChat';
@@ -34,10 +34,10 @@ const router = createBrowserRouter([
             index: true,
             Component: PostList,
           },
-          // {
-          //   path: 'post/:postId',
-          //   Component: PostDetail,
-          // },
+          {
+            path: 'post/:postId',
+            Component: PostDetail,
+          },
           {
             path: 'postdev',
             Component: PostDetail,
