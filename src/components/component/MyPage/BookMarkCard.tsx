@@ -1,15 +1,12 @@
-import { FaRegComment, FaRegHeart } from 'react-icons/fa';
-import type { BookCardProps } from '../../types/type';
-import ProfileImg from '../component/MyPage/ProfileImg';
+import type { BookCardProps } from '../../../types/type';
+import ProfileImg from '../../component/MyPage/ProfileImg';
 
-export default function BookCard({
+export default function BookMarkCard({
   nickname,
   // badge = '',
   title,
   body,
   image,
-  likes = 0,
-  comments = 0,
   createdAt,
   id,
 }: BookCardProps) {
@@ -47,19 +44,8 @@ export default function BookCard({
           </div>
           <div className="mt-[15px] line-clamp-2">{body}</div>
           {/* 좋아요, 댓글 */}
-          <div className="absolute bottom-0 left-0 flex size-[12px] pb-[30px] pl-[13px]">
-            <div className="mr-[8px] flex items-center space-x-1">
-              <span>
-                <FaRegHeart fontSize="small" />
-              </span>
-              <span>{likes}</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <span>
-                <FaRegComment fontSize="small" />
-              </span>
-              <span>{comments}</span>
-            </div>
+          <div className="absolute bottom-0 left-0 flex pb-[18px] pl-[13px]">
+            별점
           </div>
           <div>
             <span className="absolute right-0 bottom-0 pr-[13px] pb-[18px]">

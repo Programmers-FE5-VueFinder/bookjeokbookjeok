@@ -6,112 +6,272 @@ import { twMerge } from 'tailwind-merge';
 import ProfileImg from '../components/component/MyPage/ProfileImg';
 import { useProfileStore } from '../store/profileStore';
 import { useAuthStore } from '../store/authStore';
-import supabase, { STORAGE_BASE_URL } from '../utils/supabase';
-import SkeletonCard from '../components/common/CardSkeleton2';
-import BookCard from '../components/common/BookCard';
+import supabase from '../utils/supabase';
 import { useParams } from 'react-router';
+import ProfileSkeleton from '../components/common/ProfileSkeleton';
+import DiaryArea from '../components/component/MyPage/DiaryArea';
+import CommunityArea from '../components/component/MyPage/CommunityArea';
+import BookClubArea from '../components/component/MyPage/BookClubArea';
+import BookMarkArea from '../components/component/MyPage/BookMarkArea';
+
+type Post = {
+  body: string;
+  book_club_id: string | null;
+  category: string;
+  created_at: string;
+  id: string;
+  image: string | null;
+  title: string;
+  user_id: string;
+};
+
+export type BookMark = {
+  book_id: string;
+  created_at: string;
+  id: string;
+  user_id: string;
+};
+
+export type book_club = {
+  created_at: string;
+  id: string;
+  info: string | null;
+  is_recruiting: boolean;
+  name: string;
+  owner_id: string;
+};
 
 export default function Profile() {
   const [openSetting, setOpenSetting] = useState<boolean>(false);
-  const [follower, setFollwer] = useState<number>(0);
+  const [follower, setFollower] = useState<number>(0);
   const [following, setFollowing] = useState<number>(0);
+  const [post, setPost] = useState<Post[] | null>([]);
+  const [bookMark, setBookMark] = useState<BookMark[] | null>([]);
+  const [bookClub, setBookClub] = useState<book_club[] | null>([]);
+  const [loading, setLoading] = useState<boolean>(false);
   const [selectedBtn, setSelectedBtn] = useState<string>('다이어리');
-  const [content, setContent] = useState<string>('다이어리');
+  const [content, setContent] = useState<string>('diary');
   const buttonName = ['다이어리', '자유채널', '마이 북클럽', '북마크'];
   const { userId } = useParams();
+  const [follow, setFollow] = useState<boolean>(false);
 
   const { session } = useAuthStore();
   const { Image: avatarUrl, profileName, intro } = useProfileStore();
 
-  // 상태 업데이트 함수는 useEffect 바깥에 선언해도 안전합니다.
   const { setProfileName, setProfileIntro, setProfileImage } =
     useProfileStore.getState();
-
   const handleContentButton = (e: React.MouseEvent<HTMLButtonElement>) => {
     const { name } = e.currentTarget;
-    setContent(name);
+    if (name === '다이어리') {
+      setContent('diary');
+    } else if (name === '자유채널') {
+      setContent('community');
+    } else if (name === '마이 북클럽') {
+      setContent('bookclub');
+    } else {
+      setContent('bookmark');
+    }
     setSelectedBtn(name);
   };
 
+  const handleFollowing = async () => {
+    if (follow === false) {
+      if (session?.user.id !== undefined && userId !== undefined) {
+        const { error } = await supabase
+          .from('follow')
+          .insert([{ follower_id: session?.user.id, following_id: userId }])
+          .select();
+        console.error(error);
+      }
+      const updateFollower = follower + 1;
+      setFollower(updateFollower);
+      setFollow(true);
+    } else if (follow === true) {
+      console.log(session?.user.id);
+      console.log(userId);
+      if (session?.user.id !== undefined && userId !== undefined) {
+        const { error } = await supabase
+          .from('follow')
+          .delete()
+          .eq('follower_id', session?.user.id)
+          .eq('following_id', userId);
+        console.error(error);
+      }
+      const updateFollower = follower - 1;
+      setFollower(updateFollower);
+      setFollow(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchInitialProfile = async () => {
-      const user = session?.user;
-      if (!user) return;
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+    }, 500);
+  }, []);
 
-      const { data: profile, error } = await supabase
-        .from('profile')
-        .select('image, name, intro')
-        .eq('id', userId!)
-        .single();
+  useEffect(() => {
+    const fetchData = async () => {
+      const fetchInitialProfile = async () => {
+        const user = session?.user;
+        if (!user) return;
 
-      if (error) {
-        console.error('초기 프로필 데이터 로딩 실패:', error);
-        return;
-      }
-
-      if (profile) {
-        setProfileName(profile.name);
-        setProfileIntro(profile.intro);
-        if (profile.image) {
-          const initialUrl = `${STORAGE_BASE_URL}${profile.image}?t=${new Date().getTime()}`;
-          setProfileImage(initialUrl);
+        const { data: profile, error } = await supabase
+          .from('profile')
+          .select('image, name, intro')
+          .eq('id', userId!)
+          .single();
+        if (error) {
+          console.error('초기 프로필 데이터 로딩 실패:', error);
+          return;
         }
-      }
+
+        if (profile) {
+          setProfileName(profile.name);
+          setProfileIntro(profile.intro);
+          if (profile.image) {
+            if (profile.image.includes('https://')) {
+              const initialUrl = `${profile.image}?t=${new Date().getTime()}`;
+              setProfileImage(initialUrl);
+            } else {
+              const { data: urlData } = supabase.storage
+                .from('image')
+                .getPublicUrl(profile.image);
+
+              const imageURL = urlData.publicUrl;
+              const separator = imageURL.includes('?') ? '&' : '?';
+              const initialUrl = `${imageURL}${separator}v=${new Date().getTime()}`;
+              setProfileImage(initialUrl);
+            }
+          } else {
+            setProfileImage('');
+          }
+        }
+      };
+
+      const myFollow = async () => {
+        const { data: follow, error } = await supabase
+          .from('follow')
+          .select('follower_id, following_id');
+
+        console.error(error);
+
+        const followerData = follow!.map((follower) => follower.following_id);
+        let followerNumber = 0;
+
+        for (let i = 0; i < followerData.length; i++) {
+          if (followerData[i] === userId) {
+            followerNumber += 1;
+          }
+        }
+        setFollower(followerNumber);
+
+        let followingNumber = 0;
+        const followingData = follow!.map((follower) => follower.follower_id);
+
+        for (let i = 0; i < followingData.length; i++) {
+          if (followingData[i] === userId) {
+            followingNumber += 1;
+          }
+        }
+        for (let i = 0; i < followingData.length; i++) {
+          if (
+            followingData[i] === session?.user.id &&
+            followerData[i] === userId
+          ) {
+            setFollow(true);
+            return;
+          } else {
+            setFollow(false);
+          }
+        }
+        setFollowing(followingNumber);
+      };
+
+      const myPost = async () => {
+        const { data: posts, error } = await supabase
+          .from('post')
+          .select('*')
+          .eq('user_id', userId!);
+        const postDiary = posts?.filter((post) => post.category === 'diary');
+        const postCommunity = posts?.filter(
+          (post) => post.category === 'community',
+        );
+        const bookClub = posts?.filter((post) => post.category === 'bookclub');
+        const bookMark = posts?.filter((post) => post.category === 'bookmark');
+        if (content === 'diary') {
+          setPost(postDiary!);
+        } else if (content === 'community') {
+          setPost(postCommunity!);
+        } else if (content === 'bookclub') {
+          setPost(bookClub!);
+        } else if (content === 'bookmark') {
+          setPost(bookMark!);
+        }
+        console.log(posts);
+        console.error(error);
+      };
+
+      const myBookmark = async () => {
+        const { data: bookmark, error } = await supabase
+          .from('bookmark')
+          .select('*')
+          .eq('user_id', userId!);
+        setBookMark(bookmark);
+        console.error(error);
+      };
+
+      const myBookClub = async () => {
+        const { data: book_club } = await supabase
+          .from('book_club')
+          .select('*');
+
+        const { data: book_club_member } = await supabase
+          .from('book_club_member')
+          .select('*')
+          .eq('user_id', userId!);
+
+        const clubId = book_club_member?.filter((id) => id.user_id === userId);
+        const clubIds: string[] = [];
+        if (clubId?.length !== undefined) {
+          for (let i = 0; i < clubId?.length; i++) {
+            clubIds.push(clubId[i].book_club_id);
+          }
+        }
+
+        if (book_club?.length !== undefined)
+          for (let i = 0; i < book_club?.length; i++) {
+            setBookClub(book_club?.filter((club) => club.id === clubIds[i]));
+          }
+      };
+
+      await Promise.all([
+        fetchInitialProfile(),
+        myFollow(),
+        myPost(),
+        myBookmark(),
+        myBookClub(),
+      ]);
     };
 
-    const myFollower = async () => {
-      const { data: follow, error } = await supabase
-        .from('follow')
-        .select('follower_id, following_id');
-
-      console.error(error);
-
-      const followData = follow!.map((follower) => follower.following_id);
-      let followerNumber = 0;
-
-      for (let i = 0; i < followData.length; i++) {
-        if (followData[i] === userId) {
-          followerNumber += 1;
-        }
-      }
-      setFollwer(followerNumber);
-    };
-    myFollower();
-
-    const myFollowing = async () => {
-      const { data: follow, error } = await supabase
-        .from('follow')
-        .select('following_id, follower_id');
-
-      console.error(error);
-
-      const followData = follow!.map((follower) => follower.follower_id);
-      let followingNumber = 0;
-
-      for (let i = 0; i < followData.length; i++) {
-        if (followData[i] === userId) {
-          followingNumber += 1;
-        }
-      }
-      setFollowing(followingNumber);
-    };
-    myFollowing();
-
-    fetchInitialProfile();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId]); // *** [최종 수정] user.id 라는 원시값을 의존성으로 사용합니다.
+    fetchData();
+  }, [userId, content]);
 
   return (
     <>
       <div>
         {/* 프로필 에리어 */}
-        <div className="relative flex h-[350px] content-center justify-center shadow shadow-gray-200">
-          <div className="flex flex-col items-center justify-center text-center">
+        <div className="relative flex h-auto content-center justify-center shadow shadow-gray-200">
+          <div className="mt-[52px] mb-[89px] flex flex-col items-center justify-center text-center">
             {/* 프로필 이미지 */}
             <div className="relative size-[100px]">
-              <ProfileImg
-                src={avatarUrl || session?.user.user_metadata.avatar_url}
-              />
+              {loading ? (
+                <ProfileSkeleton />
+              ) : (
+                <div className="justify-center overflow-hidden rounded-full">
+                  <ProfileImg id={userId} />
+                </div>
+              )}
               {session?.user.id === userId ? (
                 <button
                   className="absolute top-0 right-1 flex size-[25px] cursor-pointer items-center justify-center rounded-full border-3 border-white bg-gray-100"
@@ -128,7 +288,8 @@ export default function Profile() {
               <div className="size-[15px] rounded-full border-1"></div>
             </div>
             <span>{intro}</span>
-            <div className="mt-[26px] flex">
+
+            <div className="mt-[14px] mb-[14px] flex">
               <div className="mr-[25px]">
                 <span className="mr-[8px] text-[16px] font-semibold">
                   팔로워
@@ -142,6 +303,27 @@ export default function Profile() {
                 <span className="text-[16px]">{following}</span>
               </div>
             </div>
+            {session?.user.id !== userId ? (
+              follow ? (
+                <button
+                  className="top-0 right-1 flex h-[40px] w-[200px] cursor-pointer items-center justify-center gap-[3px] bg-gray-200"
+                  onClick={handleFollowing}
+                >
+                  <span className="text-[16px] font-semibold text-[var(--color-black)]">
+                    팔로잉
+                  </span>
+                </button>
+              ) : (
+                <button
+                  className="top-0 right-1 flex h-[40px] w-[200px] cursor-pointer items-center justify-center gap-[3px] bg-[var(--color-main)]"
+                  onClick={handleFollowing}
+                >
+                  <span className="text-[16px] font-semibold text-[var(--color-white)]">
+                    팔로우
+                  </span>
+                </button>
+              )
+            ) : null}
           </div>
           {/* 버튼 에리어 */}
           <div className="absolute bottom-0 flex h-[40px] w-full content-center items-center justify-center">
@@ -164,16 +346,47 @@ export default function Profile() {
           </div>
         </div>
         <div className="flex items-center justify-center bg-[#FAFAFA]">
-          <div className="grid gap-[28px] p-[100px] md:grid-cols-2 lg:grid-cols-4">
-            {content}
-            <SkeletonCard />
-            <BookCard />
-            <BookCard />
-            <BookCard />
-            <BookCard />
-            <BookCard />
-            <BookCard />
-            <BookCard />
+          <div>
+            {content === 'diary' ? (
+              <DiaryArea
+                post={post}
+                profileImage={
+                  avatarUrl || session?.user.user_metadata.avatar_url
+                }
+                profileName={profileName}
+                id={userId}
+              />
+            ) : null}
+            {content === 'community' ? (
+              <CommunityArea
+                post={post}
+                profileImage={
+                  avatarUrl || session?.user.user_metadata.avatar_url
+                }
+                profileName={profileName}
+                id={userId}
+              />
+            ) : null}
+            {content === 'bookclub' ? (
+              <BookClubArea
+                post={bookClub}
+                profileImage={
+                  avatarUrl || session?.user.user_metadata.avatar_url
+                }
+                profileName={profileName}
+                id={userId}
+              />
+            ) : null}
+            {content === 'bookmark' ? (
+              <BookMarkArea
+                post={bookMark}
+                profileImage={
+                  avatarUrl || session?.user.user_metadata.avatar_url
+                }
+                profileName={profileName}
+                id={userId}
+              />
+            ) : null}
           </div>
         </div>
       </div>

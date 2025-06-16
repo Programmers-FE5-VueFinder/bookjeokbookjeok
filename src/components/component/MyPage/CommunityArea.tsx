@@ -4,16 +4,16 @@ import BookCard from '../../common/BookCard';
 import SkeletonCard from '../../common/CardSkeleton2';
 import { Link } from 'react-router';
 
-export default function DiaryArea({
+export default function CommunityArea({
   post,
   profileImage,
   profileName,
-  id
+  id,
 }: {
   post: Post[] | null;
   profileImage: string | null;
   profileName: string | null;
-  id: string | undefined
+  id: string | undefined;
 }) {
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -42,7 +42,7 @@ export default function DiaryArea({
             post?.map((item) => {
               {
                 return (
-                  <Link to={`/channel/diary/post/${item.id}`}>
+                  <Link to={`/channel/community/post/${item.id}`}>
                     <BookCard
                       profileImage={profileImage}
                       key={item.id}
