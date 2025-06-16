@@ -222,7 +222,7 @@ export default function SignUpModal() {
                 className="flex items-center gap-[5px] font-bold text-[#333]"
               >
                 비밀번호
-                <Tooltip title="비밀번호는 8자 이상 16자 이하, 영문 대소문자 숫자, 특수문자를 포함하여 입력해주세요.">
+                <Tooltip title="비밀번호는 8자 이상 16자 이하, 영문 대소문자, 숫자, 특수문자를 포함하여 입력해주세요.">
                   <div className="size-[16px] items-center justify-center rounded-full border-1 text-center text-[10px]">
                     ?
                   </div>
