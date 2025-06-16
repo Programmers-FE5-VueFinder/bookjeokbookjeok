@@ -21,7 +21,7 @@ export default function WritePost({
 }: {
   isCreateBookClub?: boolean;
 }) {
-  //path : diary, bookclub, freetalk
+  //path : diary, freetalk
   const path = useParams();
   const bookclubId = path.bookclub_id;
   const navigate = useNavigate();

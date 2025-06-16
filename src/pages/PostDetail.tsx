@@ -6,6 +6,8 @@ import PostProfile from '../components/component/post-detail/PostProfile';
 import { useEffect, useState } from 'react';
 import { fetchPostDetail } from '../apis/post';
 import type { PostDetail } from '../types/post';
+import getElapsedTime from '../utils/format-time';
+import '../css/reactQuillCustom.css';
 
 export default function PostDetail() {
   const path = useParams();
@@ -22,19 +24,24 @@ export default function PostDetail() {
     }
     postDetail();
   }, []);
+  console.log(content);
 
   return (
     loading && (
       <main className="flex flex-col items-center">
-        <PostHeader />
+        <PostHeader
+          title={content!.title}
+          name={content!.profile.name}
+          category={content!.category}
+          time={getElapsedTime(content!.created_at)}
+        />
         {/* 본문 */}
-        {/* https://velog.io/@nemo/string-to-jsx */}
         <div
           dangerouslySetInnerHTML={{ __html: content!.body }}
-          className="h-[700px] pt-[80px] pb-[100px]"
+          className="h-[700px] max-w-[1200px] pt-[80px] pb-[80px]"
         ></div>
         {/* 본문 */}
-        <PostProfile />
+        <PostProfile profile={content!.profile} />
         <div className="flex h-[110px] w-[1200px] items-center">
           <span className="text-[16px] font-semibold text-[#333333]">
             N개의 댓글

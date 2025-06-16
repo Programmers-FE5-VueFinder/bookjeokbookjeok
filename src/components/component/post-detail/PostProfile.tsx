@@ -1,15 +1,19 @@
 import FollowButton from './FollowButton';
+import type { Profile } from '../../../types/post';
 
-export default function PostProfile() {
+export default function PostProfile({ profile }: { profile: Profile }) {
+  const { image } = profile;
   return (
     <>
       <section className="flex w-[1200px] justify-between border-b border-[#d8d6d6] pb-[40px]">
         <div className="flex items-center gap-[10px]">
-          <div className="h-[40px] w-[40px] cursor-pointer rounded-[100px] bg-amber-700"></div>
+          <img
+            src={image as string}
+            className="h-[40px] w-[40px] cursor-pointer rounded-[100px]"
+          ></img>
           <span className="h-full cursor-pointer text-[20px] leading-[33px] font-semibold text-[#333]">
-            user name
+            {profile.name}
           </span>
-          <div className="h-[16px] w-[16px] rounded-[20px] bg-amber-600"></div>
         </div>
         <FollowButton />
       </section>

@@ -15,19 +15,21 @@ export type PostDetail = {
   title: string;
   body: string;
   image: string | null;
-  profile: {
-    appellation: string | null;
-    created_at: string;
-    id: string;
-    image: string | null;
-    intro: string | null;
-    name: string;
-  };
+  profile: Profile;
   category: string;
   like: Like[];
   comment: Comment[];
   created_at: string;
 } | null;
+
+export type Profile = {
+  appellation: string | null;
+  created_at: string;
+  id: string;
+  image: string | null;
+  intro: string | null;
+  name: string;
+};
 
 export type CommentInsert = {
   post_id: string;
