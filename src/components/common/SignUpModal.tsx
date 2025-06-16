@@ -162,7 +162,7 @@ export default function SignUpModal() {
                         resolve(
                           duplicated ? '이미 사용 중인 이름입니다.' : true,
                         );
-                      }, 500);
+                      }, 300);
                     });
                   },
                 })}
@@ -202,7 +202,7 @@ export default function SignUpModal() {
                         resolve(
                           duplicated ? '이미 사용 중인 이메일입니다.' : true,
                         );
-                      }, 500);
+                      }, 300);
                     });
                   },
                 })}
