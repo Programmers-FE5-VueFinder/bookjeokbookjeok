@@ -15,6 +15,7 @@ export default function PostDetail() {
   const [loading, setLoading] = useState(false);
 
   console.log(path.postId); //postId
+  console.log(content);
 
   useEffect(() => {
     async function postDetail() {
@@ -24,7 +25,6 @@ export default function PostDetail() {
     }
     postDetail();
   }, []);
-  console.log(content);
 
   return (
     loading && (

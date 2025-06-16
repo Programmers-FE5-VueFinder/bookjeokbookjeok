@@ -2,7 +2,6 @@ import { RxDotsVertical } from 'react-icons/rx';
 import FollowButton from './FollowButton';
 import EditSelectBox from './EditSelectBox';
 import { useState } from 'react';
-import { styled } from '@mui/material/styles';
 export default function PostHeader({
   title,
   name,
