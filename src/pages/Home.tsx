@@ -1,5 +1,5 @@
 import home_fire from "../assets/images/home_fire.png";
-import home_medal from "../assets/images/home_medal.png";
+import home_writing from "../assets/images/home_writing.png";
 import home_login from "../assets/images/home_login.png";
 import home_search_man from "../assets/images/home_search_man.png";
 import home_star_shine from "../assets/images/home_star_shine.png";
@@ -13,13 +13,13 @@ import home_start_shine3 from "../assets/images/home_star_shine_x3.png";
 import home_reading_girl from "../assets/images/home_reading_girl.png";
 
 import LoginModal from "./LoginModal";
-import { isLoggedIn } from "../apis/auth";
 import { useNavigate } from "react-router";
 import { useState, useEffect } from "react";
 import type { DiaryPost } from "../types/type";
+import { useAuthStore } from "../store/authStore";
+import { fetchPopularDiaries } from "../apis/post";
 import BestsellerSlider from "../components/component/Home/BestsellerSlider";
 import PopularDiaryCard from "../components/component/Home/PopularDiaryCard";
-import { fetchPopularDiaries } from "../apis/post";
 
 const slides = [
   {
@@ -61,8 +61,8 @@ export default function Home() {
   const [diaries, setDiaries] = useState<DiaryPost[]>([]);
   const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
+  const isLogin = useAuthStore((state) => state.isLogin);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-  const [isLoggedInUser, setIsLoggedInUser] = useState<boolean | null>(null);
 
   const handeleOpenLoginModal = () => {
     setIsLoginModalOpen(true);
@@ -103,16 +103,6 @@ export default function Home() {
       isMounted = false;
     };
   }, []);
-  
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      const loggedIn = await isLoggedIn();
-      setIsLoggedInUser(loggedIn);
-    };
-    checkLoginStatus();
-  }, []);
-
-
   
   return (
     <div className="flex justify-center mx-auto w-[1220px] h-fit py-[40px] gap-x-[10px]">
@@ -167,13 +157,14 @@ export default function Home() {
         {/* section 1 */}
         <section className="flex flex-col gap-y-[15px]">
 
-          {isLoggedInUser === false && (
+          {isLogin === false && (
             <div 
               className="flex justify-between w-[590px] h-[130px] px-[26px] pt-[18px] bg-[#00FF84] rounded-[20px]"
               style={{
                 boxShadow: '0px 0px 10px rgba(0, 114, 59, 0.25)',
               }}  
             >
+              {/* 로그인 배너 */}
               <div>
                 <h2 className="text-[20px] font-semibold leading-[24px]">로그인 하고 북적북적의<br/>모든 서비스를 이용해보세요</h2>
                 <button 
@@ -194,7 +185,7 @@ export default function Home() {
             </div>
           )}
 
-          {isLoggedInUser === true && (
+          {isLogin === true && (
             <div 
             className="flex justify-between w-[590px] h-[130px] px-[26px] pt-[18px] bg-[#70B5FF] rounded-[20px]"
             style={{
@@ -225,14 +216,14 @@ export default function Home() {
             className="flex justify-between  w-[590px] h-[130px] px-[26px] bg-white rounded-[20px] border border-[#00FF84]"
           >
             <div className="py-[18px]">
-              <h2 className="text-[20px] font-semibold text-[#06BE00] leading-[24px]">독서 다이어리를 작성하시고<br/>자신만의 배지를 수집해보세요</h2>
-              <h3 className="text-[14px] font-semibold mt-[13px]">작성된 다이어리와 활동에 따라 배지를 드려요</h3>
+              <h2 className="text-[20px] font-semibold text-[#06BE00] leading-[24px]">독서 다이어리를 작성하시고<br/>읽고 느낀 것들을 글로 남겨보세요</h2>
+              <h3 className="text-[14px] font-semibold mt-[13px]">함께 읽고, 함께 나누며 독서의 여운을 더 깊게 남겨보세요</h3>
             </div>
 
             <div className="flex items-end">
               <img 
-                src={home_medal} 
-                alt="home_medal" 
+                src={home_writing} 
+                alt="home_writing" 
                 className="w-auto h-[125px]"
               />
             </div>

@@ -23,6 +23,7 @@ export default function Header() {
   const handleLogout = async () => {
     await logout();
     setLogout();
+    console.log('로그인?: ', isLogin)
     navigate('/')
   };
 
@@ -72,9 +73,12 @@ export default function Header() {
           <Link to={'/search'}>
             <SearchIcon className="text-black" />
           </Link>
-          <Link to={'/notification'}>
-            <NotificationsOutlinedIcon className="text-black" />
-          </Link>
+
+          {isLogin && (
+            <Link to={'/notification'}>
+              <NotificationsOutlinedIcon className="text-black" />
+            </Link>
+          )}
 
           {isLogin ? (
             <div className="relative">
