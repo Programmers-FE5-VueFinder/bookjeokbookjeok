@@ -4,9 +4,11 @@ import { FaGear } from 'react-icons/fa6';
 import ProfileImg from './ProfileImg';
 import { useProfileStore } from '../../../store/profileStore';
 import { useAuthStore } from '../../../store/authStore';
-import supabase, { STORAGE_BASE_URL } from '../../../utils/supabase';
-
-console.log('✅✅✅ SettingModal 최종 리팩토링 코드 실행됨 (버전 체크) ✅✅✅');
+import supabase from '../../../utils/supabase';
+import {
+  useProfileImgStore,
+  type UserProfile,
+} from '../../../store/profileImgStore';
 
 interface SettingModalProps {
   onClose: () => void;
@@ -14,9 +16,12 @@ interface SettingModalProps {
 
 export default function SettingModal({ onClose }: SettingModalProps) {
   const { session } = useAuthStore();
+  const { profileCache, setProfileToCache } = useProfileImgStore();
+  const currentUserCache = session?.user.id
+    ? profileCache[session.user.id]
+    : undefined;
+  const globalAvatarUrl = currentUserCache?.image; // 캐시된 이미지 URL
   const {
-    Image: globalAvatarUrl,
-    setProfileImage: setGlobalProfileImage,
     setProfileName: setGlobalProfileName,
     setProfileIntro: setGlobalProfileIntro,
   } = useProfileStore();
@@ -46,6 +51,16 @@ export default function SettingModal({ onClose }: SettingModalProps) {
     }
   };
 
+  // const handleDeleteUser = async () => {
+  //   if (session?.user.id !== undefined) {
+  //     const { error } = await supabase
+  //       .from('profile')
+  //       .delete()
+  //       .eq('id', session?.user.id);
+  //     console.error(error);
+  //   }
+  // };
+
   const handleSave = async () => {
     const user = session?.user;
     if (!user) {
@@ -54,7 +69,12 @@ export default function SettingModal({ onClose }: SettingModalProps) {
     }
 
     try {
-      if (newName !== initialName || newIntro !== initialIntro) {
+      const updatedProfileData: UserProfile = {};
+
+      if (
+        (newName !== initialName || newIntro !== initialIntro) &&
+        newName !== ''
+      ) {
         const { error: textUpdateError } = await supabase
           .from('profile')
           .update({ name: newName, intro: newIntro })
@@ -62,6 +82,8 @@ export default function SettingModal({ onClose }: SettingModalProps) {
         if (textUpdateError) throw textUpdateError;
         setGlobalProfileName(newName);
         setGlobalProfileIntro(newIntro);
+      } else if (newName === '') {
+        alert('닉네임을 입력해 주세요');
       }
 
       if (newProfImgFile) {
@@ -83,10 +105,16 @@ export default function SettingModal({ onClose }: SettingModalProps) {
           .eq('id', user.id);
         if (imageUpdateError) throw imageUpdateError;
 
-        const newImageUrl = `${STORAGE_BASE_URL}${newFilePath}?t=${new Date().getTime()}`;
-        setGlobalProfileImage(newImageUrl);
+        const { data } = supabase.storage
+          .from('image')
+          .getPublicUrl(newFilePath);
+        const publicUrlWithCacheBust = `${data.publicUrl}?t=${new Date().getTime()}`;
+        updatedProfileData.image = publicUrlWithCacheBust;
       }
 
+      if (Object.keys(updatedProfileData).length > 0) {
+        setProfileToCache(user.id, updatedProfileData);
+      }
       onClose();
     } catch (error) {
       if (error instanceof Error) {
@@ -137,9 +165,9 @@ export default function SettingModal({ onClose }: SettingModalProps) {
         </div>
 
         <div className="relative my-[20px]">
-          <ProfileImg
-            src={previewImage || globalAvatarUrl || '/default-avatar.png'}
-          />
+          <div className="size-[100px] overflow-hidden rounded-full">
+            <ProfileImg src={previewImage || globalAvatarUrl} />
+          </div>
           <label
             htmlFor="profileImg"
             className="absolute top-0 right-1 flex size-[25px] cursor-pointer items-center justify-center rounded-full border-3 border-white bg-gray-100 text-center"
@@ -158,18 +186,15 @@ export default function SettingModal({ onClose }: SettingModalProps) {
         <div className="mb-[20px] flex gap-[13px]">
           <input
             type="text"
-            className="inputBox h-[35px] w-[234px]"
+            className="inputBox h-[35px] w-[320px]"
             placeholder="닉네임은 8자 이내로 작성해주세요"
-            value={newName}
             onChange={(e) => setNewName(e.target.value)}
           />
-          <button className="w-[73px] cursor-pointer">중복 검사</button>
         </div>
 
         <textarea
           className="inputBox mb-[20px] h-[215px] w-[320px] resize-none pt-[15px]"
           placeholder="자신에 대한 간략한 소개를 써주세요"
-          value={newIntro}
           onChange={(e) => setNewIntro(e.target.value)}
         />
 
@@ -180,12 +205,8 @@ export default function SettingModal({ onClose }: SettingModalProps) {
           >
             저장하기
           </button>
-          <button className="cursor-pointer text-[12px] text-gray-300">
-            회원탈퇴
-          </button>
         </div>
       </div>
-
     </div>
   );
 }

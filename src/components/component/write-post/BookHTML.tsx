@@ -19,7 +19,7 @@ export default function BookHTML({
     <>
       <div
         style={{ marginLeft: 'calc((100% - 1200px) / 2)' }}
-        className="flex h-[130px] w-fit cursor-default items-center gap-[5px] border border-dashed border-[#333] px-[5px] py-[5px] text-[#333]"
+        className="flex h-[130px] w-fit cursor-default items-center gap-[10px] border border-dashed border-[#333] px-[5px] py-[5px] text-[#333]"
       >
         <img
           src={selectedBook.cover}
