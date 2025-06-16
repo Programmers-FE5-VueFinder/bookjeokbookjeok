@@ -1,8 +1,7 @@
-import './quillOverride.ts';
 import { useEffect, useRef, useState } from 'react';
 import ReactQuillEditor from './ReactQuillEditor';
 import { MdArrowBack } from 'react-icons/md';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { MdOutlineSearch } from 'react-icons/md';
 import BookSearchModal from '../BookSearchModal';
 import type { BookDetail } from '../../../types/book';
@@ -10,7 +9,12 @@ import SelectBookInfo from './SelectBookInfo';
 import BookRating from './BookRating';
 import CategorySelect from './CategorySelect';
 import { useAuthStore } from '../../../store/authStore';
-import { createBookClub } from '../../../apis/book-club.ts';
+import {
+  createBookClub,
+  createBookClubPost,
+  editBookClub,
+  fetchBookClub,
+} from '../../../apis/book-club.ts';
 import supabase from '../../../utils/supabase';
 import Toastfy from '../../common/Toastfy.tsx';
 import { createPost } from '../../../apis/post.ts';
@@ -20,6 +24,8 @@ export default function WritePost({
 }: {
   isCreateBookClub?: boolean;
 }) {
+  const path = useParams();
+  const bookclubId = path.bookclub_id;
   const navigate = useNavigate();
   const [category, setCategory] = useState('diary');
   const [rating, setRating] = useState<number | undefined>();
@@ -34,7 +40,7 @@ export default function WritePost({
 
   useEffect(() => {
     if (!isLogIn) navigate('/');
-  }, []);
+  }, [isLogIn]);
 
   const onClose = () => setShowModal(false);
 
@@ -58,6 +64,13 @@ export default function WritePost({
       id: selectedBook!.isbn13,
       star: rating,
     };
+
+    /* 북클럽 수정 */
+    if (bookclubId) {
+      editBookClub(bookclubId, title, body);
+      navigate(`/bookclub/${bookclubId}`);
+      return;
+    }
 
     switch (category) {
       case 'diary': {
@@ -105,6 +118,10 @@ export default function WritePost({
         // community post 생성 api
         return;
       }
+      case 'book-club': {
+        createBookClubPost(title, body, bookclubId!);
+        return;
+      }
       default: {
         const bookclub_id = await createBookClub(title, body);
         navigate(`/bookclub/${bookclub_id}`);
@@ -112,11 +129,26 @@ export default function WritePost({
     }
   };
 
+  useEffect(() => {
+    if (bookclubId) {
+      if (isCreateBookClub) {
+        const setBookClubInfo = async () => {
+          const bookclub = await fetchBookClub(bookclubId);
+          titleRef!.current!.value = bookclub.name;
+          setValue(bookclub.info!);
+        };
+        setBookClubInfo();
+      } else {
+        setCategory('book-club');
+      }
+    }
+  }, [bookclubId, isCreateBookClub]);
+
   return (
     <>
       <main className="flex h-screen">
         <div className="flex grow-1 flex-col">
-          {!isCreateBookClub && <CategorySelect setCategory={setCategory} />}
+          {!bookclubId && <CategorySelect setCategory={setCategory} />}
           <form
             className="w-ful flex grow-1 flex-col justify-between"
             onSubmit={submitHandler}

@@ -1,7 +1,6 @@
 import { createBrowserRouter, RouterProvider } from 'react-router';
 import Home from '../pages/Home';
 import SignUp from '../pages/SignUp';
-// import Login from '../pages/Login';
 import Profile from '../pages/Profile';
 import PostList from '../pages/PostList';
 import NotFound from '../pages/NotFound';
@@ -12,7 +11,6 @@ import Notification from '../pages/Notification';
 import SearchResult from '../pages/SearchResult';
 import ChannelLayout from './layouts/ChannelLayout';
 import { fetchUserData } from './loader/auth.loader';
-// import CreatePostLayout from './layouts/CreatPostLayout';
 import BookClub from '../pages/BookClub';
 import CreateBookClub from '../pages/CreateBookClub';
 import BookClubChat from '../pages/BookClubChat';
@@ -44,10 +42,6 @@ const router = createBrowserRouter([
         path: '/profile/:userId',
         Component: Profile,
       },
-      // {
-      //   path: '/login',
-      //   Component: Login,
-      // },
       {
         path: '/signup',
         Component: SignUp,
@@ -65,8 +59,20 @@ const router = createBrowserRouter([
         Component: CreateBookClub,
       },
       {
+        path: '/edit-bookclub/:bookclub_id',
+        Component: CreateBookClub,
+      },
+      {
         path: '/bookclub/:bookclub_id',
         Component: BookClub,
+      },
+      {
+        path: '/create-post',
+        Component: CreatePost,
+      },
+      {
+        path: '/create-post/:bookclub_id',
+        Component: CreatePost,
       },
     ],
   },
@@ -79,7 +85,7 @@ const router = createBrowserRouter([
     Component: BookClubChat,
   },
   {
-    path: '/create-post/:category',
+    path: '/create-post',
     loader: fetchUserData,
     Component: CreatePost,
   },

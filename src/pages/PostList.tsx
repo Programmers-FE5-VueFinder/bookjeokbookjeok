@@ -145,6 +145,7 @@ export default function PostList() {
                     profileImage={post.profile.image}
                     likes={post.like.length}
                     comments={post.comment.length}
+                    id={post.profile.id}
                     createdAt={new Date(post.created_at).toLocaleDateString()}
                   />
                 </Link>

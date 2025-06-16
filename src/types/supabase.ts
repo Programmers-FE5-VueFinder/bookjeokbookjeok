@@ -115,7 +115,7 @@ export type Database = {
           created_at?: string;
           id?: string;
           message: string;
-          user_id: string;
+          user_id?: string;
         };
         Update: {
           book_club_id?: string;
@@ -518,7 +518,15 @@ export type Database = {
           intro?: string | null;
           name?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: 'profile_id_fkey1';
+            columns: ['id'];
+            isOneToOne: true;
+            referencedRelation: 'profile';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       review: {
         Row: {
