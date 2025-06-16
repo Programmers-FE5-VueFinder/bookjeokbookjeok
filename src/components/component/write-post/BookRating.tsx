@@ -34,7 +34,8 @@ export default function BookRating({
               key={num}
               onMouseEnter={() => setHoverIndex(num)}
               onMouseLeave={() => setHoverIndex(0)}
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
                 setClickIndex(num);
                 setRating(num);
               }}

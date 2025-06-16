@@ -13,6 +13,7 @@ import { useAuthStore } from '../../../store/authStore';
 import { createBookClub } from '../../../apis/book-club.ts';
 import supabase from '../../../utils/supabase';
 import Toastfy from '../../common/Toastfy.tsx';
+import { createPost } from '../../../apis/post.ts';
 
 export default function WritePost({
   isCreateBookClub,
@@ -29,6 +30,7 @@ export default function WritePost({
 
   const isLogIn = useAuthStore((state) => state.isLogin);
   const session = useAuthStore((state) => state.session);
+  console.log(session?.user.id);
 
   useEffect(() => {
     if (!isLogIn) navigate('/');
@@ -53,32 +55,46 @@ export default function WritePost({
     }
 
     const bookInfo = {
-      id: selectedBook!.isbn,
+      id: selectedBook!.isbn13,
       star: rating,
-    };
-
-    const post = {
-      title: title,
-      body: body,
-      user_id: session?.user.id,
-      image: image,
-      category: category,
     };
 
     switch (category) {
       case 'diary': {
         try {
-          const response = await supabase.from('post').insert([post]);
+          const { data } = await supabase
+            .from('book')
+            .insert({
+              id: selectedBook!.isbn13,
+              title: selectedBook!.title,
+              author: selectedBook!.author,
+              description: selectedBook!.description,
+              categoryId: selectedBook!.categoryId,
+              categoryName: selectedBook!.categoryName,
+            })
+            .select()
+            .single();
+
+          const response = await createPost(
+            session!.user.id,
+            title,
+            body,
+            image,
+            category,
+            data!.id,
+            bookInfo,
+          );
           console.log(response);
-          // if (bookInfo.id) {
-          //   await supabase.from('book_tag').insert({
-          //     book_id: bookInfo.id,
-          //     star: bookInfo.star,
-          //     reference_category: 'newPost.data!.category',
-          //     reference_id: 'newPost.data!.id',
-          //   });
-          // }
-          navigate('/');
+
+          if (bookInfo.id) {
+            await supabase.from('book_tag').insert({
+              book_id: bookInfo.id,
+              star: bookInfo.star,
+              reference_category: 'diary',
+              reference_id: response,
+            });
+          }
+          // navigate('/');
         } catch (e) {
           console.log(e);
           Toastfy('error', '작성에 실패했습니다');
@@ -86,9 +102,6 @@ export default function WritePost({
         return;
       }
       case 'community': {
-        const response = await supabase.from('post').insert([post]);
-        console.log(response);
-        navigate('/');
         // community post 생성 api
         return;
       }
@@ -125,7 +138,10 @@ export default function WritePost({
               ) : (
                 <button
                   style={{ marginLeft: 'calc((100% - 1200px) / 2)' }}
-                  onClick={() => setShowModal(true)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setShowModal(true);
+                  }}
                   className="flex h-[130px] w-[100px] cursor-pointer flex-col items-center justify-center border border-dashed border-[#333] text-[rgba(153,153,153,.4)]"
                 >
                   <MdOutlineSearch />
