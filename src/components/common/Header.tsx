@@ -9,6 +9,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { MdOutlinePersonOutline } from 'react-icons/md';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 import AlarmModal from '../component/alarm/AlarmModal';
+import { fetchAlarmList } from '../../apis/notification';
 
 export default function Header() {
   // const session = useAuthStore((state) => state.session); 나중에 프로필 받아올 때 사용
@@ -20,6 +21,8 @@ export default function Header() {
   const [isAlarmModalOpen, setIsAlarmModalOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+
+  const [alarms, setAlarms] = useState<Alarm[]>([]);
 
   const handleLogout = async () => {
     await logout();
@@ -40,6 +43,15 @@ export default function Header() {
     };
     syncSession();
   }, [setLogin, setLogout]);
+
+  useEffect(() => {
+    if (isLogin) {
+      const fetchAlarms = async () => {
+        setAlarms((await fetchAlarmList()) ?? []);
+      };
+      fetchAlarms();
+    }
+  }, [isLogin]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -74,15 +86,15 @@ export default function Header() {
           <Link to={'/search'}>
             <SearchIcon className="text-black" />
           </Link>
-          <button
-            onClick={() => setIsAlarmModalOpen(true)}
-            className="relative cursor-pointer"
-          >
-            <NotificationsOutlinedIcon className="text-black" />
+          <div onClick={() => setIsAlarmModalOpen(true)} className="relative">
+            <NotificationsOutlinedIcon className="cursor-pointer text-black" />
             {isAlarmModalOpen && (
-              <AlarmModal onClose={() => setIsAlarmModalOpen(false)} />
+              <AlarmModal
+                onClose={() => setIsAlarmModalOpen(false)}
+                alarms={alarms}
+              />
             )}
-          </button>
+          </div>
 
           {isLogin ? (
             <div className="relative">

@@ -27,4 +27,14 @@ export declare global {
     message: string;
     created_at: string;
   }
+  interface Alarm {
+    id: string;
+    type: string;
+    object_id: string;
+    user_id: string;
+    sender: User;
+    is_read: boolean;
+    created_at: string;
+    objectName: string;
+  }
 }
