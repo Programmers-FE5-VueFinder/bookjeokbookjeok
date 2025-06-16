@@ -11,7 +11,7 @@ import BookRating from './BookRating';
 import CategorySelect from './CategorySelect';
 // import { createPost } from '../../../apis/post';
 import { useAuthStore } from '../../../store/authStore';
-import { fetchAuthId } from '../../../apis/auth.ts';
+import { fetchAuthId, isLoggedIn } from '../../../apis/auth.ts';
 import { createBookClub } from '../../../apis/book-club.ts';
 import supabase from '../../../utils/supabase';
 
@@ -29,23 +29,19 @@ export default function WritePost({
   const [selectedBook, setSeletedBook] = useState<BookDetail | null>(null);
   const titleRef = useRef<HTMLInputElement>(null);
 
-  const isLogIn = useAuthStore((state) => state.isLogin);
-  const session = useAuthStore((state) => state.session);
-
-  //id 갑 가져오기
   let userId: string;
   async function as() {
     userId = await fetchAuthId();
   }
   as();
 
-  // useEffect(() => {
-  //   //비로그인 후원 메인으로 리다이렉트
-  //   setTimeout(() => {
-  //     console.log(isLogIn);
-  //     console.log(session);
-  //   }, 0);
-  // }, []);
+  const isLogIn = useAuthStore((state) => state.isLogin);
+  // const session = useAuthStore((state) => state.session);
+  useEffect(() => {
+    if (!isLogIn) {
+      navigate('/');
+    }
+  }, [isLogIn]);
 
   const onClose = () => setShowModal(false);
 
@@ -54,7 +50,6 @@ export default function WritePost({
 
     const title = titleRef.current?.value;
     const body = value.toString();
-    const id = String(Date.now());
 
     //정규식으로 썸네일 뽑기
     const match = body.match(/<img[^>]+src="([^"]+)"[^>]*>/);
