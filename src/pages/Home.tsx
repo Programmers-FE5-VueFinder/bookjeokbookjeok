@@ -20,6 +20,8 @@ import { useAuthStore } from "../store/authStore";
 import { fetchPopularDiaries } from "../apis/post";
 import BestsellerSlider from "../components/component/Home/BestsellerSlider";
 import PopularDiaryCard from "../components/component/Home/PopularDiaryCard";
+import PopularDiaryCardSkeleton from "../components/component/Home/PopularDiaryCardSkeleton";
+
 
 const slides = [
   {
@@ -245,18 +247,21 @@ export default function Home() {
         {/* section 3 */}
         <div className="flex flex-col gap-y-[15px] cursor-pointer">
           {isLoading ? (
-            <p className="text-gray-500 text-sm">로딩 중입니다...</p>
+            <PopularDiaryCardSkeleton />
           ) : (
             diaries.map((post) => (
               <PopularDiaryCard
                 key={post.id}
                 genre={post.book.categoryName}
                 title={post.book.title}
-                content={post.book.subInfo?.subTitle ? post.book.subInfo?.subTitle : post.book.description}
+                content={
+                  post.book.subInfo?.subTitle
+                  ?? post.book.description?.split('. ')[0]
+                  ?? '설명이 없습니다'
+                }
               />
             ))
           )}
-
 
           <PopularDiaryCard 
             genre="novel"

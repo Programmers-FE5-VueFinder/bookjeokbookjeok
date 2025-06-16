@@ -23,23 +23,22 @@ export default function Header() {
   const handleLogout = async () => {
     await logout();
     setLogout();
-    console.log('로그인?: ', isLogin)
     navigate('/')
   };
-
+  
   // 로그인 상태 관리는 zustand로 대체, logout만 auth.ts 사용
   useEffect(() => {
     const syncSession = async () => {
-        const { data: { session }} = await supabase.auth.getSession();
-        if (session) {
-          setLogin(session);
-        } else {
-          setLogout();
-        }
+      const { data: { session }} = await supabase.auth.getSession();
+      if (session) {
+        setLogin(session);
+      } else {
+        setLogout();
+      }
     };
     syncSession();
   }, [setLogin, setLogout]);
-
+  // console.log('로그인?: ', isLogin)
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
