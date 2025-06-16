@@ -18,6 +18,8 @@ export interface BookCardProps {
   createdAt: string;
   profileImage: string | null;
   id: string | undefined;
+  book_id?: string | null;
+  category?: string;
 }
 
 export interface PostDetailResponse {

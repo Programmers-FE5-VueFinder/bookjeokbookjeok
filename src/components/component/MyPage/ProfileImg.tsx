@@ -78,7 +78,7 @@ const ProfileImage: React.FC<ProfileImageProps> = ({ id: propId, src }) => {
     return () => {
       isMounted = false;
     };
-  }, [targetId, profileCache, setProfileToCache]);
+  }, []);
 
   return (
     <img

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import type { Post } from '../../../types/type';
 import BookCard from '../../common/BookCard';
 import SkeletonCard from '../../common/CardSkeleton2';
 import { Link } from 'react-router';
+import type { Post } from '../../../pages/Profile';
 
 export default function CommunityArea({
   post,
@@ -29,13 +29,13 @@ export default function CommunityArea({
     <>
       <div className="relative w-full items-center justify-center">
         {loading ? null : post?.length === 0 ? (
-          <div className="h-[440px]">
+          <div className="min-h-[calc(100vh-1570px)]">
             <div className="absolute top-[47%] left-[15%] text-center">
               <span className="textT1">게시글이 없습니다.</span>
             </div>
           </div>
         ) : null}
-        <div className="grid gap-[28px] p-[100px] text-center md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-[28px] p-[100px] text-center md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 min-h-[calc(100vh-570px)]">
           {loading ? (
             <SkeletonCard />
           ) : (
@@ -53,6 +53,7 @@ export default function CommunityArea({
                         'ko-KR',
                       )}
                       id={id}
+                      book_id={item.book_id}
                     />
                   </Link>
                 );

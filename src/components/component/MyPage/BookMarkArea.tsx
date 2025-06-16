@@ -28,13 +28,13 @@ export default function BookMarkArea({
     <>
       <div className="relative items-center justify-center">
         {loading ? null : post?.length === 0 ? (
-          <div className="h-[440px]">
+          <div className="min-h-[calc(100vh-770px)]">
             <div className="absolute top-[47%] left-0 w-[261px] text-center">
               <span className="textT1">북마크한 도서가 없습니다.</span>
             </div>
           </div>
         ) : null}
-        <div className="grid h-auto gap-[28px] p-[100px] text-center md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid min-h-[calc(100vh-585px)] gap-[28px] p-[100px] text-center md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {loading ? (
             <SkeletonCard />
           ) : (
@@ -51,6 +51,7 @@ export default function BookMarkArea({
                       'ko-KR',
                     )}
                     id={id}
+                    book_id={item.book_id}
                   />
                 );
               }

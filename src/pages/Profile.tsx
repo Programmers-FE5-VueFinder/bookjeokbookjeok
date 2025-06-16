@@ -14,9 +14,10 @@ import CommunityArea from '../components/component/MyPage/CommunityArea';
 import BookClubArea from '../components/component/MyPage/BookClubArea';
 import BookMarkArea from '../components/component/MyPage/BookMarkArea';
 
-type Post = {
+export type Post = {
   body: string;
   book_club_id: string | null;
+  book_id: string | null;
   category: string;
   created_at: string;
   id: string;
@@ -208,7 +209,6 @@ export default function Profile() {
         } else if (content === 'bookmark') {
           setPost(bookMark!);
         }
-        console.log(posts);
         console.error(error);
       };
 
@@ -285,7 +285,7 @@ export default function Profile() {
             </div>
             <div className="mt-[14px] mb-[14px] flex items-center gap-[6px] font-bold">
               <span>{profileName} 님</span>
-              <div className="size-[15px] rounded-full border-1"></div>
+              {/* <div className="size-[15px] rounded-full border-1"></div> */}
             </div>
             <span>{intro}</span>
 
@@ -306,7 +306,7 @@ export default function Profile() {
             {session?.user.id !== userId ? (
               follow ? (
                 <button
-                  className="top-0 right-1 flex h-[40px] w-[200px] cursor-pointer items-center justify-center gap-[3px] bg-gray-200"
+                  className="top-0 right-1 flex h-[40px] w-[200px] cursor-pointer items-center justify-center gap-[3px] rounded-lg bg-gray-200"
                   onClick={handleFollowing}
                 >
                   <span className="text-[16px] font-semibold text-[var(--color-black)]">
@@ -315,7 +315,7 @@ export default function Profile() {
                 </button>
               ) : (
                 <button
-                  className="top-0 right-1 flex h-[40px] w-[200px] cursor-pointer items-center justify-center gap-[3px] bg-[var(--color-main)]"
+                  className="top-0 right-1 flex h-[40px] w-[200px] cursor-pointer items-center justify-center gap-[3px] rounded-lg bg-[var(--color-main)]"
                   onClick={handleFollowing}
                 >
                   <span className="text-[16px] font-semibold text-[var(--color-white)]">

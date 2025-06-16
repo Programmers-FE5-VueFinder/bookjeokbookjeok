@@ -71,7 +71,10 @@ export default function SettingModal({ onClose }: SettingModalProps) {
     try {
       const updatedProfileData: UserProfile = {};
 
-      if (newName !== initialName || newIntro !== initialIntro) {
+      if (
+        (newName !== initialName || newIntro !== initialIntro) &&
+        newName !== ''
+      ) {
         const { error: textUpdateError } = await supabase
           .from('profile')
           .update({ name: newName, intro: newIntro })
@@ -79,6 +82,8 @@ export default function SettingModal({ onClose }: SettingModalProps) {
         if (textUpdateError) throw textUpdateError;
         setGlobalProfileName(newName);
         setGlobalProfileIntro(newIntro);
+      } else if (newName === '') {
+        alert('닉네임을 입력해 주세요');
       }
 
       if (newProfImgFile) {
@@ -144,7 +149,7 @@ export default function SettingModal({ onClose }: SettingModalProps) {
   }, [session?.user]);
 
   return (
-    <div className="modal-overlay">
+    <div className="modal-overlay" onClick={onClose}>
       <div
         className="relative flex h-[567px] w-[383px] flex-col items-center rounded-xl bg-white px-[20px] py-[18px] text-center"
         onClick={(e) => e.stopPropagation()}
@@ -181,18 +186,15 @@ export default function SettingModal({ onClose }: SettingModalProps) {
         <div className="mb-[20px] flex gap-[13px]">
           <input
             type="text"
-            className="inputBox h-[35px] w-[234px]"
+            className="inputBox h-[35px] w-[320px]"
             placeholder="닉네임은 8자 이내로 작성해주세요"
-            value={newName}
             onChange={(e) => setNewName(e.target.value)}
           />
-          <button className="w-[73px] cursor-pointer">중복 검사</button>
         </div>
 
         <textarea
           className="inputBox mb-[20px] h-[215px] w-[320px] resize-none pt-[15px]"
           placeholder="자신에 대한 간략한 소개를 써주세요"
-          value={newIntro}
           onChange={(e) => setNewIntro(e.target.value)}
         />
 
