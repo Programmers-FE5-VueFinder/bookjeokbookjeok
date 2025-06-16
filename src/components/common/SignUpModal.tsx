@@ -139,7 +139,7 @@ export default function SignUpModal({
                 }
 
                 console.log('회원가입 성공');
-                setView(false); // 모달 닫기
+                onClose();
               })}
               className="flex w-full flex-col gap-[10px] text-[#333]"
             >
