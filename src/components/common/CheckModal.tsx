@@ -5,10 +5,7 @@ interface CheckModalProps {
   content: string;
 }
 
-export default function CheckModal({
-  content,
-  onClose,
-}: CheckModalProps) {
+export default function CheckModal({ content, onClose }: CheckModalProps) {
   return (
     <>
       <div className="modal-overlay">
@@ -21,9 +18,7 @@ export default function CheckModal({
           </div>
           <div className="w-[350px]">
             <Link to={'/'}>
-              <button
-                className="h-[32px] w-[50%] cursor-pointer content-center items-center justify-center bg-[#bdbfbd] text-center"
-              >
+              <button className="h-[32px] w-[50%] cursor-pointer content-center items-center justify-center bg-[#bdbfbd] text-center">
                 <span className="text-[16px] font-semibold text-white">
                   확인
                 </span>

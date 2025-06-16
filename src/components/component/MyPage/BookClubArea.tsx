@@ -29,7 +29,7 @@ export default function BookClubArea({
       <div className="relative items-center">
         {loading ? null : post?.length === 0 ? (
           <div className="min-h-[calc(100vh-770px)]">
-            <div className="w-[270px] absolute top-[47%] left-0 text-center">
+            <div className="absolute top-[47%] left-0 w-[270px] text-center">
               <span className="textT1">참가한 북클럽이 없습니다.</span>
             </div>
           </div>
