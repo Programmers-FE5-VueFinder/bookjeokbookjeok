@@ -24,16 +24,6 @@ export default function PostList() {
     community: '자유채널',
   };
 
-  // const sortedPosts = [...posts].sort((a, b) => {
-  //   if (selectedSort === '최신글') {
-  //     return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-  //   }
-  //   if (selectedSort === '인기글') {
-  //     // return b.likes - a.likes;
-  //   }
-  //   return 0;
-  // })
-
   const channelName = channelId
     ? channelNames[channelId] || '알 수 없는 채널'
     : '최신글';
@@ -54,16 +44,14 @@ export default function PostList() {
         setLoading(false);
         return;
       }
-
-      if (result.data) {
-        console.log('백엔드 응답 데이터:', result.data);
-      }
-
+      // if (result.data) {
+      //   console.log('백엔드 응답 데이터:', result.data);
+      // }
       const detailPosts: PostDetail[] = await Promise.all(
         result.data.map(async (post: Post) => {
           const detail = await fetchPostDetail(post.id);
 
-          console.log('Post Detail 응답 데이터:', detail);
+          // console.log('Post Detail 응답 데이터:', detail);
 
           return {
             ...post,
@@ -80,7 +68,15 @@ export default function PostList() {
           };
         }),
       );
-      setPosts(detailPosts);
+
+      // 인기글 정렬
+      const sorted = selectedSort === '인기글' 
+        ? [...detailPosts].sort((a, b) => b.like.length - a.like.length)
+        : [...detailPosts].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+
+      console.log(sorted);
+
+      setPosts(sorted);
       setLoading(false);
     };
 
@@ -90,7 +86,7 @@ export default function PostList() {
     if (options && options.length > 0) {
       setSelectedSort(options[0]);
     }
-  }, [channelId]);
+  }, [channelId, selectedSort]);
 
   return (
     <>
@@ -123,7 +119,7 @@ export default function PostList() {
           )}
         </div>
 
-        <div className="my-[132px] w-[1200px] bg-red-50">
+        <div className="my-[132px] w-[1200px]">
           {loading ? (
             <div>로딩중...</div>
           ) : posts.length === 0 ? (

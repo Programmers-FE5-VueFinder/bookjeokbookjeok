@@ -20,7 +20,7 @@ export default function BookCard({
           boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.25)',
         }}
       >
-        <div className="h-[247px] w-[278px] content-center justify-center overflow-hidden rounded-t-2xl border-b-1 border-[#EAEAEA] text-center">
+        <div className="h-[247px] w-[278px] content-center justify-center overflow-hidden rounded-t-[10px] border-b-1 border-[#EAEAEA] text-center">
           {image ? (
             <img
               src={image}
