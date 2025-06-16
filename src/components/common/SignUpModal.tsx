@@ -7,6 +7,7 @@ import { IoMdCheckmark } from 'react-icons/io';
 import { IoMdClose } from 'react-icons/io';
 import supabase from '../../utils/supabase';
 import { isEmailDuplicated, isNameDuplicated } from '../../apis/profile';
+import { useAuthStore } from '../../store/authStore';
 
 type ConsentKey = 'use' | 'personal' | 'marketing';
 
@@ -28,6 +29,7 @@ export default function SignUpModal({
   });
   const background = useRef(null);
   const closeButton = useRef(null);
+  const setLogin = useAuthStore((state) => state.setLogin);
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
 
   const handleConsentClick = (type: ConsentKey) => {
@@ -138,8 +140,24 @@ export default function SignUpModal({
                   return;
                 }
 
-                console.log('회원가입 성공');
-                onClose();
+                const { data: loginData, error: loginError } =
+                  await supabase.auth.signInWithPassword({
+                    email,
+                    password,
+                  });
+
+                if (loginError) {
+                  console.error(
+                    '회원가입은 되었지만 로그인 실패:',
+                    loginError.message,
+                  );
+                  return;
+                }
+
+                if (loginData.session) {
+                  setLogin(loginData.session);
+                  onClose();
+                }
               })}
               className="flex w-full flex-col gap-[10px] text-[#333]"
             >
