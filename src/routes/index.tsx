@@ -8,7 +8,6 @@ import NotFound from '../pages/NotFound';
 import PostDetail from '../pages/PostDetail';
 import CreatePost from '../pages/CreatePost';
 import RootLayout from './layouts/RootLayout';
-import Notification from '../pages/Notification';
 import SearchResult from '../pages/SearchResult';
 import ChannelLayout from './layouts/ChannelLayout';
 import { fetchUserData } from './loader/auth.loader';
@@ -50,10 +49,6 @@ const router = createBrowserRouter([
       {
         path: '/signup',
         Component: SignUp,
-      },
-      {
-        path: '/notification',
-        Component: Notification,
       },
       {
         path: '/search',

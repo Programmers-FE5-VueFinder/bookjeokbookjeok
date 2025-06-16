@@ -1,7 +1,25 @@
-export default function AlarmModal() {
+import { useEffect, useRef } from 'react';
+
+export default function AlarmModal({ onClose }: { onClose: () => void }) {
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
+        onClose();
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [onClose]);
+
   return (
     <>
-      <div className="w-[280px] rounded-[5px] px-[10px] shadow-[0_0_5px_rgba(0,0,0,0.25)]">
+      <div
+        ref={modalRef}
+        className="absolute top-10 right-1 w-[280px] rounded-[5px] px-[10px] shadow-[0_0_5px_rgba(0,0,0,0.25)]"
+      >
         <h2 className="flex h-[30px] w-[260px] items-center justify-center border-b border-[#E4E4E4] text-[16px] font-semibold">
           알림
         </h2>

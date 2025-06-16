@@ -8,6 +8,7 @@ import { useAuthStore } from '../../store/authStore';
 import SearchIcon from '@mui/icons-material/Search';
 import { MdOutlinePersonOutline } from 'react-icons/md';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
+import AlarmModal from '../component/alarm/AlarmModal';
 
 export default function Header() {
   // const session = useAuthStore((state) => state.session); 나중에 프로필 받아올 때 사용
@@ -15,7 +16,8 @@ export default function Header() {
   const setLogin = useAuthStore((state) => state.setLogin);
   const setLogout = useAuthStore((state) => state.setLogout);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [isAlarmModalOpen, setIsAlarmModalOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
@@ -27,12 +29,14 @@ export default function Header() {
   // 로그인 상태 관리는 zustand로 대체, logout만 auth.ts 사용
   useEffect(() => {
     const syncSession = async () => {
-        const { data: { session }} = await supabase.auth.getSession();
-        if (session) {
-            setLogin(session);
-        } else {
-            setLogout();
-        }
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (session) {
+        setLogin(session);
+      } else {
+        setLogout();
+      }
     };
     syncSession();
   }, [setLogin, setLogout]);
@@ -70,9 +74,15 @@ export default function Header() {
           <Link to={'/search'}>
             <SearchIcon className="text-black" />
           </Link>
-          <Link to={'/notification'}>
+          <button
+            onClick={() => setIsAlarmModalOpen(true)}
+            className="relative cursor-pointer"
+          >
             <NotificationsOutlinedIcon className="text-black" />
-          </Link>
+            {isAlarmModalOpen && (
+              <AlarmModal onClose={() => setIsAlarmModalOpen(false)} />
+            )}
+          </button>
 
           {isLogin ? (
             <div className="relative">
@@ -105,9 +115,9 @@ export default function Header() {
             </div>
           ) : (
             <>
-              <button onClick={() => setIsModalOpen(true)}>로그인</button>
-              {isModalOpen && (
-                <LoginModal onClose={() => setIsModalOpen(false)} />
+              <button onClick={() => setIsLoginModalOpen(true)}>로그인</button>
+              {isLoginModalOpen && (
+                <LoginModal onClose={() => setIsLoginModalOpen(false)} />
               )}
             </>
           )}
