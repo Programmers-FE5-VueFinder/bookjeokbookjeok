@@ -24,11 +24,11 @@ export default function Login({ onClose, onOpenSignUp }: LoginProps) {
       password,
     });
     if (email.length === 0) {
-      setErrorMessage('이메일을 입력해 주세요');
+      setErrorMessage('이메일을 입력해 주세요.');
       return;
     }
     if (password.length === 0) {
-      setErrorMessage('비밀번호를 입력해 주세요');
+      setErrorMessage('비밀번호를 입력해 주세요.');
       return;
     }
     if (error) {
