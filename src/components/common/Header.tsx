@@ -77,7 +77,6 @@ export default function Header() {
       };
     }
   }, [isLogin]);
-  console.log(alarms);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {

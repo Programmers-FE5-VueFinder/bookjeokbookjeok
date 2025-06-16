@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import AlarmList from './AlarmList';
+import { readAllAlarm } from '../../../apis/notification';
 
 export default function AlarmModal({
   alarms,
@@ -36,7 +37,10 @@ export default function AlarmModal({
             개의 알림
           </p>
           {alarms.length > 0 && (
-            <button className="cursor-pointer rounded p-1 text-[#9E9E9E] hover:bg-[#EDEDED] hover:text-[#525252]">
+            <button
+              className="cursor-pointer rounded p-1 text-[#9E9E9E] hover:bg-[#EDEDED] hover:text-[#525252]"
+              onClick={readAllAlarm}
+            >
               모두 읽음
             </button>
           )}

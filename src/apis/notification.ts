@@ -93,3 +93,15 @@ export async function getObjectName(
 export async function readAlarm(id: string) {
   await supabase.from('notification').update({ is_read: true }).eq('id', id);
 }
+
+/* 모두 읽음 */
+export async function readAllAlarm() {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  await supabase
+    .from('notification')
+    .update({ is_read: true })
+    .eq('user_id', user!.id);
+}
