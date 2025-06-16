@@ -9,15 +9,12 @@ import {
   useProfileImgStore,
   type UserProfile,
 } from '../../../store/profileImgStore';
-import CheckModal from '../../common/CheckModal';
 
 interface SettingModalProps {
   onClose: () => void;
 }
 
 export default function SettingModal({ onClose }: SettingModalProps) {
-  const [openDelete, setOpenDelete] = useState<boolean>(false);
-
   const { session } = useAuthStore();
   const { profileCache, setProfileToCache } = useProfileImgStore();
   const currentUserCache = session?.user.id
@@ -206,22 +203,8 @@ export default function SettingModal({ onClose }: SettingModalProps) {
           >
             저장하기
           </button>
-          <button
-            className="cursor-pointer text-[12px] text-gray-300"
-            onClick={() => setOpenDelete(true)}
-          >
-            회원탈퇴
-          </button>
         </div>
       </div>
-      {openDelete ? (
-        <div>
-          <CheckModal
-            content={'정말 회원 탈퇴 하시겠습니까?'}
-            onClose={() => setOpenDelete(false)}
-          />
-        </div>
-      ) : null}
     </div>
   );
 }

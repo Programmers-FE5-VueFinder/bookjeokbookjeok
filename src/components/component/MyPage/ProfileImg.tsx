@@ -68,11 +68,8 @@ const ProfileImage: React.FC<ProfileImageProps> = ({ id: propId, src }) => {
             });
           }
         }
-      } catch (err) {
-        console.error(
-          `ID '${targetId}'의 프로필 정보를 가져오는 데 실패했습니다.`,
-          err,
-        );
+      } catch (error) {
+        console.error(error);
       }
     };
 
@@ -87,7 +84,7 @@ const ProfileImage: React.FC<ProfileImageProps> = ({ id: propId, src }) => {
     <img
       src={src || imageUrl || session?.user.user_metadata.avatar_url}
       alt={'프로필 이미지'}
-      className='justify-center items-center w-[100px]'
+      className="w-[100px] items-center justify-center"
     />
   );
 };
