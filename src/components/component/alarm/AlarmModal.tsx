@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import AlarmList from './AlarmList';
 
 export default function AlarmModal({ onClose }: { onClose: () => void }) {
   const modalRef = useRef<HTMLDivElement>(null);
@@ -18,32 +19,26 @@ export default function AlarmModal({ onClose }: { onClose: () => void }) {
     <>
       <div
         ref={modalRef}
-        className="absolute top-10 right-1 w-[280px] rounded-[5px] px-[10px] shadow-[0_0_5px_rgba(0,0,0,0.25)]"
+        className="absolute top-10 right-1 w-[280px] rounded-[5px] bg-white px-[10px] shadow-[0_0_5px_rgba(0,0,0,0.25)]"
       >
-        <h2 className="flex h-[30px] w-[260px] items-center justify-center border-b border-[#E4E4E4] text-[16px] font-semibold">
+        <h2 className="flex h-[36px] w-full items-center justify-center border-b border-[#E4E4E4] text-[16px] font-semibold">
           알림
         </h2>
-        <p className="my-[20px] text-[14px]">2개의 알림</p>
+        <div className="flex h-[50px] items-center justify-between text-[14px]">
+          <p>
+            <span className="font-bold text-[#08C818]">2</span>개의 알림
+          </p>
+          {true && (
+            <button className="cursor-pointer rounded p-1 text-[#9E9E9E] hover:bg-[#EDEDED] hover:text-[#525252]">
+              모두 읽음
+            </button>
+          )}
+        </div>
+
         {/* 반복문 렌더링 */}
-        <ul>
-          <li className="mb-[25px] flex flex-col gap-[10px] text-[14px]">
-            <div className="flex gap-[6px]">
-              <span className="mt-[7px] h-[8px] w-[10px] rounded-[50px] bg-red-700"></span>
-              <p className="text-[14px]">
-                <strong>김정우</strong>님이 독서 모임에 가입 신청을 하셨습니다
-              </p>
-            </div>
-            <p className="ml-[15px] text-[#898989]">2시간 전</p>
-          </li>
-          <li className="mb-[25px] flex flex-col gap-[10px] text-[14px]">
-            <div className="flex gap-[6px]">
-              <span className="mt-[7px] h-[8px] w-[10px] rounded-[50px] bg-red-700"></span>
-              <p className="text-[14px]">
-                <strong>김정우</strong>님이 독서 모임에 가입 신청을 하셨습니다
-              </p>
-            </div>
-            <p className="ml-[15px] text-[#898989]">2시간 전</p>
-          </li>
+        <ul className="mr-[-5px] flex max-h-[250px] flex-col gap-3 overflow-scroll">
+          <AlarmList />
+          <AlarmList />
         </ul>
       </div>
     </>
