@@ -1,9 +1,10 @@
 import clsx from 'clsx';
-import { fetchPostDetail, fetchPosts } from '../apis/post';
-import { useEffect, useState, useMemo } from 'react';
 import { Link, useParams } from 'react-router';
+import { useEffect, useState, useMemo } from 'react';
 import BookCard from '../components/common/BookCard';
 import type { Post, PostDetail } from '../types/type';
+import { fetchPostDetail, fetchPosts } from '../apis/post';
+import SkeletonCard from '../components/common/CardSkeleton2';
 
 const sortOptionsMap: Record<string, string[]> = {
   diary: ['최신글', '인기글', '팔로잉'],
@@ -123,7 +124,7 @@ export default function PostList() {
 
         <div className="my-[132px] w-[1200px]">
           {loading ? (
-            <div>로딩중...</div>
+            <SkeletonCard />
           ) : sortedPosts.length === 0 ? (
             <div>게시글이 없습니다.</div>
           ) : (
