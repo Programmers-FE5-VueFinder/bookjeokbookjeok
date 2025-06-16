@@ -1,9 +1,5 @@
 import clsx from 'clsx';
-<<<<<<< HEAD
-// import { fetchPosts } from '../apis/post';
-=======
 import { fetchPostDetail, fetchPosts } from '../apis/post';
->>>>>>> 681ffea94aa00ebf3b37dba7ec2d52ef2a081cc4
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router';
 import BookCard from '../components/common/BookCard';
@@ -24,11 +20,7 @@ export default function PostList() {
 
   const channelNames: { [key: string]: string } = {
     diary: '다이어리',
-<<<<<<< HEAD
-    book_club: '독서모임',
-=======
     book_club: '북클럽',
->>>>>>> 681ffea94aa00ebf3b37dba7ec2d52ef2a081cc4
     community: '자유채널',
   };
 
