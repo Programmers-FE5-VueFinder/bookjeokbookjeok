@@ -63,7 +63,7 @@ export default function SignUpModal() {
     register,
     handleSubmit,
     formState: { isSubmitting, isSubmitted, errors },
-  } = useForm();
+  } = useForm({ mode: 'onChange' });
 
   return (
     <>
