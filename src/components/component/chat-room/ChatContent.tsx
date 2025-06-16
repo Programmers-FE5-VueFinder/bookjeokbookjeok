@@ -26,10 +26,11 @@ export default function ChatContent({
       <div className="flex h-[calc(100%-220px)] w-full flex-col gap-5 overflow-y-auto whitespace-pre-line">
         {Object.entries(messageGroup).map(([userId, messages]) => (
           <ChatBubbleGroup
-            key={messages[0].id}
+            key={`${userId}-${messages[0].id}`}
             isMy={userId === myId}
             user={messages[0].profile}
             message={messages.map((msg) => ({
+              id: msg.id,
               message: msg.message,
               time: msg.created_at,
             }))}

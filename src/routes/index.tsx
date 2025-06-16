@@ -12,7 +12,6 @@ import Notification from '../pages/Notification';
 import SearchResult from '../pages/SearchResult';
 import ChannelLayout from './layouts/ChannelLayout';
 import { fetchUserData } from './loader/auth.loader';
-// import CreatePostLayout from './layouts/CreatPostLayout';
 import BookClub from '../pages/BookClub';
 import CreateBookClub from '../pages/CreateBookClub';
 import BookClubChat from '../pages/BookClubChat';
@@ -73,6 +72,10 @@ const router = createBrowserRouter([
         Component: CreateBookClub,
       },
       {
+        path: '/edit-bookclub/:bookclub_id',
+        Component: CreateBookClub,
+      },
+      {
         path: '/bookclub/:bookclub_id',
         Component: BookClub,
       },
@@ -80,11 +83,11 @@ const router = createBrowserRouter([
         path: '/create-post',
         Component: CreatePost,
       },
+      {
+        path: '/create-post/:bookclub_id',
+        Component: CreatePost,
+      },
     ],
-  },
-  {
-    path: '/bookclub/:bookclub_id/chat',
-    Component: BookClubChat,
   },
   {
     path: '/bookclub/:bookclub_id/chat',
