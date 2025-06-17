@@ -1,4 +1,4 @@
-import { logout } from '../../apis/auth';
+import { fetchAuthId, logout } from '../../apis/auth';
 import supabase from '../../utils/supabase';
 import LoginModal from '../../pages/LoginModal';
 import { Link, useNavigate } from 'react-router';
@@ -8,6 +8,9 @@ import { useAuthStore } from '../../store/authStore';
 import SearchIcon from '@mui/icons-material/Search';
 import { MdOutlinePersonOutline } from 'react-icons/md';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
+import AlarmModal from '../component/alarm/AlarmModal';
+import { fetchAlarmList } from '../../apis/notification';
+import SignUpModal from './SignUpModal';
 
 export default function Header() {
   // const session = useAuthStore((state) => state.session); 나중에 프로필 받아올 때 사용
@@ -17,20 +20,28 @@ export default function Header() {
   const navigate = useNavigate();
   const { session } = useAuthStore();
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAlarmModalOpen, setIsAlarmModalOpen] = useState(false);
+  const [activeModal, setActiveModal] = useState<'login' | 'signup' | null>(
+    null,
+  );
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+
+  const [alarms, setAlarms] = useState<Alarm[]>([]);
 
   const handleLogout = async () => {
     await logout();
     setLogout();
-    navigate('/')
+    navigate('/');
   };
-  
+
   // 로그인 상태 관리는 zustand로 대체, logout만 auth.ts 사용
   useEffect(() => {
     const syncSession = async () => {
-      const { data: { session }} = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (session) {
         setLogin(session);
       } else {
@@ -40,6 +51,42 @@ export default function Header() {
     syncSession();
   }, [setLogin, setLogout]);
   // console.log('로그인?: ', isLogin)
+  useEffect(() => {
+    if (isLogin) {
+      let channel: ReturnType<typeof supabase.channel> | null = null;
+
+      const realimeAlarm = async () => {
+        const authId = await fetchAuthId();
+        const fetchAlarms = await fetchAlarmList();
+        setAlarms(fetchAlarms ? fetchAlarms : []);
+
+        channel = supabase
+          .channel(`${authId}-alarm`)
+          .on(
+            'postgres_changes',
+            {
+              event: 'UPDATE',
+              schema: 'public',
+              table: 'notification',
+              filter: `user_id=eq.${authId}`,
+            },
+            async () => {
+              const fetchAlarms = await fetchAlarmList();
+              setAlarms(fetchAlarms ? fetchAlarms : []);
+            },
+          )
+          .subscribe();
+      };
+      realimeAlarm();
+
+      return () => {
+        if (channel) {
+          supabase.removeChannel(channel);
+        }
+      };
+    }
+  }, [isLogin]);
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -73,16 +120,27 @@ export default function Header() {
           <Link to={'/search'}>
             <SearchIcon className="text-black" />
           </Link>
-
-          {isLogin && (
-            <Link to={'/notification'}>
-              <NotificationsOutlinedIcon className="text-black" />
-            </Link>
-          )}
+          <div onClick={() => setIsAlarmModalOpen(true)} className="relative">
+            <div className="relative">
+              <NotificationsOutlinedIcon className="cursor-pointer text-black" />
+              {alarms.length > 0 && (
+                <div className="absolute top-0 right-0 h-[8px] w-[8px] rounded-full bg-red-500" />
+              )}
+            </div>
+            {isAlarmModalOpen && (
+              <AlarmModal
+                onClose={() => setIsAlarmModalOpen(false)}
+                alarms={alarms}
+              />
+            )}
+          </div>
 
           {isLogin ? (
             <div className="relative">
-              <button onClick={() => setIsDropdownOpen((prev) => !prev)}>
+              <button
+                onClick={() => setIsDropdownOpen((prev) => !prev)}
+                className="cursor-pointer"
+              >
                 <MdOutlinePersonOutline size={24} className="text-black" />
               </button>
 
@@ -112,9 +170,23 @@ export default function Header() {
             </div>
           ) : (
             <>
-              <button onClick={() => setIsModalOpen(true)}>로그인</button>
-              {isModalOpen && (
-                <LoginModal onClose={() => setIsModalOpen(false)} />
+              <button
+                onClick={() => setActiveModal('login')}
+                className="cursor-pointer"
+              >
+                로그인
+              </button>
+              {activeModal === 'login' && (
+                <LoginModal
+                  onClose={() => setActiveModal(null)}
+                  onOpenSignUp={() => setActiveModal('signup')}
+                />
+              )}
+              {activeModal === 'signup' && (
+                <SignUpModal
+                  onClose={() => setActiveModal(null)}
+                  onBackToLogin={() => setActiveModal('login')}
+                />
               )}
             </>
           )}

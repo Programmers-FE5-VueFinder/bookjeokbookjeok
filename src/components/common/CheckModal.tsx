@@ -1,4 +1,7 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> f0f701e6f1d82f1e858ac7bc113801a9ec1ffcfb
 import { type Dispatch, type SetStateAction } from 'react';
 
 export default function CheckModal({
@@ -54,6 +57,7 @@ export default function CheckModal({
           </div>
         </div>
       )}
+<<<<<<< HEAD
 =======
 import { Link } from 'react-router';
 
@@ -91,6 +95,8 @@ export default function CheckModal({ content, onClose }: CheckModalProps) {
         </div>
       </div>
 >>>>>>> feature/write-post
+=======
+>>>>>>> f0f701e6f1d82f1e858ac7bc113801a9ec1ffcfb
     </>
   );
 }
