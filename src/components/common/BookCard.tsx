@@ -1,15 +1,13 @@
-import { FaRegComment, FaRegHeart } from 'react-icons/fa';
+import { Link } from 'react-router';
+import { useEffect, useState } from 'react';
+import supabase from '../../utils/supabase';
 import type { BookCardProps } from '../../types/type';
 import ProfileImg from '../component/MyPage/ProfileImg';
-import { useEffect, useState } from 'react';
-import type { BookData } from '../../types/book';
-import { Link } from 'react-router';
-import supabase from '../../utils/supabase';
+import { FaRegComment, FaRegHeart } from 'react-icons/fa';
 import defaultImg from '../../assets/images/default_post_img.png';
 
 export default function BookCard({
   nickname,
-  // badge = '',
   title,
   body,
   image,
@@ -20,20 +18,20 @@ export default function BookCard({
   book_id,
   category,
 }: BookCardProps) {
-  const [result, setResult] = useState<BookData[]>([]);
   const [img, setImg] = useState<string | null>(null);
 
   useEffect(() => {
+    // console.log('book_id:', book_id);  
     const getBookData = async () => {
       if (book_id !== null && book_id !== undefined) {
         try {
           const { data: book } = await supabase
             .from('book')
             .select('*')
-            .eq('id', book_id);
-          console.log(book![0].cover);
-          setImg(book![0].cover);
-          setResult(book!);
+            .eq('id', book_id)
+            .single();
+            setImg(book?.cover ?? '');
+            // console.log("여기", book?.cover);
         } catch (error) {
           console.error(error);
         }
@@ -52,15 +50,17 @@ export default function BookCard({
       >
         <div className="h-[247px] w-[278px] content-center justify-center overflow-hidden border-b-1 border-[#EAEAEA] text-center">
           {category === 'diary' ? (
-            result.length !== 0 ? (
+            img ? ( // img 있으면 렌더링
               <div className="relative">
-                <img src={img!} className="h-full w-full blur-xs" />
+                <img src={img} className="h-full w-full blur-xs" />
                 <img
-                  src={img!}
+                  src={img}
                   className="absolute top-[13%] left-[30%] h-[166px] w-[113px]"
                 />
               </div>
-            ) : null
+            ) : (
+              <img src={defaultImg} className="h-full w-full object-cover" />
+            )
           ) : image ? (
             <img
               src={image}
