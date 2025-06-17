@@ -4,11 +4,13 @@ import { IoMdInformationCircleOutline } from 'react-icons/io';
 import { IoMdPerson } from 'react-icons/io';
 import { IoMdPersonAdd } from 'react-icons/io';
 import {
+  approveApply,
   deleteBookClub,
   fetchApplyList,
   fetchBookClub,
   isBookClubOwner,
   leaveBookClub,
+  rejectApply,
 } from '../apis/book-club';
 import { Link, useNavigate, useParams } from 'react-router';
 import UserCard from '../components/common/UserCard';
@@ -39,6 +41,21 @@ export default function BookClub() {
   const handleLeaveBookclub = () => {
     navigate('/');
     leaveBookClub(bookclub_id!);
+  };
+
+  const fetchData = async () => {
+    setBookclub(await fetchBookClub(bookclub_id!));
+    setApplyList((await fetchApplyList(bookclub_id!)) ?? []);
+  };
+
+  const handleApprove = async (user_id: string) => {
+    await approveApply(user_id, bookclub_id!);
+    await fetchData();
+  };
+
+  const handleReject = async (user_id: string) => {
+    await rejectApply(user_id, bookclub_id!);
+    await fetchData();
   };
 
   useEffect(() => {
@@ -148,7 +165,13 @@ export default function BookClub() {
                   </div>
                   <div className="flex flex-row gap-5">
                     {applyList.map((user) => (
-                      <UserCard key={user.id} user={user} isRecruiting />
+                      <UserCard
+                        key={user.id}
+                        user={user}
+                        isRecruiting
+                        handleApprove={handleApprove}
+                        handleReject={handleReject}
+                      />
                     ))}
                   </div>
                 </div>

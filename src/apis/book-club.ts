@@ -149,8 +149,42 @@ export async function fetchApplyList(book_club_id: string) {
 }
 
 /* 북클럽 신청 승인 */
+export async function approveApply(user_id: string, book_club_id: string) {
+  // 멤버 추가
+  await supabase
+    .from('book_club_member')
+    .insert({ user_id: user_id, book_club_id: book_club_id });
+  // 승인 알림 발송
+  await supabase.from('notification').insert({
+    type: 'book-club-approve',
+    user_id: user_id,
+    object_id: book_club_id,
+  });
+  // 알림 삭제
+  await supabase
+    .from('notification')
+    .delete()
+    .eq('type', 'book-club')
+    .eq('sender_id', user_id)
+    .eq('object_id', book_club_id);
+}
 
 /* 북클럽 신청 거절 */
+export async function rejectApply(user_id: string, book_club_id: string) {
+  // 거절 알림 발송
+  await supabase.from('notification').insert({
+    type: 'book-club-reject',
+    user_id: user_id,
+    object_id: book_club_id,
+  });
+  // 알림 삭제
+  await supabase
+    .from('notification')
+    .delete()
+    .eq('type', 'book-club')
+    .eq('sender_id', user_id)
+    .eq('object_id', book_club_id);
+}
 
 /* 북클럽 탈퇴 */
 export async function leaveBookClub(id: string) {

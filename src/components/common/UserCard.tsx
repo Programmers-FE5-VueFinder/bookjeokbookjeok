@@ -5,9 +5,13 @@ import ProfileImage from '../component/MyPage/ProfileImg';
 export default function UserCard({
   isRecruiting,
   user,
+  handleApprove,
+  handleReject,
 }: {
   isRecruiting?: boolean;
   user: User;
+  handleApprove?: (user_id: string) => void;
+  handleReject?: (user_id: string) => void;
 }) {
   return (
     <>
@@ -22,10 +26,16 @@ export default function UserCard({
         </Link>
         {isRecruiting ? (
           <div className="flex w-full flex-row justify-center gap-2">
-            <button className="h-[30px] w-[60px] cursor-pointer rounded bg-[#08C818] pb-[2px] font-medium text-white">
+            <button
+              className="h-[30px] w-[60px] cursor-pointer rounded bg-[#08C818] pb-[2px] font-medium text-white"
+              onClick={() => handleApprove!(user.id)}
+            >
               수락
             </button>
-            <button className="h-[30px] w-[60px] cursor-pointer rounded bg-[#CBCBCB] pb-[2px] font-medium text-white">
+            <button
+              className="h-[30px] w-[60px] cursor-pointer rounded bg-[#CBCBCB] pb-[2px] font-medium text-white"
+              onClick={() => handleReject!(user.id)}
+            >
               거절
             </button>
           </div>
