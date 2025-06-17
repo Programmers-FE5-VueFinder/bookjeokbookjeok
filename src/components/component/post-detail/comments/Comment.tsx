@@ -1,7 +1,7 @@
 import { RxDotsVertical } from 'react-icons/rx';
 import { useNavigate, useParams } from 'react-router';
 import { useAuthStore } from '../../../../store/authStore';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import {
   addComment,
   deleteComment,
@@ -29,6 +29,8 @@ export default function Comment({ comments, fetchComments }: Props) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editBody, setEditBody] = useState('');
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
+  const replyInputRef = useRef<HTMLInputElement | null>(null);
+  const editInputRef = useRef<HTMLInputElement | null>(null);
 
   const toggleMenu = (id: string) => {
     setActiveMenuId((prev) => (prev === id ? null : id));
@@ -41,11 +43,6 @@ export default function Comment({ comments, fetchComments }: Props) {
     }
     setActiveMenuId(null);
   };
-
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   const handleReplySubmit = async (e: React.FormEvent, parentId: string) => {
     e.preventDefault();
@@ -99,6 +96,23 @@ export default function Comment({ comments, fetchComments }: Props) {
     }
   };
 
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    if (replyTo && replyInputRef.current) {
+      replyInputRef.current.focus();
+    }
+  }, [replyTo]);
+
+  useEffect(() => {
+    if (editingId && editInputRef.current) {
+      editInputRef.current.focus();
+    }
+  }, [editingId]);
+
   return (
     <section className="mx-auto w-[1200px]">
       {comments.filter((comment) => comment.parent_comment_id === null)
@@ -133,10 +147,12 @@ export default function Comment({ comments, fetchComments }: Props) {
                 </p>
 
                 <div className="relative">
-                  <RxDotsVertical
-                    className="menu-trigger cursor-pointer"
-                    onClick={() => toggleMenu(parent.id)}
-                  />
+                  {parent.user_id === userId && (
+                    <RxDotsVertical
+                      className="menu-trigger cursor-pointer"
+                      onClick={() => toggleMenu(parent.id)}
+                    />
+                  )}
                   {activeMenuId === parent.id && parent.user_id === userId && (
                     <div className="menu-dropdown absolute right-0 z-10 mt-2 w-[70px] rounded-[5px] border border-[#E9E9E9] bg-white shadow-md">
                       <button
@@ -162,6 +178,7 @@ export default function Comment({ comments, fetchComments }: Props) {
                   className="flex gap-[10px] space-y-2 pl-[33px]"
                 >
                   <input
+                    ref={editInputRef}
                     className="h-[60px] w-full grow-1 rounded-[10px] border border-[#D6D6D6] p-2"
                     value={editBody}
                     onChange={(e) => setEditBody(e.target.value)}
@@ -218,10 +235,12 @@ export default function Comment({ comments, fetchComments }: Props) {
                         </div>
 
                         <div className="relative ml-auto">
-                          <RxDotsVertical
-                            className="menu-trigger cursor-pointer"
-                            onClick={() => toggleMenu(reply.id)}
-                          />
+                          {reply.user_id === userId && (
+                            <RxDotsVertical
+                              className="menu-trigger cursor-pointer"
+                              onClick={() => toggleMenu(reply.id)}
+                            />
+                          )}
                           {activeMenuId === reply.id &&
                             reply.user_id === userId && (
                               <div className="menu-dropdown absolute right-0 z-10 mt-2 w-[70px] rounded-[5px] border border-[#E9E9E9] bg-white shadow-md">
@@ -286,6 +305,7 @@ export default function Comment({ comments, fetchComments }: Props) {
                     className="mt-3 flex gap-[10px] space-y-2"
                   >
                     <input
+                      ref={replyInputRef}
                       className="h-[60px] w-full grow-1 rounded-[10px] border border-[#D6D6D6] p-2"
                       placeholder="답글을 작성해 주세요."
                       value={replyBody}
