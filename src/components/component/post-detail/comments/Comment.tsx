@@ -191,6 +191,12 @@ export default function Comment({ comments, fetchComments }: Props) {
                     className="h-[60px] w-full grow-1 rounded-[10px] border border-[#D6D6D6] p-2"
                     value={editBody}
                     onChange={(e) => setEditBody(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        submitEdit(e);
+                      }
+                    }}
                   />
                   <button
                     type="submit"
@@ -279,6 +285,12 @@ export default function Comment({ comments, fetchComments }: Props) {
                             className="ml-[22px] h-[60px] w-full grow-1 rounded-[10px] border border-[#D6D6D6] p-2"
                             value={editBody}
                             onChange={(e) => setEditBody(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault();
+                                submitEdit(e);
+                              }
+                            }}
                           />
                           <button
                             type="submit"
@@ -319,6 +331,18 @@ export default function Comment({ comments, fetchComments }: Props) {
                       placeholder="답글을 작성해 주세요."
                       value={replyBody}
                       onChange={(e) => setReplyBody(e.target.value)}
+                      onKeyDown={async (e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          await handleReplySubmit(e, parent.id);
+                          if (userId) {
+                            await sendReplyNotification({
+                              parentCommentId: parent.id,
+                              senderId: userId,
+                            });
+                          }
+                        }
+                      }}
                     />
                     <button
                       type="submit"
