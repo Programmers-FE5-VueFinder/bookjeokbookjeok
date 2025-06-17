@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import supabase from '../../../utils/supabase';
 import { useProfileImgStore } from '../../../store/profileImgStore';
 import { useAuthStore } from '../../../store/authStore';
+import ProfileSkeleton from '../../common/ProfileSkeleton';
 
 type ProfileImageProps = {
   id?: string | null;
@@ -14,6 +15,7 @@ type ProfileImageProps = {
  * @param {string} [props.id]
  */
 const ProfileImage: React.FC<ProfileImageProps> = ({ id: propId, src }) => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { session } = useAuthStore();
   const { profileCache, setProfileToCache } = useProfileImgStore();
 
@@ -38,6 +40,7 @@ const ProfileImage: React.FC<ProfileImageProps> = ({ id: propId, src }) => {
 
     const fetchProfileData = async () => {
       try {
+        setIsLoading(true);
         const { data: profile, error } = await supabase
           .from('profile')
           .select('image, name, intro')
@@ -70,6 +73,8 @@ const ProfileImage: React.FC<ProfileImageProps> = ({ id: propId, src }) => {
         }
       } catch (error) {
         console.error(error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -78,14 +83,20 @@ const ProfileImage: React.FC<ProfileImageProps> = ({ id: propId, src }) => {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [targetId]);
 
   return (
-    <img
-      src={src || imageUrl || session?.user.user_metadata.avatar_url}
-      alt={'프로필 이미지'}
-      className="w-[100px] items-center justify-center"
-    />
+    <div>
+      {isLoading ? (
+        <ProfileSkeleton />
+      ) : (
+        <img
+          src={src || imageUrl || session?.user.user_metadata.avatar_url}
+          alt={'프로필 이미지'}
+          className="w-[100px] items-center justify-center"
+        />
+      )}
+    </div>
   );
 };
 

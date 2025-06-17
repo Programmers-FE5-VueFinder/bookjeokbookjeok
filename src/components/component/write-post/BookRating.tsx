@@ -31,16 +31,17 @@ export default function BookRating({
         {[1, 2, 3, 4, 5].map((num) => {
           return (
             <button
+              key={num}
               onMouseEnter={() => setHoverIndex(num)}
               onMouseLeave={() => setHoverIndex(0)}
-              onClick={() => {
+              onClick={(e) => {
+                e.preventDefault();
                 setClickIndex(num);
                 setRating(num);
               }}
               className="cursor-pointer"
             >
               <FaStar
-                key={num}
                 fill={fillStarOfIndex(
                   num,
                   hoverIndex === 0 ? 'leave' : 'enter',

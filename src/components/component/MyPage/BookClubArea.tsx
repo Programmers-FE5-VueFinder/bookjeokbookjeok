@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import SkeletonCard from '../../common/CardSkeleton2';
 import BookCard from '../../common/BookCard';
 import type { book_club } from '../../../pages/Profile';
+import { Link } from 'react-router';
 
 export default function BookClubArea({
   post,
@@ -41,17 +42,19 @@ export default function BookClubArea({
             post?.map((item) => {
               {
                 return (
-                  <BookCard
-                    profileImage={profileImage}
-                    key={item.id}
-                    body={item.info}
-                    title={item.name}
-                    nickname={profileName!}
-                    createdAt={new Date(item.created_at).toLocaleDateString(
-                      'ko-KR',
-                    )}
-                    id={id}
-                  />
+                  <Link to={`/bookclub/${item.id}`}>
+                    <BookCard
+                      profileImage={profileImage}
+                      key={item.id}
+                      body={item.info}
+                      title={item.name}
+                      nickname={profileName!}
+                      createdAt={new Date(item.created_at).toLocaleDateString(
+                        'ko-KR',
+                      )}
+                      id={id}
+                    />
+                  </Link>
                 );
               }
             })
