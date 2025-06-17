@@ -135,16 +135,16 @@ export default function Comment({ comments, fetchComments }: Props) {
                   onClick={() => toggleMenu(parent.id)}
                 />
                 {activeMenuId === parent.id && parent.user_id === userId && (
-                  <div className="menu-dropdown absolute right-0 z-10 mt-2 w-[100px] rounded border bg-white text-sm shadow-md">
+                  <div className="menu-dropdown absolute right-0 z-10 mt-2 w-[70px] rounded-[5px] border border-[#E9E9E9] bg-white shadow-md">
                     <button
                       onClick={() => startEdit(parent)}
-                      className="block w-full px-3 py-2 text-left hover:bg-gray-100"
+                      className="block w-full px-3 py-2 text-center text-[16px] font-medium text-black hover:bg-gray-100"
                     >
                       수정
                     </button>
                     <button
                       onClick={() => handleDelete(parent.id)}
-                      className="block w-full px-3 py-2 text-left hover:bg-gray-100"
+                      className="block w-full border-t border-[#E9E9E9] px-3 py-2 text-center text-[16px] font-medium text-black hover:bg-gray-100"
                     >
                       삭제
                     </button>
@@ -207,16 +207,16 @@ export default function Comment({ comments, fetchComments }: Props) {
                         />
                         {activeMenuId === reply.id &&
                           reply.user_id === userId && (
-                            <div className="menu-dropdown absolute right-0 z-10 mt-2 w-[100px] rounded border bg-white text-sm shadow-md">
+                            <div className="menu-dropdown absolute right-0 z-10 mt-2 w-[70px] rounded-[5px] border border-[#E9E9E9] bg-white shadow-md">
                               <button
                                 onClick={() => startEdit(reply)}
-                                className="block w-full px-3 py-2 text-left hover:bg-gray-100"
+                                className="block w-full px-3 py-2 text-center text-[16px] font-medium text-black hover:bg-gray-100"
                               >
                                 수정
                               </button>
                               <button
                                 onClick={() => handleDelete(reply.id)}
-                                className="block w-full px-3 py-2 text-left hover:bg-gray-100"
+                                className="block w-full border-t border-[#E9E9E9] px-3 py-2 text-center text-[16px] font-medium text-black hover:bg-gray-100"
                               >
                                 삭제
                               </button>
