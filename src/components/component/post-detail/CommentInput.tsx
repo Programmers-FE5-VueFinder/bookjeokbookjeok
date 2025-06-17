@@ -53,7 +53,7 @@ export default function CommentInput({
         />
         <button
           onClick={writeComment}
-          className="flex h-[60px] w-[60px] items-center justify-center rounded-[10px] bg-[#F3F3F3] text-[24px]"
+          className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-[10px] bg-[#F3F3F3] text-[24px]"
         >
           <GoPaperAirplane />
         </button>
