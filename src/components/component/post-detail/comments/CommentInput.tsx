@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useParams } from 'react-router';
 import { useAuthStore } from '../../../../store/authStore';
 import { addComment } from '../../../../apis/comment';
+import { sendCommentNotification } from '../../../../apis/notification';
 
 export default function CommentInput({
   onSuccess,
@@ -37,6 +38,11 @@ export default function CommentInput({
       await addComment(postId, userId, comment);
       setComment('');
       onSuccess?.();
+      // 댓글 알림
+      await sendCommentNotification({
+        postId: postId,
+        senderId: userId,
+      });
     } catch (error) {
       console.error('댓글 등록 실패', error);
     }
