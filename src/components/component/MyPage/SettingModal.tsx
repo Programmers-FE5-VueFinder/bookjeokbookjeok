@@ -1,22 +1,33 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { IoIosArrowBack } from 'react-icons/io';
 import { FaGear } from 'react-icons/fa6';
 import ProfileImg from './ProfileImg';
 import { useProfileStore } from '../../../store/profileStore';
 import { useAuthStore } from '../../../store/authStore';
-import supabase, { STORAGE_BASE_URL } from '../../../utils/supabase';
-
-console.log('✅✅✅ SettingModal 최종 리팩토링 코드 실행됨 (버전 체크) ✅✅✅');
+import supabase from '../../../utils/supabase';
+import {
+  useProfileImgStore,
+  type UserProfile,
+} from '../../../store/profileImgStore';
+import { toast } from 'react-toastify';
 
 interface SettingModalProps {
   onClose: () => void;
 }
 
 export default function SettingModal({ onClose }: SettingModalProps) {
+  const nameRef = useRef<HTMLInputElement>(null);
+  const [show, isShow] = useState<boolean>(false);
+  const [pass, setPass] = useState<boolean>(false);
+  const [validate, setValidate] = useState<boolean>(false);
+  // const [prof, setProf] = useState<number | undefined>(0);
   const { session } = useAuthStore();
+  const { profileCache, setProfileToCache } = useProfileImgStore();
+  const currentUserCache = session?.user.id
+    ? profileCache[session.user.id]
+    : undefined;
+  const globalAvatarUrl = currentUserCache?.image; // 캐시된 이미지 URL
   const {
-    Image: globalAvatarUrl,
-    setProfileImage: setGlobalProfileImage,
     setProfileName: setGlobalProfileName,
     setProfileIntro: setGlobalProfileIntro,
   } = useProfileStore();
@@ -46,53 +57,97 @@ export default function SettingModal({ onClose }: SettingModalProps) {
     }
   };
 
-  const handleSave = async () => {
-    const user = session?.user;
-    if (!user) {
-      alert('사용자 정보가 없습니다. 다시 로그인해주세요.');
-      return;
+  const handleCheckNickName = async () => {
+    const name = nameRef.current?.value;
+    const valName = /^[A-Za-z가-힣0-9]{2,10}$/;
+    let prof: number | undefined = 0;
+    if (name !== undefined) {
+      setValidate(valName.test(name));
+      setPass(false);
+      if (valName.test(name) === true) {
+        try {
+          const { data: profile } = await supabase
+            .from('profile')
+            .select('*')
+            .eq('name', name);
+          prof = profile?.length;
+          console.log(prof);
+          if (prof === 0) {
+            setPass(true);
+          } else {
+            setPass(false);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
+      isShow(true);
     }
+  };
 
-    try {
-      if (newName !== initialName || newIntro !== initialIntro) {
-        const { error: textUpdateError } = await supabase
-          .from('profile')
-          .update({ name: newName, intro: newIntro })
-          .eq('id', user.id);
-        if (textUpdateError) throw textUpdateError;
-        setGlobalProfileName(newName);
-        setGlobalProfileIntro(newIntro);
+  const handleSave = async () => {
+    if (pass) {
+      const user = session?.user;
+      if (!user) {
+        alert('사용자 정보가 없습니다. 다시 로그인해주세요.');
+        return;
       }
 
-      if (newProfImgFile) {
-        if (initialAvatarPath) {
-          await supabase.storage.from('image').remove([initialAvatarPath]);
+      try {
+        const updatedProfileData: UserProfile = {};
+
+        if (
+          (newName !== initialName || newIntro !== initialIntro) &&
+          newName !== ''
+        ) {
+          const { error: textUpdateError } = await supabase
+            .from('profile')
+            .update({ name: newName, intro: newIntro })
+            .eq('id', user.id);
+          toast.success('변경되었습니다');
+          if (textUpdateError) throw textUpdateError;
+          setGlobalProfileName(newName);
+          setGlobalProfileIntro(newIntro);
         }
 
-        const fileExt = newProfImgFile.name.split('.').pop();
-        const newFilePath = `public/avatars/${user.id}.${fileExt}`;
+        if (newProfImgFile) {
+          if (initialAvatarPath) {
+            await supabase.storage.from('image').remove([initialAvatarPath]);
+          }
 
-        const { error: uploadError } = await supabase.storage
-          .from('image')
-          .upload(newFilePath, newProfImgFile, { upsert: true });
-        if (uploadError) throw uploadError;
+          const fileExt = newProfImgFile.name.split('.').pop();
+          const newFilePath = `public/avatars/${user.id}.${fileExt}`;
 
-        const { error: imageUpdateError } = await supabase
-          .from('profile')
-          .update({ image: newFilePath })
-          .eq('id', user.id);
-        if (imageUpdateError) throw imageUpdateError;
+          const { error: uploadError } = await supabase.storage
+            .from('image')
+            .upload(newFilePath, newProfImgFile, { upsert: true });
+          if (uploadError) throw uploadError;
 
-        const newImageUrl = `${STORAGE_BASE_URL}${newFilePath}?t=${new Date().getTime()}`;
-        setGlobalProfileImage(newImageUrl);
+          const { error: imageUpdateError } = await supabase
+            .from('profile')
+            .update({ image: newFilePath })
+            .eq('id', user.id);
+          if (imageUpdateError) throw imageUpdateError;
+
+          const { data } = supabase.storage
+            .from('image')
+            .getPublicUrl(newFilePath);
+          const publicUrlWithCacheBust = `${data.publicUrl}?t=${new Date().getTime()}`;
+          updatedProfileData.image = publicUrlWithCacheBust;
+        }
+
+        if (Object.keys(updatedProfileData).length > 0) {
+          setProfileToCache(user.id, updatedProfileData);
+        }
+        onClose();
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error('프로필 업데이트 중 오류 발생:', error.message);
+          alert(`오류 발생: ${error.message}`);
+        }
       }
-
-      onClose();
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error('프로필 업데이트 중 오류 발생:', error.message);
-        alert(`오류 발생: ${error.message}`);
-      }
+    } else {
+      toast.error('다시 시도해주세요');
     }
   };
 
@@ -123,7 +178,7 @@ export default function SettingModal({ onClose }: SettingModalProps) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div
-        className="relative flex h-[567px] w-[383px] flex-col items-center rounded-xl bg-white px-[20px] py-[18px] text-center"
+        className="relative flex h-[567px] w-[383px] flex-col items-center rounded-xl bg-white px-[31.5px] py-[18px] text-center"
         onClick={(e) => e.stopPropagation()}
       >
         <div>
@@ -137,9 +192,9 @@ export default function SettingModal({ onClose }: SettingModalProps) {
         </div>
 
         <div className="relative my-[20px]">
-          <ProfileImg
-            src={previewImage || globalAvatarUrl || '/default-avatar.png'}
-          />
+          <div className="size-[100px] overflow-hidden rounded-full">
+            <ProfileImg src={previewImage || globalAvatarUrl} />
+          </div>
           <label
             htmlFor="profileImg"
             className="absolute top-0 right-1 flex size-[25px] cursor-pointer items-center justify-center rounded-full border-3 border-white bg-gray-100 text-center"
@@ -155,21 +210,46 @@ export default function SettingModal({ onClose }: SettingModalProps) {
           />
         </div>
 
-        <div className="mb-[20px] flex gap-[13px]">
-          <input
-            type="text"
-            className="inputBox h-[35px] w-[234px]"
-            placeholder="닉네임은 8자 이내로 작성해주세요"
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-          />
-          <button className="w-[73px] cursor-pointer">중복 검사</button>
+        <div className="mb-[10px]">
+          <div className="flex w-full gap-[13px]">
+            <input
+              type="text"
+              className="inputBox h-[35px] w-full"
+              placeholder="닉네임은 8자 이내로 작성해주세요"
+              onChange={(e) => setNewName(e.target.value)}
+              ref={nameRef}
+            />
+            <button
+              className="w-[100px] cursor-pointer"
+              onClick={handleCheckNickName}
+            >
+              중복 확인
+            </button>
+          </div>
+        </div>
+        <div>
+          {show ? (
+            validate ? (
+              pass ? (
+                <span className="textT4 text-green-500">
+                  사용 가능한 닉네임입니다
+                </span>
+              ) : (
+                <span className="textT4 text-red-500">
+                  사용 중인 닉네임입니다
+                </span>
+              )
+            ) : (
+              <span className="textT4 text-red-500">
+                2자 이상 10자 이하, 특수문자 없이 작성해주세요.
+              </span>
+            )
+          ) : null}
         </div>
 
         <textarea
-          className="inputBox mb-[20px] h-[215px] w-[320px] resize-none pt-[15px]"
+          className="inputBox mt-[10px] mb-[20px] h-[215px] w-full resize-none pt-[15px]"
           placeholder="자신에 대한 간략한 소개를 써주세요"
-          value={newIntro}
           onChange={(e) => setNewIntro(e.target.value)}
         />
 
@@ -180,12 +260,8 @@ export default function SettingModal({ onClose }: SettingModalProps) {
           >
             저장하기
           </button>
-          <button className="cursor-pointer text-[12px] text-gray-300">
-            회원탈퇴
-          </button>
         </div>
       </div>
-
     </div>
   );
 }

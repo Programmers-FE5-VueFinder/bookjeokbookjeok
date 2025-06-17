@@ -1,42 +1,49 @@
-import { Link } from 'react-router';
 import { logout } from '../../apis/auth';
 import supabase from '../../utils/supabase';
 import LoginModal from '../../pages/LoginModal';
+import { Link, useNavigate } from 'react-router';
 import { useEffect, useRef, useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
 
 import SearchIcon from '@mui/icons-material/Search';
 import { MdOutlinePersonOutline } from 'react-icons/md';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
+import SignUpModal from './SignUpModal';
 
 export default function Header() {
   // const session = useAuthStore((state) => state.session); 나중에 프로필 받아올 때 사용
   const isLogin = useAuthStore((state) => state.isLogin);
   const setLogin = useAuthStore((state) => state.setLogin);
   const setLogout = useAuthStore((state) => state.setLogout);
+  const navigate = useNavigate();
+  const { session } = useAuthStore();
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeModal, setActiveModal] = useState<'login' | 'signup' | null>(
+    null,
+  );
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const handleLogout = async () => {
     await logout();
     setLogout();
+    navigate('/')
   };
-
+  
   // 로그인 상태 관리는 zustand로 대체, logout만 auth.ts 사용
   useEffect(() => {
     const syncSession = async () => {
-        const { data: { session }} = await supabase.auth.getSession();
-        if (session) {
-            setLogin(session);
-        } else {
-            setLogout();
-        }
+      const { data: { session }} = await supabase.auth.getSession();
+      if (session) {
+        setLogin(session);
+      } else {
+        setLogout();
+      }
     };
     syncSession();
   }, [setLogin, setLogout]);
-
+  // console.log('로그인?: ', isLogin)
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (
@@ -63,27 +70,33 @@ export default function Header() {
           <Link to={'/channel/diary'}>다이어리</Link>
           <Link to={'/channel/book_club'}>북클럽</Link>
           <Link to={'/channel/community'}>자유채널</Link>
-          <Link to={'/create-post'}>글작성</Link>
+          <Link to={'/create-post/diary'}>글작성</Link>
         </nav>
 
         <div className="flex space-x-4" ref={dropdownRef}>
           <Link to={'/search'}>
             <SearchIcon className="text-black" />
           </Link>
-          <Link to={'/notification'}>
-            <NotificationsOutlinedIcon className="text-black" />
-          </Link>
+
+          {isLogin && (
+            <Link to={'/notification'}>
+              <NotificationsOutlinedIcon className="text-black" />
+            </Link>
+          )}
 
           {isLogin ? (
             <div className="relative">
-              <button onClick={() => setIsDropdownOpen((prev) => !prev)}>
+              <button
+                onClick={() => setIsDropdownOpen((prev) => !prev)}
+                className="cursor-pointer"
+              >
                 <MdOutlinePersonOutline size={24} className="text-black" />
               </button>
 
               {isDropdownOpen && (
                 <div className="absolute right-0 z-50 mt-2 w-[100px] rounded-[5px] border border-[#E9E9E9] bg-white shadow-md">
                   <Link
-                    to="/profile"
+                    to={`/profile/${session?.user.id}`}
                     className="flex w-full items-center justify-center px-4 py-2 text-center text-[16px] font-medium text-black hover:bg-gray-100"
                     onClick={() => {
                       setIsDropdownOpen(false);
@@ -93,21 +106,36 @@ export default function Header() {
                   </Link>
 
                   <div className="mx-auto w-[87px] border-t border-[#E9E9E9]"></div>
-
-                  <button
-                    className="flex w-full items-center justify-center px-4 py-2 text-[16px] font-medium text-black hover:bg-gray-100"
-                    onClick={handleLogout}
-                  >
-                    로그아웃
-                  </button>
+                  <Link to={'/'}>
+                    <button
+                      className="flex w-full items-center justify-center px-4 py-2 text-[16px] font-medium text-black hover:bg-gray-100"
+                      onClick={handleLogout}
+                    >
+                      로그아웃
+                    </button>
+                  </Link>
                 </div>
               )}
             </div>
           ) : (
             <>
-              <button onClick={() => setIsModalOpen(true)}>로그인</button>
-              {isModalOpen && (
-                <LoginModal onClose={() => setIsModalOpen(false)} />
+              <button
+                onClick={() => setActiveModal('login')}
+                className="cursor-pointer"
+              >
+                로그인
+              </button>
+              {activeModal === 'login' && (
+                <LoginModal
+                  onClose={() => setActiveModal(null)}
+                  onOpenSignUp={() => setActiveModal('signup')}
+                />
+              )}
+              {activeModal === 'signup' && (
+                <SignUpModal
+                  onClose={() => setActiveModal(null)}
+                  onBackToLogin={() => setActiveModal('login')}
+                />
               )}
             </>
           )}

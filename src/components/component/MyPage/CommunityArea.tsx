@@ -4,7 +4,7 @@ import SkeletonCard from '../../common/CardSkeleton2';
 import { Link } from 'react-router';
 import type { Post } from '../../../pages/Profile';
 
-export default function DiaryArea({
+export default function CommunityArea({
   post,
   profileImage,
   profileName,
@@ -16,7 +16,6 @@ export default function DiaryArea({
   id: string | undefined;
 }) {
   const [loading, setLoading] = useState<boolean>(false);
-  // const [img, setImg] = useState();
 
   useEffect(() => {
     setLoading(true);
@@ -30,7 +29,7 @@ export default function DiaryArea({
     <>
       <div className="relative w-full items-center justify-center">
         {loading ? null : post?.length === 0 ? (
-          <div className="h-[calc(100vh-770px)]">
+          <div className="min-h-[calc(100vh-1570px)]">
             <div className="absolute top-[47%] left-[15%] text-center">
               <span className="textT1">게시글이 없습니다.</span>
             </div>
@@ -43,7 +42,7 @@ export default function DiaryArea({
             post?.map((item) => {
               {
                 return (
-                  <Link to={`/channel/diary/post/${item.id}`}>
+                  <Link to={`/channel/community/post/${item.id}`}>
                     <BookCard
                       profileImage={profileImage}
                       key={item.id}
@@ -55,7 +54,6 @@ export default function DiaryArea({
                       )}
                       id={id}
                       book_id={item.book_id}
-                      category={item.category}
                     />
                   </Link>
                 );
