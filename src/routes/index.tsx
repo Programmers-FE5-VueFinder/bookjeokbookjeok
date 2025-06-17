@@ -7,7 +7,6 @@ import NotFound from '../pages/NotFound';
 import PostDetail from '../pages/PostDetail';
 import CreatePost from '../pages/CreatePost';
 import RootLayout from './layouts/RootLayout';
-import Notification from '../pages/Notification';
 import SearchResult from '../pages/SearchResult';
 import ChannelLayout from './layouts/ChannelLayout';
 import { fetchUserData } from './loader/auth.loader';
@@ -47,10 +46,6 @@ const router = createBrowserRouter([
         Component: SignUp,
       },
       {
-        path: '/notification',
-        Component: Notification,
-      },
-      {
         path: '/search',
         Component: SearchResult,
       },
@@ -65,10 +60,6 @@ const router = createBrowserRouter([
       {
         path: '/bookclub/:bookclub_id',
         Component: BookClub,
-      },
-      {
-        path: '/create-post',
-        Component: CreatePost,
       },
       {
         path: '/create-post/:bookclub_id',
@@ -86,6 +77,11 @@ const router = createBrowserRouter([
   },
   {
     path: '/create-post',
+    loader: fetchUserData,
+    Component: CreatePost,
+  },
+  {
+    path: '/editpost/:postId',
     loader: fetchUserData,
     Component: CreatePost,
   },

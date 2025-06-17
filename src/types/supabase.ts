@@ -399,27 +399,6 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: 'notification_object_id_fkey';
-            columns: ['object_id'];
-            isOneToOne: false;
-            referencedRelation: 'follow';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'notification_object_id_fkey1';
-            columns: ['object_id'];
-            isOneToOne: false;
-            referencedRelation: 'like';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'notification_object_id_fkey2';
-            columns: ['object_id'];
-            isOneToOne: false;
-            referencedRelation: 'comment';
-            referencedColumns: ['id'];
-          },
-          {
             foreignKeyName: 'notification_sender_id_fkey';
             columns: ['sender_id'];
             isOneToOne: false;
@@ -497,6 +476,7 @@ export type Database = {
         Row: {
           appellation: string | null;
           created_at: string;
+          email: string | null;
           id: string;
           image: string | null;
           intro: string | null;
@@ -505,6 +485,7 @@ export type Database = {
         Insert: {
           appellation?: string | null;
           created_at?: string;
+          email?: string | null;
           id?: string;
           image?: string | null;
           intro?: string | null;
@@ -513,6 +494,7 @@ export type Database = {
         Update: {
           appellation?: string | null;
           created_at?: string;
+          email?: string | null;
           id?: string;
           image?: string | null;
           intro?: string | null;
