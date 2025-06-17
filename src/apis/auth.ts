@@ -1,10 +1,19 @@
 import supabase from '../utils/supabase';
 
 /* 로그인 여부 판별 */
+
+// 비동기 함수가 결과 return 없이 undefined만 반환돼서 주석 처리
+// export async function isLoggedIn() {
+//   supabase.auth.getSession().then(({ data: { session } }) => {
+//     return !!session;
+//   });
+// }
+
 export async function isLoggedIn() {
-  supabase.auth.getSession().then(({ data: { session } }) => {
-    return !!session;
-  });
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  return !!session;
 }
 
 /* 로그인 유저 id */
@@ -34,9 +43,7 @@ export async function kakaoLogin() {
 export async function logout() {
   try {
     const { error } = await supabase.auth.signOut();
-    if (error) {
-      throw error;
-    }
+    if (error) throw error;
   } catch (e) {
     console.error(e);
   }
