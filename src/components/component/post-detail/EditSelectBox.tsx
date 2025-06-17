@@ -16,7 +16,7 @@ export default function EditSelectBox({
   const navigate = useNavigate();
   const { postId } = useParams();
 
-  deletePost(postId as string);
+  // deletePost(postId as string);
 
   return (
     <>

@@ -2,7 +2,7 @@ import { FaRegComment, FaRegHeart } from 'react-icons/fa';
 import type { BookCardProps } from '../../types/type';
 import ProfileImg from '../component/MyPage/ProfileImg';
 import { useEffect, useState } from 'react';
-import type { BookData } from '../../types/book';
+import type { BookData, BookDetail } from '../../types/book';
 import { Link } from 'react-router';
 import supabase from '../../utils/supabase';
 import defaultImg from '../../assets/images/default_post_img.png';
@@ -20,7 +20,7 @@ export default function BookCard({
   book_id,
   category,
 }: BookCardProps) {
-  const [result, setResult] = useState<BookData[]>([]);
+  const [result, setResult] = useState<BookDetail[]>([]);
   const [img, setImg] = useState<string | null>(null);
 
   useEffect(() => {
@@ -31,7 +31,6 @@ export default function BookCard({
             .from('book')
             .select('*')
             .eq('id', book_id);
-          console.log(book![0].cover);
           setImg(book![0].cover);
           setResult(book!);
         } catch (error) {
@@ -86,7 +85,9 @@ export default function BookCard({
           <div className="mt-[15px] truncate text-[18px] font-bold">
             <span>{title}</span>
           </div>
-          <div className="mt-[15px] line-clamp-2">{body}</div>
+          <div className="mt-[15px] line-clamp-2">
+            {body!.replace(/<[^>]*>?/g, '')}
+          </div>
           {/* 좋아요, 댓글 */}
           <div className="absolute bottom-0 left-0 flex size-[12px] pb-[30px] pl-[13px]">
             <div className="mr-[8px] flex items-center space-x-1">

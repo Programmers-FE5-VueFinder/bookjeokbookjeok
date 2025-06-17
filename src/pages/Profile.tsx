@@ -13,6 +13,7 @@ import DiaryArea from '../components/component/MyPage/DiaryArea';
 import CommunityArea from '../components/component/MyPage/CommunityArea';
 import BookClubArea from '../components/component/MyPage/BookClubArea';
 import BookMarkArea from '../components/component/MyPage/BookMarkArea';
+import { fetchAddFollow, fetchDeleteFollow } from '../apis/follow';
 
 export type Post = {
   body: string;
@@ -52,7 +53,8 @@ export default function Profile() {
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedBtn, setSelectedBtn] = useState<string>('다이어리');
   const [content, setContent] = useState<string>('diary');
-  const buttonName = ['다이어리', '자유채널', '마이 북클럽', '북마크'];
+  const MybuttonName = ['다이어리', '자유채널', '마이 북클럽', '북마크'];
+  const buttonName = ['다이어리', '자유채널', '북마크'];
   const { userId } = useParams();
   const [follow, setFollow] = useState<boolean>(false);
 
@@ -77,23 +79,14 @@ export default function Profile() {
   const handleFollowing = async () => {
     if (follow === false) {
       if (session?.user.id !== undefined && userId !== undefined) {
-        const { error } = await supabase
-          .from('follow')
-          .insert([{ follower_id: session?.user.id, following_id: userId }])
-          .select();
-        console.error(error);
+        fetchAddFollow(session.user.id, userId);
       }
       const updateFollower = follower + 1;
       setFollower(updateFollower);
       setFollow(true);
     } else if (follow === true) {
       if (session?.user.id !== undefined && userId !== undefined) {
-        const { error } = await supabase
-          .from('follow')
-          .delete()
-          .eq('follower_id', session?.user.id)
-          .eq('following_id', userId);
-        console.error(error);
+        fetchDeleteFollow(session.user.id, userId);
       }
       const updateFollower = follower - 1;
       setFollower(updateFollower);
@@ -175,7 +168,8 @@ export default function Profile() {
           const { data: posts } = await supabase
             .from('post')
             .select('*')
-            .eq('user_id', userId!);
+            .eq('user_id', userId!)
+            .order('created_at', { ascending: false });
           const postDiary = posts?.filter((post) => post.category === 'diary');
           const postCommunity = posts?.filter(
             (post) => post.category === 'community',
@@ -205,7 +199,8 @@ export default function Profile() {
           const { data: bookmark } = await supabase
             .from('bookmark')
             .select('*')
-            .eq('user_id', userId!);
+            .eq('user_id', userId!)
+            .order('created_at', { ascending: false });
           setBookMark(bookmark);
         } catch (error) {
           console.error(error);
@@ -246,7 +241,7 @@ export default function Profile() {
     };
 
     fetchData();
-  }, [userId, setProfileName]);
+  }, [userId, content, setProfileName]);
 
   return (
     <>
@@ -343,20 +338,35 @@ export default function Profile() {
           {/* 버튼 에리어 */}
           <div className="absolute bottom-0 flex h-[40px] w-full content-center items-center justify-center">
             <div className="flex w-[1200px] items-center justify-center">
-              {buttonName.map((item) => {
-                return (
-                  <button
-                    className={twMerge(
-                      item === selectedBtn ? 'button-active' : 'button',
-                    )}
-                    onClick={handleContentButton}
-                    key={item}
-                    name={item}
-                  >
-                    {item}
-                  </button>
-                );
-              })}
+              {session?.user.id !== userId
+                ? buttonName.map((item) => {
+                    return (
+                      <button
+                        className={twMerge(
+                          item === selectedBtn ? 'button-active' : 'button',
+                        )}
+                        onClick={handleContentButton}
+                        key={item}
+                        name={item}
+                      >
+                        {item}
+                      </button>
+                    );
+                  })
+                : MybuttonName.map((item) => {
+                    return (
+                      <button
+                        className={twMerge(
+                          item === selectedBtn ? 'button-active' : 'button',
+                        )}
+                        onClick={handleContentButton}
+                        key={item}
+                        name={item}
+                      >
+                        {item}
+                      </button>
+                    );
+                  })}
             </div>
           </div>
         </div>

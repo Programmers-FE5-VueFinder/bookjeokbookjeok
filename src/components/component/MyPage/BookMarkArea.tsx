@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import SkeletonCard from '../../common/CardSkeleton2';
 import BookMarkCard from '../MyPage/BookMarkCard';
 import type { BookMark } from '../../../pages/Profile';
+// import BookPage from '../book-detail/BookPage';
+// import ReactDOM from 'react-dom';
 
 export default function BookMarkArea({
   post,
@@ -15,6 +17,10 @@ export default function BookMarkArea({
   id: string | undefined;
 }) {
   const [loading, setLoading] = useState<boolean>(false);
+  // const [isOpen, setIsOpen] = useState(false);
+
+  // const handleOpen = () => setIsOpen(true);
+  // const closeModal = () => setIsOpen(false);
 
   useEffect(() => {
     setLoading(true);
@@ -34,7 +40,7 @@ export default function BookMarkArea({
             </div>
           </div>
         ) : null}
-        <div className="grid min-h-[calc(100vh-585px)] gap-[28px] p-[100px] text-center md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid min-h-[calc(100vh-569px)] gap-[28px] p-[100px] text-center md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {loading ? (
             <SkeletonCard />
           ) : (
@@ -60,6 +66,15 @@ export default function BookMarkArea({
             })
           )}
         </div>
+        {/* {isOpen &&
+          ReactDOM.createPortal(
+            <BookPage
+              isOpen={isOpen}
+              closeModal={closeModal}
+              bookDetail={bookDetail[0]}
+            />,
+            document.body,
+          )} */}
       </div>
     </>
   );
