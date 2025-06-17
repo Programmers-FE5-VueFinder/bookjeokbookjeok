@@ -3,30 +3,56 @@ import Comment from '../components/component/post-detail/Comment';
 import CommentInput from '../components/component/post-detail/CommentInput';
 import PostHeader from '../components/component/post-detail/PostHeader';
 import PostProfile from '../components/component/post-detail/PostProfile';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { fetchPostDetail } from '../apis/post';
 import type { PostDetail } from '../types/post';
 import getElapsedTime from '../utils/format-time';
 import '../css/reactQuillCustom.css';
 import CheckModal from '../components/common/CheckModal';
+import { getComments } from '../apis/comment';
+
+type CommentTypeBase = {
+  id: string;
+  body: string;
+  created_at: string;
+  user_id: string;
+  parent_comment_id: string | null;
+  profile: {
+    name: string;
+    image: string | null;
+  };
+};
 
 export default function PostDetail() {
   const path = useParams();
+  const { postId } = useParams();
   const [content, setContent] = useState<PostDetail | undefined>(undefined);
+  const [comments, setComments] = useState<CommentTypeBase[]>([]);
   const [modalStatus, setModalStatus] = useState({
     show: false,
     active: false,
   });
   const [loading, setLoading] = useState(false);
 
+  const fetchComments = useCallback(async () => {
+    if (!postId) return;
+    try {
+      const res = await getComments(postId);
+      setComments(res);
+    } catch (err) {
+      console.error('댓글 불러오기 실패', err);
+    }
+  }, [postId]);
+
   useEffect(() => {
     async function postDetail() {
       const response = await fetchPostDetail(path.postId as string);
       setContent(response);
       setLoading(true);
+      await fetchComments();
     }
     postDetail();
-  }, []);
+  }, [path.postId, fetchComments]);
 
   return (
     loading && (
@@ -56,11 +82,9 @@ export default function PostDetail() {
             N개의 댓글
           </span>
         </div>
-        <CommentInput />
+        <CommentInput onSuccess={fetchComments} />
         <div className="mb-[150px]">
-          <Comment />
-          <Comment />
-          <Comment />
+          <Comment comments={comments} fetchComments={fetchComments} />
         </div>
       </main>
     )
