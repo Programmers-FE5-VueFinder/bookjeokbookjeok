@@ -1,4 +1,3 @@
-// import './quillOverride.ts';
 import { useEffect, useRef, useState } from 'react';
 import ReactQuillEditor from './ReactQuillEditor';
 import { MdArrowBack } from 'react-icons/md';
@@ -6,37 +5,42 @@ import { useNavigate, useParams } from 'react-router';
 import { MdOutlineSearch } from 'react-icons/md';
 import BookSearchModal from '../BookSearchModal';
 import type { BookDetail } from '../../../types/book';
-import BookHTML from './BookHTML';
+import SelectBookInfo from './SelectBookInfo';
+import BookRating from './BookRating';
+import CategorySelect from './CategorySelect';
+import { useAuthStore } from '../../../store/authStore';
 import {
   createBookClub,
   createBookClubPost,
   editBookClub,
   fetchBookClub,
-} from '../../../apis/book-club';
-import CategorySelect from './CategorySelect';
-import BookRating from './BookRating';
+} from '../../../apis/book-club.ts';
+import supabase from '../../../utils/supabase';
+import Toastfy from '../../common/Toastfy.tsx';
+import { createPost } from '../../../apis/post.ts';
 
 export default function WritePost({
   isCreateBookClub,
 }: {
   isCreateBookClub?: boolean;
 }) {
-  // 로그인 안 된 유저가 접근시
-  // const isLogin = useAuthStore((state) => state.isLogin);
-  // if (!isLogin) navigate('/');
-
-  //path : diary, bookclub, freetalk
   const path = useParams();
   const bookclubId = path.bookclub_id;
   const navigate = useNavigate();
-
-  const [category, setCategory] = useState(path.category);
-  const [rating, setRating] = useState<number | null>(null);
+  const [category, setCategory] = useState('diary');
+  const [rating, setRating] = useState<number | undefined>();
   const [value, setValue] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [selectedBook, setSeletedBook] = useState<BookDetail | null>(null);
-
   const titleRef = useRef<HTMLInputElement>(null);
+
+  const isLogIn = useAuthStore((state) => state.isLogin);
+  const session = useAuthStore((state) => state.session);
+  console.log(session?.user.id);
+
+  useEffect(() => {
+    if (!isLogIn) navigate('/');
+  }, [isLogIn]);
 
   const onClose = () => setShowModal(false);
 
@@ -46,7 +50,20 @@ export default function WritePost({
     const title = titleRef.current?.value;
     const body = value.toString();
 
-    if (!title || !body) return; // toastify로 제목이나 내용을 모두 입력해 달라는 경고문구 추가
+    //정규식으로 썸네일 뽑기
+    const match = body.match(/<img[^>]+src="([^"]+)"[^>]*>/);
+    const image = match ? match[1] : null;
+
+    if (!title || !body) {
+      if (!title) Toastfy('error', '제목을 작성 해주세요');
+      if (body === '<p><br></p>') Toastfy('error', '본문을 작성 해주세요');
+      return;
+    }
+
+    const bookInfo = {
+      id: selectedBook!.isbn13,
+      star: rating,
+    };
 
     /* 북클럽 수정 */
     if (bookclubId) {
@@ -57,7 +74,44 @@ export default function WritePost({
 
     switch (category) {
       case 'diary': {
-        // diary post 생성 api
+        try {
+          const { data } = await supabase
+            .from('book')
+            .insert({
+              id: selectedBook!.isbn13,
+              title: selectedBook!.title,
+              author: selectedBook!.author,
+              description: selectedBook!.description,
+              categoryId: selectedBook!.categoryId,
+              categoryName: selectedBook!.categoryName,
+            })
+            .select()
+            .single();
+
+          const response = await createPost(
+            session!.user.id,
+            title,
+            body,
+            image,
+            category,
+            data!.id,
+            bookInfo,
+          );
+          console.log(response);
+
+          if (bookInfo.id) {
+            await supabase.from('book_tag').insert({
+              book_id: bookInfo.id,
+              star: bookInfo.star,
+              reference_category: 'diary',
+              reference_id: response,
+            });
+          }
+          // navigate('/');
+        } catch (e) {
+          console.log(e);
+          Toastfy('error', '작성에 실패했습니다');
+        }
         return;
       }
       case 'community': {
@@ -107,8 +161,8 @@ export default function WritePost({
                 className="h-fir mx-auto my-[20px] block w-[1200px] max-w-[1200px] pl-[5px] text-[24px] text-[#666666]"
               />
 
-              {selectedBook ? (
-                <BookHTML
+              {selectedBook && category === 'diary' ? (
+                <SelectBookInfo
                   setShowModal={setShowModal}
                   setSeletedBook={setSeletedBook}
                   selectedBook={selectedBook}
@@ -116,7 +170,10 @@ export default function WritePost({
               ) : (
                 <button
                   style={{ marginLeft: 'calc((100% - 1200px) / 2)' }}
-                  onClick={() => setShowModal(true)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setShowModal(true);
+                  }}
                   className="flex h-[130px] w-[100px] cursor-pointer flex-col items-center justify-center border border-dashed border-[#333] text-[rgba(153,153,153,.4)]"
                 >
                   <MdOutlineSearch />
@@ -124,7 +181,12 @@ export default function WritePost({
                 </button>
               )}
               {selectedBook && <BookRating setRating={setRating} />}
-              <ReactQuillEditor setValue={setValue} value={value} />
+              <ReactQuillEditor
+                category={category}
+                setValue={setValue}
+                value={value}
+                selectedBook={selectedBook}
+              />
             </div>
             <div className="flex h-[60px] min-h-[60px] w-[100%] justify-center border-t border-t-[#D5D5D5]">
               <div className="flex h-[100%] w-[1200px] items-center justify-between">
@@ -137,7 +199,6 @@ export default function WritePost({
                 </button>
                 <button
                   type="submit"
-                  onClick={() => console.log(value)}
                   className="cursor-pointer rounded-[5px] bg-[#F1F1F1] px-[23px] py-[8px] text-[14px] hover:bg-[#41D94D] hover:font-semibold hover:text-[#fff]"
                 >
                   발행하기

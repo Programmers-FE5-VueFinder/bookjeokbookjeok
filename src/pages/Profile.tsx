@@ -59,8 +59,7 @@ export default function Profile() {
   const { session } = useAuthStore();
   const { Image: avatarUrl, profileName, intro } = useProfileStore();
 
-  const { setProfileName, setProfileIntro, setProfileImage } =
-    useProfileStore.getState();
+  const { setProfileName, setProfileIntro } = useProfileStore.getState();
   const handleContentButton = (e: React.MouseEvent<HTMLButtonElement>) => {
     const { name } = e.currentTarget;
     if (name === '다이어리') {
@@ -88,8 +87,6 @@ export default function Profile() {
       setFollower(updateFollower);
       setFollow(true);
     } else if (follow === true) {
-      console.log(session?.user.id);
-      console.log(userId);
       if (session?.user.id !== undefined && userId !== undefined) {
         const { error } = await supabase
           .from('follow')
@@ -130,95 +127,89 @@ export default function Profile() {
         if (profile) {
           setProfileName(profile.name);
           setProfileIntro(profile.intro);
-          if (profile.image) {
-            if (profile.image.includes('https://')) {
-              const initialUrl = `${profile.image}?t=${new Date().getTime()}`;
-              setProfileImage(initialUrl);
-            } else {
-              const { data: urlData } = supabase.storage
-                .from('image')
-                .getPublicUrl(profile.image);
-
-              const imageURL = urlData.publicUrl;
-              const separator = imageURL.includes('?') ? '&' : '?';
-              const initialUrl = `${imageURL}${separator}v=${new Date().getTime()}`;
-              setProfileImage(initialUrl);
-            }
-          } else {
-            setProfileImage('');
-          }
         }
       };
 
       const myFollow = async () => {
-        const { data: follow, error } = await supabase
-          .from('follow')
-          .select('follower_id, following_id');
+        try {
+          const { data: follow } = await supabase
+            .from('follow')
+            .select('follower_id, following_id');
+          const followerData = follow!.map((follower) => follower.following_id);
+          let followerNumber = 0;
 
-        console.error(error);
-
-        const followerData = follow!.map((follower) => follower.following_id);
-        let followerNumber = 0;
-
-        for (let i = 0; i < followerData.length; i++) {
-          if (followerData[i] === userId) {
-            followerNumber += 1;
+          for (let i = 0; i < followerData.length; i++) {
+            if (followerData[i] === userId) {
+              followerNumber += 1;
+            }
           }
-        }
-        setFollower(followerNumber);
+          setFollower(followerNumber);
 
-        let followingNumber = 0;
-        const followingData = follow!.map((follower) => follower.follower_id);
+          let followingNumber = 0;
+          const followingData = follow!.map((follower) => follower.follower_id);
 
-        for (let i = 0; i < followingData.length; i++) {
-          if (followingData[i] === userId) {
-            followingNumber += 1;
+          for (let i = 0; i < followingData.length; i++) {
+            if (followingData[i] === userId) {
+              followingNumber += 1;
+            }
           }
-        }
-        for (let i = 0; i < followingData.length; i++) {
-          if (
-            followingData[i] === session?.user.id &&
-            followerData[i] === userId
-          ) {
-            setFollow(true);
-            return;
-          } else {
-            setFollow(false);
+          for (let i = 0; i < followingData.length; i++) {
+            if (
+              followingData[i] === session?.user.id &&
+              followerData[i] === userId
+            ) {
+              setFollow(true);
+              return;
+            } else {
+              setFollow(false);
+            }
           }
+          setFollowing(followingNumber);
+        } catch (error) {
+          console.error(error);
         }
-        setFollowing(followingNumber);
       };
 
       const myPost = async () => {
-        const { data: posts, error } = await supabase
-          .from('post')
-          .select('*')
-          .eq('user_id', userId!);
-        const postDiary = posts?.filter((post) => post.category === 'diary');
-        const postCommunity = posts?.filter(
-          (post) => post.category === 'community',
-        );
-        const bookClub = posts?.filter((post) => post.category === 'bookclub');
-        const bookMark = posts?.filter((post) => post.category === 'bookmark');
-        if (content === 'diary') {
-          setPost(postDiary!);
-        } else if (content === 'community') {
-          setPost(postCommunity!);
-        } else if (content === 'bookclub') {
-          setPost(bookClub!);
-        } else if (content === 'bookmark') {
-          setPost(bookMark!);
+        try {
+          const { data: posts } = await supabase
+            .from('post')
+            .select('*')
+            .eq('user_id', userId!);
+          const postDiary = posts?.filter((post) => post.category === 'diary');
+          const postCommunity = posts?.filter(
+            (post) => post.category === 'community',
+          );
+          const bookClub = posts?.filter(
+            (post) => post.category === 'bookclub',
+          );
+          const bookMark = posts?.filter(
+            (post) => post.category === 'bookmark',
+          );
+          if (content === 'diary') {
+            setPost(postDiary!);
+          } else if (content === 'community') {
+            setPost(postCommunity!);
+          } else if (content === 'bookclub') {
+            setPost(bookClub!);
+          } else if (content === 'bookmark') {
+            setPost(bookMark!);
+          }
+        } catch (error) {
+          console.error(error);
         }
-        console.error(error);
       };
 
       const myBookmark = async () => {
-        const { data: bookmark, error } = await supabase
-          .from('bookmark')
-          .select('*')
-          .eq('user_id', userId!);
-        setBookMark(bookmark);
-        console.error(error);
+        try {
+          const { data: bookmark } = await supabase
+            .from('bookmark')
+            .select('*')
+            .eq('user_id', userId!);
+          setBookMark(bookmark);
+        } catch (error) {
+          console.error(error);
+        }
       };
 
       const myBookClub = async () => {
@@ -255,7 +246,7 @@ export default function Profile() {
     };
 
     fetchData();
-  }, [userId, content]);
+  }, [userId, content, setProfileName]);
 
   return (
     <>
