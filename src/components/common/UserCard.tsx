@@ -11,16 +11,11 @@ export default function UserCard({
 }) {
   return (
     <>
-      <div className="flex h-[211px] w-[160px] flex-col items-center gap-2">
+      <div className="flex h-[211px] w-[160px] flex-col items-center gap-3">
         <Link to={`/profile/${user.id}`}>
-          <div className="size-[80px] cursor-pointer overflow-hidden rounded-full shadow-[0px_3px_7px_rgba(0,0,0,0.25)]">
+          <div className="size-[100px] cursor-pointer overflow-hidden rounded-full shadow-[0px_3px_7px_rgba(0,0,0,0.25)]">
             <ProfileImage id={user.id} />
           </div>
-          {/* <Avatar
-            sx={{ width: 80, height: 80 }}
-            src={user.image!}
-            className="cursor-pointer shadow-[0px_3px_7px_rgba(0,0,0,0.25)]"
-          /> */}
         </Link>
         <Link to={`/profile/${user.id}`}>
           <p className="cursor-pointer font-medium">{user.name}</p>
