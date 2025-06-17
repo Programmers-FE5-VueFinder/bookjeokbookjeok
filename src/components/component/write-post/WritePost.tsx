@@ -24,6 +24,7 @@ export default function WritePost({
 }: {
   isCreateBookClub?: boolean;
 }) {
+  //path : diary, freetalk
   const path = useParams();
   const bookclubId = path.bookclub_id;
   const navigate = useNavigate();
@@ -46,7 +47,6 @@ export default function WritePost({
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     const title = titleRef.current?.value;
     const body = value.toString();
 
