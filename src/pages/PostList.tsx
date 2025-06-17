@@ -5,6 +5,8 @@ import BookCard from '../components/common/BookCard';
 import type { Post, PostDetail } from '../types/type';
 import { fetchPostDetail, fetchPosts } from '../apis/post';
 import SkeletonCard from '../components/common/CardSkeleton2';
+import { useAuthStore } from '../store/authStore';
+import { fetchFollowingPosts } from '../apis/following-posts';
 
 const sortOptionsMap: Record<string, string[]> = {
   diary: ['최신글', '인기글', '팔로잉'],
@@ -16,8 +18,10 @@ export default function PostList() {
   const params = useParams();
   const channelId = params.channelId;
 
-  const [posts, setPosts] = useState<PostDetail[]>([]);
   const [loading, setLoading] = useState(true);
+  const [posts, setPosts] = useState<PostDetail[]>([]);
+  const [followingPosts, setFollowingPosts] = useState<PostDetail[]>([]);
+  const myProfileId = useAuthStore((state) => state.session?.user.id);
 
   const channelNames: { [key: string]: string } = {
     diary: '다이어리',
@@ -84,7 +88,29 @@ export default function PostList() {
     }
   }, [channelId]);
   
+  // 팔로잉 포스트 목록
+  useEffect(() => {
+    const loadFollwingPosts = async () => {
+      if (!myProfileId) return; 
+      setLoading(true);
+
+      const fetchedPosts = await fetchFollowingPosts(myProfileId);
+      setFollowingPosts(fetchedPosts);
+      setLoading(false);
+    };
+
+    if (selectedSort === '팔로잉') {
+      loadFollwingPosts();
+    }
+  }, [myProfileId, selectedSort]);
+
   const sortedPosts = useMemo(() => {
+    // 팔로잉
+    if (selectedSort === '팔로잉') {
+      return [...followingPosts].sort(
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+    }
     // // 인기글 정렬
     if (selectedSort === '인기글') {
       return [...posts].sort((a, b) => b.like.length - a.like.length);
@@ -93,7 +119,7 @@ export default function PostList() {
     return [...posts].sort(
       (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
     );
-  }, [posts, selectedSort]);
+  }, [posts, followingPosts, selectedSort]);
 
   return (
     <>
@@ -135,9 +161,6 @@ export default function PostList() {
             // 카드 컴포
             <div className="grid h-fit w-[1200px] grid-cols-4 gap-[28px]">
               {sortedPosts.map((post) => {
-                // if (post.category === 'diary') {
-                //   console.log('다이어리 book.cover:', post.book?.cover);
-                // }
                 return (
                   <Link key={post.id} to={`/channel/${post.category}/post/${post.id}`}>
                     <BookCard
