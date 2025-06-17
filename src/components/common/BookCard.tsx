@@ -49,7 +49,7 @@ export default function BookCard({
   return (
     <>
       <div
-        className="relative h-[440px] w-[278px] flex-col justify-center overflow-hidden rounded-[10px] bg-white text-center text-[16px]"
+        className="relative h-[440px] w-[278px] flex-col justify-center overflow-hidden rounded-[10px] bg-white text-center text-[16px] transition-transform duration-300 hover:scale-103"
         style={{
           boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.25)',
         }}
