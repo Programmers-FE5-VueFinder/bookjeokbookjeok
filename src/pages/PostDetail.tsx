@@ -3,6 +3,7 @@ import Comment from '../components/component/post-detail/Comment';
 import CommentInput from '../components/component/post-detail/CommentInput';
 import PostHeader from '../components/component/post-detail/PostHeader';
 import PostProfile from '../components/component/post-detail/PostProfile';
+import { FaRegComment } from 'react-icons/fa6';
 import { useCallback, useEffect, useState } from 'react';
 import { fetchPostDetail } from '../apis/post';
 import type { PostDetail } from '../types/post';
@@ -78,8 +79,9 @@ export default function PostDetail() {
         {/* 본문 */}
         <PostProfile profile={content!.profile} />
         <div className="flex h-[110px] w-[1200px] items-center">
-          <span className="text-[16px] font-semibold text-[#333333]">
-            N개의 댓글
+          <span className="flex items-center gap-[8px] text-[16px] font-semibold text-[#333333]">
+            <FaRegComment />
+            {comments.length}개의 댓글
           </span>
         </div>
         <CommentInput onSuccess={fetchComments} />
