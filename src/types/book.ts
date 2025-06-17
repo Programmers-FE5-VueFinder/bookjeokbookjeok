@@ -37,3 +37,14 @@ export interface Review {
     image: string | null;
   };
 }
+
+export interface BookData {
+  author: string | null;
+  categoryId: number | null;
+  categoryName: string | null;
+  cover: string | null;
+  created_at: string;
+  description: string | null;
+  id: string;
+  title: string;
+}

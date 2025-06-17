@@ -34,7 +34,10 @@ export default function BookHTML({
             <p>{selectedBook.author.split(' (')[0]}</p>
           </div>
           <button
-            onClick={handleResearchBook}
+            onClick={(e) => {
+              e.preventDefault();
+              handleResearchBook();
+            }}
             className="flex h-[30px] w-[80px] cursor-pointer items-center justify-center rounded-[5px] bg-[#F1F1F1] text-[14px] hover:bg-[#41D94D] hover:font-semibold hover:text-[#fff]"
           >
             다시 찾기

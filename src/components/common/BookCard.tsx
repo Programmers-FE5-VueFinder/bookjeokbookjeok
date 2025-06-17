@@ -2,9 +2,10 @@ import { FaRegComment, FaRegHeart } from 'react-icons/fa';
 import type { BookCardProps } from '../../types/type';
 import ProfileImg from '../component/MyPage/ProfileImg';
 import { useEffect, useState } from 'react';
-import type { BookDetail } from '../../types/book';
-import { searchBooks } from '../../apis/book-search';
+import type { BookData } from '../../types/book';
 import { Link } from 'react-router';
+import supabase from '../../utils/supabase';
+import defaultImg from '../../assets/images/default_post_img.png';
 
 export default function BookCard({
   nickname,
@@ -19,23 +20,28 @@ export default function BookCard({
   book_id,
   category,
 }: BookCardProps) {
-  const [result, setResult] = useState<BookDetail[]>([]);
-  const [img, setImg] = useState<string>('');
+  const [result, setResult] = useState<BookData[]>([]);
+  const [img, setImg] = useState<string | null>(null);
+
   useEffect(() => {
     const getBookData = async () => {
       if (book_id !== null && book_id !== undefined) {
-        const item = await searchBooks(book_id);
-        setResult(item);
+        try {
+          const { data: book } = await supabase
+            .from('book')
+            .select('*')
+            .eq('id', book_id);
+          console.log(book![0].cover);
+          setImg(book![0].cover);
+          setResult(book!);
+        } catch (error) {
+          console.error(error);
+        }
       }
     };
     getBookData();
   }, [book_id]);
-  useEffect(() => {
-    if (result.length !== 0) setImg(result[0].cover);
-  }, [result]);
-  // console.log(result);
-  console.log(category);
-  // console.log(book_id);
+
   return (
     <>
       <div
@@ -45,24 +51,25 @@ export default function BookCard({
         }}
       >
         <div className="h-[247px] w-[278px] content-center justify-center overflow-hidden border-b-1 border-[#EAEAEA] text-center">
-          {image ? (
+          {category === 'diary' ? (
+            result.length !== 0 ? (
+              <div className="relative">
+                <img src={img!} className="h-full w-full blur-xs" />
+                <img
+                  src={img!}
+                  className="absolute top-[13%] left-[30%] h-[166px] w-[113px]"
+                />
+              </div>
+            ) : null
+          ) : image ? (
             <img
               src={image}
               alt="post"
               className="h-full w-full object-cover"
             />
-          ) : null}
-          {category === 'diary' ? (
-            result.length !== 0 ? (
-              <div className="relative">
-                <img src={img} className="h-full w-full blur-xs" />
-                <img
-                  src={img}
-                  className="absolute top-[13%] left-[30%] h-[166px] w-[113px]"
-                />
-              </div>
-            ) : null
-          ) : null}
+          ) : (
+            <img src={defaultImg} />
+          )}
         </div>
         <div className="p-[13px] text-start">
           <Link to={`/profile/${id}`}>
