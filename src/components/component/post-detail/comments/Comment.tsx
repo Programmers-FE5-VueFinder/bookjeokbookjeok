@@ -1,27 +1,16 @@
 import { RxDotsVertical } from 'react-icons/rx';
 import { useParams } from 'react-router';
-import { useAuthStore } from '../../../store/authStore';
+import { useAuthStore } from '../../../../store/authStore';
 import { useEffect, useState } from 'react';
 import {
   addComment,
   deleteComment,
   updateComment,
-} from '../../../apis/comment';
-import getElapsedTime from '../../../utils/format-time';
+} from '../../../../apis/comment';
+import getElapsedTime from '../../../../utils/format-time';
 import { GoPaperAirplane } from 'react-icons/go';
 import { MdOutlineCancel } from 'react-icons/md';
-
-type CommentTypeBase = {
-  id: string;
-  body: string;
-  created_at: string;
-  user_id: string;
-  parent_comment_id: string | null;
-  profile: {
-    name: string;
-    image: string | null;
-  };
-};
+import type { CommentTypeBase } from '../../../../types/type';
 
 type Props = {
   comments: CommentTypeBase[];

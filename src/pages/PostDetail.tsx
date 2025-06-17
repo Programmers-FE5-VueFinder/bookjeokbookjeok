@@ -1,6 +1,6 @@
 import { useParams } from 'react-router';
-import Comment from '../components/component/post-detail/Comment';
-import CommentInput from '../components/component/post-detail/CommentInput';
+import Comment from '../components/component/post-detail/comments/Comment';
+import CommentInput from '../components/component/post-detail/comments/CommentInput';
 import PostHeader from '../components/component/post-detail/PostHeader';
 import PostProfile from '../components/component/post-detail/PostProfile';
 import { FaRegComment } from 'react-icons/fa6';
@@ -11,18 +11,7 @@ import getElapsedTime from '../utils/format-time';
 import '../css/reactQuillCustom.css';
 import CheckModal from '../components/common/CheckModal';
 import { getComments } from '../apis/comment';
-
-type CommentTypeBase = {
-  id: string;
-  body: string;
-  created_at: string;
-  user_id: string;
-  parent_comment_id: string | null;
-  profile: {
-    name: string;
-    image: string | null;
-  };
-};
+import type { CommentTypeBase } from '../types/type';
 
 export default function PostDetail() {
   const path = useParams();

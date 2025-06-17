@@ -2,8 +2,8 @@ import { GoPaperAirplane } from 'react-icons/go';
 import { useState } from 'react';
 
 import { useParams } from 'react-router';
-import { useAuthStore } from '../../../store/authStore';
-import { addComment } from '../../../apis/comment';
+import { useAuthStore } from '../../../../store/authStore';
+import { addComment } from '../../../../apis/comment';
 
 export default function CommentInput({
   onSuccess,

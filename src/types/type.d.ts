@@ -62,10 +62,10 @@ export interface PostDetail extends Post {
 }
 
 export interface PopularDiaryCardProps {
-    genre: string | null;  
-    title: string;
-    content: string | null | undefined;
-};
+  genre: string | null;
+  title: string;
+  content: string | null | undefined;
+}
 
 interface DiaryPost {
   id: string;
@@ -82,7 +82,7 @@ interface Book {
   description: string | null;
   subInfo?: {
     subTitle: string;
-  }
+  };
 }
 interface Like {
   id: string;
@@ -103,4 +103,16 @@ type Bestsellers = {
   author: string;
   cover: string;
   isbn13?: string;
+};
+
+type CommentTypeBase = {
+  id: string;
+  body: string;
+  created_at: string;
+  user_id: string;
+  parent_comment_id: string | null;
+  profile: {
+    name: string;
+    image: string | null;
+  };
 };
