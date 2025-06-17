@@ -1,5 +1,5 @@
 import { RxDotsVertical } from 'react-icons/rx';
-import { useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { useAuthStore } from '../../../../store/authStore';
 import { useEffect, useState } from 'react';
 import {
@@ -19,6 +19,7 @@ type Props = {
 };
 
 export default function Comment({ comments, fetchComments }: Props) {
+  const navigate = useNavigate();
   const { postId } = useParams();
   const session = useAuthStore((state) => state.session);
   const userId = session?.user?.id;
@@ -114,7 +115,10 @@ export default function Comment({ comments, fetchComments }: Props) {
               className="border-b border-[#d8d6d6d6] py-[40px]"
             >
               <header className="relative mb-[25px] flex items-center justify-between text-[#333]">
-                <div className="flex w-full items-center gap-[10px] text-[#333]">
+                <p
+                  onClick={() => navigate(`/profile/${parent.user_id}`)}
+                  className="flex max-w-full cursor-pointer items-center gap-[10px] text-[#333]"
+                >
                   {parent.profile.image ? (
                     <img
                       src={parent.profile.image}
@@ -126,7 +130,7 @@ export default function Comment({ comments, fetchComments }: Props) {
                   )}
                   <span>{parent.profile.name}</span>
                   <time>{getElapsedTime(parent.created_at)}</time>
-                </div>
+                </p>
 
                 <div className="relative">
                   <RxDotsVertical
@@ -196,17 +200,22 @@ export default function Comment({ comments, fetchComments }: Props) {
                       className="border-l-2 border-gray-200 pl-4"
                     >
                       <header className="relative mb-1 flex items-center gap-2 text-[#333]">
-                        {reply.profile.image ? (
-                          <img
-                            src={reply.profile.image}
-                            alt="profile"
-                            className="h-[25px] w-[25px] rounded-full"
-                          />
-                        ) : (
-                          <div className="h-[25px] w-[25px] rounded-full bg-black" />
-                        )}
-                        <span>{reply.profile.name}</span>
-                        <time>{getElapsedTime(reply.created_at)}</time>
+                        <div
+                          onClick={() => navigate(`/profile/${reply.user_id}`)}
+                          className="flex max-w-full cursor-pointer gap-2"
+                        >
+                          {reply.profile.image ? (
+                            <img
+                              src={reply.profile.image}
+                              alt="profile"
+                              className="h-[25px] w-[25px] rounded-full"
+                            />
+                          ) : (
+                            <div className="h-[25px] w-[25px] rounded-full bg-black" />
+                          )}
+                          <span>{reply.profile.name}</span>
+                          <time>{getElapsedTime(reply.created_at)}</time>
+                        </div>
 
                         <div className="relative ml-auto">
                           <RxDotsVertical
