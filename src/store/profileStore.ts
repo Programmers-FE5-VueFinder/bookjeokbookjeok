@@ -12,10 +12,6 @@ type ProfileStore = {
 export const useProfileStore = create<ProfileStore>()((set) => ({
   Image: null,
   setProfileImage: (imageUrl) => {
-    console.log(
-      ' Zustand 스토어: setProfileImage 액션 실행됨! 새 URL:',
-      imageUrl,
-    );
     set({ Image: imageUrl });
   },
   profileName: null,
