@@ -103,7 +103,8 @@ export async function fetchChat(id: string) {
   const { data: chat } = await supabase
     .from('book_club_chat')
     .select(`id, profile(*), message, created_at`)
-    .eq('book_club_id', id);
+    .eq('book_club_id', id)
+    .order('created_at', { ascending: true });
 
   return chat;
 }
