@@ -134,23 +134,25 @@ export default function BookClub() {
                   </div>
                 </>
               )}
-              <div className="mt-[40px]">
-                <div className="clubInfo">
-                  <IoMdPersonAdd />
-                  <p>
-                    가입 신청{' '}
-                    <span className="font-bold text-[#08C818]">
-                      {applyList.length}
-                    </span>
-                    명
-                  </p>
+              {isOwner && applyList.length > 0 && (
+                <div className="mt-[40px]">
+                  <div className="clubInfo">
+                    <IoMdPersonAdd />
+                    <p>
+                      가입 신청{' '}
+                      <span className="font-bold text-[#08C818]">
+                        {applyList.length}
+                      </span>
+                      명
+                    </p>
+                  </div>
+                  <div className="flex flex-row gap-5">
+                    {applyList.map((user) => (
+                      <UserCard key={user.id} user={user} isRecruiting />
+                    ))}
+                  </div>
                 </div>
-                <div className="flex flex-row gap-5">
-                  {applyList.map((user) => (
-                    <UserCard key={user.id} user={user} isRecruiting />
-                  ))}
-                </div>
-              </div>
+              )}
 
               <div className="mt-[40px]">
                 <div className="clubInfo">
