@@ -12,6 +12,7 @@ import { GoPaperAirplane } from 'react-icons/go';
 import { MdOutlineCancel } from 'react-icons/md';
 import type { CommentTypeBase } from '../../../../types/type';
 import { sendReplyNotification } from '../../../../apis/notification';
+import { toast } from 'react-toastify';
 
 type Props = {
   comments: CommentTypeBase[];
@@ -46,7 +47,11 @@ export default function Comment({ comments, fetchComments }: Props) {
 
   const handleReplySubmit = async (e: React.FormEvent, parentId: string) => {
     e.preventDefault();
-    if (!replyBody.trim() || !userId) return;
+    if (!replyBody.trim()) {
+      toast.warning('답글 내용을 입력해주세요.');
+      return;
+    }
+    if (!userId) return;
 
     try {
       await addComment(postId!, userId, replyBody, parentId);
@@ -84,7 +89,11 @@ export default function Comment({ comments, fetchComments }: Props) {
 
   const submitEdit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editBody.trim() || !editingId) return;
+    if (!editBody.trim()) {
+      toast.warning('수정할 내용을 입력해주세요.');
+      return;
+    }
+    if (!editingId) return;
 
     try {
       await updateComment(editingId, editBody);
