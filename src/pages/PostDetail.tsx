@@ -24,6 +24,7 @@ export default function PostDetail() {
       const response = await fetchPostDetail(path.postId as string);
       setContent(response);
       setLoading(true);
+      console.log(response);
     }
     postDetail();
   }, []);

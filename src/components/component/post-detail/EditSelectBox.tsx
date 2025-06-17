@@ -15,8 +15,7 @@ export default function EditSelectBox({
 }) {
   const navigate = useNavigate();
   const { postId } = useParams();
-
-  deletePost(postId as string);
+  console.log(postId);
 
   return (
     <>
@@ -38,7 +37,6 @@ export default function EditSelectBox({
           <button
             onClick={async (e) => {
               e.preventDefault();
-              console.log(postId);
               if (active) {
                 await deletePost(postId as string);
                 navigate(-1);

@@ -54,7 +54,9 @@ export default function WritePost({
     e.preventDefault();
     const title = titleRef.current?.value;
     const body = value.toString();
-    const image = findThumbnailImage(body);
+    const image = selectedBook?.cover
+      ? selectedBook.cover
+      : findThumbnailImage(body);
 
     if (!title || !body) {
       if (!title) Toastfy('error', '제목을 작성 해주세요');
@@ -89,6 +91,7 @@ export default function WritePost({
               title: selectedBook!.title,
               author: selectedBook!.author,
               description: selectedBook!.description,
+              cover: selectedBook!.cover,
               categoryId: selectedBook!.categoryId,
               categoryName: selectedBook!.categoryName,
             })
@@ -141,6 +144,7 @@ export default function WritePost({
   }, [isLogIn]);
 
   useEffect(() => {
+    console.log(editPostData);
     if (bookclubId) {
       if (isCreateBookClub) {
         const setBookClubInfo = async () => {
@@ -169,7 +173,7 @@ export default function WritePost({
                 <input
                   ref={titleRef}
                   type="text"
-                  value={`${editPostData?.title ? editPostData!.title : value}`}
+                  value={`${editPostData?.title ? editPostData?.title : value}`}
                   placeholder={`${editPostData?.title ? '제목을 입력해 주세요.' : null}`}
                   className="h-fir mx-auto my-[20px] block w-[1200px] max-w-[1200px] pl-[5px] text-[24px] text-[#666666]"
                 />
