@@ -50,6 +50,11 @@ export default function CommentInput({
           className="h-[60px] grow-1 rounded-[10px] border border-[#D6D6D6] pl-[15px]"
           value={comment}
           onChange={(e) => setComment(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              writeComment(e);
+            }
+          }}
         />
         <button
           onClick={writeComment}
