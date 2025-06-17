@@ -99,174 +99,67 @@ export default function Comment({ comments, fetchComments }: Props) {
 
   return (
     <section className="mx-auto w-[1200px]">
-      {comments
-        .filter((comment) => comment.parent_comment_id === null)
-        .map((parent) => (
-          <article
-            key={parent.id}
-            className="border-b border-[#d8d6d6d6] py-[40px]"
-          >
-            <header className="relative mb-[25px] flex items-center justify-between text-[#333]">
-              <div className="flex w-full items-center gap-[10px] text-[#333]">
-                {parent.profile.image ? (
-                  <img
-                    src={parent.profile.image}
-                    alt="profile"
-                    className="h-[25px] w-[25px] rounded-full"
+      {comments.filter((comment) => comment.parent_comment_id === null)
+        .length === 0 ? (
+        <div className="pt-[80px] text-center text-[18px] text-gray-500">
+          아직 댓글이 없습니다. 가장 먼저 댓글을 작성해보세요!
+        </div>
+      ) : (
+        comments
+          .filter((comment) => comment.parent_comment_id === null)
+          .map((parent) => (
+            <article
+              key={parent.id}
+              className="border-b border-[#d8d6d6d6] py-[40px]"
+            >
+              <header className="relative mb-[25px] flex items-center justify-between text-[#333]">
+                <div className="flex w-full items-center gap-[10px] text-[#333]">
+                  {parent.profile.image ? (
+                    <img
+                      src={parent.profile.image}
+                      alt="profile"
+                      className="h-[25px] w-[25px] rounded-full"
+                    />
+                  ) : (
+                    <div className="h-[25px] w-[25px] rounded-full bg-black" />
+                  )}
+                  <span>{parent.profile.name}</span>
+                  <time>{getElapsedTime(parent.created_at)}</time>
+                </div>
+
+                <div className="relative">
+                  <RxDotsVertical
+                    className="menu-trigger cursor-pointer"
+                    onClick={() => toggleMenu(parent.id)}
                   />
-                ) : (
-                  <div className="h-[25px] w-[25px] rounded-full bg-black" />
-                )}
-                <span>{parent.profile.name}</span>
-                <time>{getElapsedTime(parent.created_at)}</time>
-              </div>
-
-              <div className="relative">
-                <RxDotsVertical
-                  className="menu-trigger cursor-pointer"
-                  onClick={() => toggleMenu(parent.id)}
-                />
-                {activeMenuId === parent.id && parent.user_id === userId && (
-                  <div className="menu-dropdown absolute right-0 z-10 mt-2 w-[70px] rounded-[5px] border border-[#E9E9E9] bg-white shadow-md">
-                    <button
-                      onClick={() => startEdit(parent)}
-                      className="block w-full px-3 py-2 text-center text-[16px] font-medium text-black hover:bg-gray-100"
-                    >
-                      수정
-                    </button>
-                    <button
-                      onClick={() => handleDelete(parent.id)}
-                      className="block w-full border-t border-[#E9E9E9] px-3 py-2 text-center text-[16px] font-medium text-black hover:bg-gray-100"
-                    >
-                      삭제
-                    </button>
-                  </div>
-                )}
-              </div>
-            </header>
-
-            {editingId === parent.id ? (
-              <form
-                onSubmit={submitEdit}
-                className="flex gap-[10px] space-y-2 pl-[33px]"
-              >
-                <input
-                  className="h-[60px] w-full grow-1 rounded-[10px] border border-[#D6D6D6] p-2"
-                  value={editBody}
-                  onChange={(e) => setEditBody(e.target.value)}
-                />
-
-                <button
-                  type="submit"
-                  className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-[10px] bg-[#F3F3F3] text-[24px]"
-                >
-                  <GoPaperAirplane />
-                </button>
-                <button
-                  className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-[10px] bg-[#F3F3F3] text-[24px]"
-                  onClick={() => setReplyTo(null)}
-                >
-                  <MdOutlineCancel />
-                </button>
-              </form>
-            ) : (
-              <div className="space-y-1 pl-[33px]">
-                <p>{parent.body}</p>
-                <button
-                  onClick={() => setReplyTo(parent.id)}
-                  className="mt-[20px] cursor-pointer text-[16px] font-medium text-[#6D6D6D]"
-                >
-                  답글
-                </button>
-              </div>
-            )}
-
-            <div className="mt-4 space-y-4 pl-8">
-              {comments
-                .filter((reply) => reply.parent_comment_id === parent.id)
-                .map((reply) => (
-                  <article
-                    key={reply.id}
-                    className="border-l-2 border-gray-200 pl-4"
-                  >
-                    <header className="relative mb-1 flex items-center gap-2 text-[#333]">
-                      {reply.profile.image ? (
-                        <img
-                          src={reply.profile.image}
-                          alt="profile"
-                          className="h-[25px] w-[25px] rounded-full"
-                        />
-                      ) : (
-                        <div className="h-[25px] w-[25px] rounded-full bg-black" />
-                      )}
-                      <span>{reply.profile.name}</span>
-                      <time>{getElapsedTime(reply.created_at)}</time>
-
-                      <div className="relative ml-auto">
-                        <RxDotsVertical
-                          className="menu-trigger cursor-pointer"
-                          onClick={() => toggleMenu(reply.id)}
-                        />
-                        {activeMenuId === reply.id &&
-                          reply.user_id === userId && (
-                            <div className="menu-dropdown absolute right-0 z-10 mt-2 w-[70px] rounded-[5px] border border-[#E9E9E9] bg-white shadow-md">
-                              <button
-                                onClick={() => startEdit(reply)}
-                                className="block w-full px-3 py-2 text-center text-[16px] font-medium text-black hover:bg-gray-100"
-                              >
-                                수정
-                              </button>
-                              <button
-                                onClick={() => handleDelete(reply.id)}
-                                className="block w-full border-t border-[#E9E9E9] px-3 py-2 text-center text-[16px] font-medium text-black hover:bg-gray-100"
-                              >
-                                삭제
-                              </button>
-                            </div>
-                          )}
-                      </div>
-                    </header>
-
-                    {editingId === reply.id ? (
-                      <form
-                        onSubmit={submitEdit}
-                        className="flex gap-[10px] space-y-2"
+                  {activeMenuId === parent.id && parent.user_id === userId && (
+                    <div className="menu-dropdown absolute right-0 z-10 mt-2 w-[70px] rounded-[5px] border border-[#E9E9E9] bg-white shadow-md">
+                      <button
+                        onClick={() => startEdit(parent)}
+                        className="block w-full px-3 py-2 text-center text-[16px] font-medium text-black hover:bg-gray-100"
                       >
-                        <input
-                          className="ml-[22px] h-[60px] w-full grow-1 rounded-[10px] border border-[#D6D6D6] p-2"
-                          value={editBody}
-                          onChange={(e) => setEditBody(e.target.value)}
-                        />
+                        수정
+                      </button>
+                      <button
+                        onClick={() => handleDelete(parent.id)}
+                        className="block w-full border-t border-[#E9E9E9] px-3 py-2 text-center text-[16px] font-medium text-black hover:bg-gray-100"
+                      >
+                        삭제
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </header>
 
-                        <button
-                          type="submit"
-                          className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-[10px] bg-[#F3F3F3] text-[24px]"
-                        >
-                          <GoPaperAirplane />
-                        </button>
-                        <button
-                          className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-[10px] bg-[#F3F3F3] text-[24px]"
-                          onClick={cancelEdit}
-                        >
-                          <MdOutlineCancel />
-                        </button>
-                      </form>
-                    ) : (
-                      <p className="mt-[15px] pl-[33px]">{reply.body}</p>
-                    )}
-                  </article>
-                ))}
-
-              {replyTo === parent.id && (
+              {editingId === parent.id ? (
                 <form
-                  onSubmit={(e) => handleReplySubmit(e, parent.id)}
-                  className="mt-3 flex gap-[10px] space-y-2"
+                  onSubmit={submitEdit}
+                  className="flex gap-[10px] space-y-2 pl-[33px]"
                 >
                   <input
                     className="h-[60px] w-full grow-1 rounded-[10px] border border-[#D6D6D6] p-2"
-                    placeholder="답글을 작성해 주세요."
-                    value={replyBody}
-                    onChange={(e) => setReplyBody(e.target.value)}
+                    value={editBody}
+                    onChange={(e) => setEditBody(e.target.value)}
                   />
                   <button
                     type="submit"
@@ -281,10 +174,122 @@ export default function Comment({ comments, fetchComments }: Props) {
                     <MdOutlineCancel />
                   </button>
                 </form>
+              ) : (
+                <div className="space-y-1 pl-[33px]">
+                  <p>{parent.body}</p>
+                  <button
+                    onClick={() => setReplyTo(parent.id)}
+                    className="mt-[20px] cursor-pointer text-[16px] font-medium text-[#6D6D6D]"
+                  >
+                    답글
+                  </button>
+                </div>
               )}
-            </div>
-          </article>
-        ))}
+
+              <div className="mt-4 space-y-4 pl-8">
+                {comments
+                  .filter((reply) => reply.parent_comment_id === parent.id)
+                  .map((reply) => (
+                    <article
+                      key={reply.id}
+                      className="border-l-2 border-gray-200 pl-4"
+                    >
+                      <header className="relative mb-1 flex items-center gap-2 text-[#333]">
+                        {reply.profile.image ? (
+                          <img
+                            src={reply.profile.image}
+                            alt="profile"
+                            className="h-[25px] w-[25px] rounded-full"
+                          />
+                        ) : (
+                          <div className="h-[25px] w-[25px] rounded-full bg-black" />
+                        )}
+                        <span>{reply.profile.name}</span>
+                        <time>{getElapsedTime(reply.created_at)}</time>
+
+                        <div className="relative ml-auto">
+                          <RxDotsVertical
+                            className="menu-trigger cursor-pointer"
+                            onClick={() => toggleMenu(reply.id)}
+                          />
+                          {activeMenuId === reply.id &&
+                            reply.user_id === userId && (
+                              <div className="menu-dropdown absolute right-0 z-10 mt-2 w-[70px] rounded-[5px] border border-[#E9E9E9] bg-white shadow-md">
+                                <button
+                                  onClick={() => startEdit(reply)}
+                                  className="block w-full px-3 py-2 text-center text-[16px] font-medium text-black hover:bg-gray-100"
+                                >
+                                  수정
+                                </button>
+                                <button
+                                  onClick={() => handleDelete(reply.id)}
+                                  className="block w-full border-t border-[#E9E9E9] px-3 py-2 text-center text-[16px] font-medium text-black hover:bg-gray-100"
+                                >
+                                  삭제
+                                </button>
+                              </div>
+                            )}
+                        </div>
+                      </header>
+
+                      {editingId === reply.id ? (
+                        <form
+                          onSubmit={submitEdit}
+                          className="flex gap-[10px] space-y-2"
+                        >
+                          <input
+                            className="ml-[22px] h-[60px] w-full grow-1 rounded-[10px] border border-[#D6D6D6] p-2"
+                            value={editBody}
+                            onChange={(e) => setEditBody(e.target.value)}
+                          />
+                          <button
+                            type="submit"
+                            className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-[10px] bg-[#F3F3F3] text-[24px]"
+                          >
+                            <GoPaperAirplane />
+                          </button>
+                          <button
+                            className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-[10px] bg-[#F3F3F3] text-[24px]"
+                            onClick={cancelEdit}
+                          >
+                            <MdOutlineCancel />
+                          </button>
+                        </form>
+                      ) : (
+                        <p className="mt-[15px] pl-[33px]">{reply.body}</p>
+                      )}
+                    </article>
+                  ))}
+
+                {replyTo === parent.id && (
+                  <form
+                    onSubmit={(e) => handleReplySubmit(e, parent.id)}
+                    className="mt-3 flex gap-[10px] space-y-2"
+                  >
+                    <input
+                      className="h-[60px] w-full grow-1 rounded-[10px] border border-[#D6D6D6] p-2"
+                      placeholder="답글을 작성해 주세요."
+                      value={replyBody}
+                      onChange={(e) => setReplyBody(e.target.value)}
+                    />
+                    <button
+                      type="submit"
+                      className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-[10px] bg-[#F3F3F3] text-[24px]"
+                    >
+                      <GoPaperAirplane />
+                    </button>
+                    <button
+                      className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-[10px] bg-[#F3F3F3] text-[24px]"
+                      onClick={() => setReplyTo(null)}
+                    >
+                      <MdOutlineCancel />
+                    </button>
+                  </form>
+                )}
+              </div>
+            </article>
+          ))
+      )}
     </section>
   );
 }
