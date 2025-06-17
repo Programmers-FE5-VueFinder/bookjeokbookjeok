@@ -5,6 +5,7 @@ import { useParams } from 'react-router';
 import { useAuthStore } from '../../../../store/authStore';
 import { addComment } from '../../../../apis/comment';
 import { sendCommentNotification } from '../../../../apis/notification';
+import { toast } from 'react-toastify';
 
 export default function CommentInput({
   onSuccess,
@@ -20,7 +21,7 @@ export default function CommentInput({
   const writeComment = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!comment.trim()) {
-      alert('댓글을 입력해주세요.');
+      toast.warning('댓글을 입력해 주세요.');
       return;
     }
 
