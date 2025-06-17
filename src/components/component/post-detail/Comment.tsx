@@ -8,6 +8,8 @@ import {
   updateComment,
 } from '../../../apis/comment';
 import getElapsedTime from '../../../utils/format-time';
+import { GoPaperAirplane } from 'react-icons/go';
+import { MdOutlineCancel } from 'react-icons/md';
 
 type CommentTypeBase = {
   id: string;
@@ -155,18 +157,28 @@ export default function Comment({ comments, fetchComments }: Props) {
             </header>
 
             {editingId === parent.id ? (
-              <form onSubmit={submitEdit} className="space-y-2 pl-[33px]">
+              <form
+                onSubmit={submitEdit}
+                className="flex gap-[10px] space-y-2 pl-[33px]"
+              >
                 <input
                   className="h-[60px] w-full grow-1 rounded-[10px] border border-[#D6D6D6] p-2"
                   value={editBody}
                   onChange={(e) => setEditBody(e.target.value)}
                 />
-                <div className="flex gap-2">
-                  <button type="submit">저장</button>
-                  <button type="button" onClick={cancelEdit}>
-                    취소
-                  </button>
-                </div>
+
+                <button
+                  type="submit"
+                  className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-[10px] bg-[#F3F3F3] text-[24px]"
+                >
+                  <GoPaperAirplane />
+                </button>
+                <button
+                  className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-[10px] bg-[#F3F3F3] text-[24px]"
+                  onClick={() => setReplyTo(null)}
+                >
+                  <MdOutlineCancel />
+                </button>
               </form>
             ) : (
               <div className="space-y-1 pl-[33px]">
@@ -227,18 +239,28 @@ export default function Comment({ comments, fetchComments }: Props) {
                     </header>
 
                     {editingId === reply.id ? (
-                      <form onSubmit={submitEdit} className="space-y-2">
+                      <form
+                        onSubmit={submitEdit}
+                        className="flex gap-[10px] space-y-2"
+                      >
                         <input
                           className="ml-[22px] h-[60px] w-full grow-1 rounded-[10px] border border-[#D6D6D6] p-2"
                           value={editBody}
                           onChange={(e) => setEditBody(e.target.value)}
                         />
-                        <div className="flex gap-2">
-                          <button type="submit">저장</button>
-                          <button type="button" onClick={cancelEdit}>
-                            취소
-                          </button>
-                        </div>
+
+                        <button
+                          type="submit"
+                          className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-[10px] bg-[#F3F3F3] text-[24px]"
+                        >
+                          <GoPaperAirplane />
+                        </button>
+                        <button
+                          className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-[10px] bg-[#F3F3F3] text-[24px]"
+                          onClick={cancelEdit}
+                        >
+                          <MdOutlineCancel />
+                        </button>
                       </form>
                     ) : (
                       <p className="mt-[15px] pl-[33px]">{reply.body}</p>
@@ -249,7 +271,7 @@ export default function Comment({ comments, fetchComments }: Props) {
               {replyTo === parent.id && (
                 <form
                   onSubmit={(e) => handleReplySubmit(e, parent.id)}
-                  className="mt-3 space-y-2"
+                  className="mt-3 flex gap-[10px] space-y-2"
                 >
                   <input
                     className="h-[60px] w-full grow-1 rounded-[10px] border border-[#D6D6D6] p-2"
@@ -257,12 +279,18 @@ export default function Comment({ comments, fetchComments }: Props) {
                     value={replyBody}
                     onChange={(e) => setReplyBody(e.target.value)}
                   />
-                  <div className="flex gap-2">
-                    <button type="submit">작성</button>
-                    <button type="button" onClick={() => setReplyTo(null)}>
-                      취소
-                    </button>
-                  </div>
+                  <button
+                    type="submit"
+                    className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-[10px] bg-[#F3F3F3] text-[24px]"
+                  >
+                    <GoPaperAirplane />
+                  </button>
+                  <button
+                    className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-[10px] bg-[#F3F3F3] text-[24px]"
+                    onClick={() => setReplyTo(null)}
+                  >
+                    <MdOutlineCancel />
+                  </button>
                 </form>
               )}
             </div>
