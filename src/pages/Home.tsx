@@ -12,6 +12,7 @@ import LoginModal from './LoginModal';
 import { useState } from 'react';
 import BestsellerSlider from '../components/component/Home/BestsellerSlider';
 import PopularDiaryCard from '../components/component/Home/PopularDiaryCard';
+import SignUpModal from '../components/common/SignUpModal';
 
 const slides = [
   {
@@ -34,15 +35,9 @@ const slides = [
 export default function Home() {
   // const [diaries, setDiaries] = useState<PopularDiaryCardProps[]>([]); api 호출 시 사용 예정
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-
-  const handelOpenLoginModal = () => {
-    setIsLoginModalOpen(true);
-  };
-
-  const handleCloseLoginModal = () => {
-    setIsLoginModalOpen(false);
-  };
+  const [activeModal, setActiveModal] = useState<'login' | 'signup' | null>(
+    null,
+  );
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
@@ -123,13 +118,22 @@ export default function Home() {
               </h2>
               <button
                 className="mt-[17px] h-[25px] w-[65px] cursor-pointer rounded-[20px] bg-[#80FFC2] text-[16px] font-semibold text-black"
-                onClick={handelOpenLoginModal}
+                onClick={() => setActiveModal('login')}
               >
                 로그인
               </button>
 
-              {isLoginModalOpen && (
-                <LoginModal onClose={handleCloseLoginModal} />
+              {activeModal === 'login' && (
+                <LoginModal
+                  onClose={() => setActiveModal(null)}
+                  onOpenSignUp={() => setActiveModal('signup')}
+                />
+              )}
+              {activeModal === 'signup' && (
+                <SignUpModal
+                  onClose={() => setActiveModal(null)}
+                  onBackToLogin={() => setActiveModal('login')}
+                />
               )}
             </div>
 
