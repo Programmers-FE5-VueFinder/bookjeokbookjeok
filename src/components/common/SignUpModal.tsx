@@ -27,6 +27,7 @@ export default function SignUpModal({
     personal: false,
     marketing: false,
   });
+  const background = useRef(null);
   const closeButton = useRef(null);
   const setLogin = useAuthStore((state) => state.setLogin);
   const debounceTimer = useRef<NodeJS.Timeout | null>(null);
