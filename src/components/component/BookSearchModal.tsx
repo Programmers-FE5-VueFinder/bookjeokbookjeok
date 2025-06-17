@@ -105,7 +105,6 @@ export default function BookSearchModal({
                   className="group flex cursor-pointer p-2 hover:bg-[#08C818]/20"
                   onClick={() => {
                     setSeletedBook(book);
-                    console.log(book.isbn);
                     onClose();
                     setQuery('');
                   }}

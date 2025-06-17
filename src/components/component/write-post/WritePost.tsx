@@ -18,14 +18,17 @@ import {
 import supabase from '../../../utils/supabase';
 import Toastfy from '../../common/Toastfy.tsx';
 import type { PostDetail } from '../../../types/post.ts';
-import { createPost } from '../../../apis/post.ts';
+import { createPost, editPost } from '../../../apis/post.ts';
+import { searchBooks } from '../../../apis/book-search.ts';
 
 export default function WritePost({
   isCreateBookClub,
   editPostData,
+  bookTitle,
 }: {
   isCreateBookClub?: boolean;
   editPostData?: PostDetail;
+  bookTitle?: string;
 }) {
   //path : diary, freetalk
   const path = useParams();
@@ -59,13 +62,13 @@ export default function WritePost({
       : findThumbnailImage(body);
 
     if (!title || !body) {
-      if (!title) Toastfy('error', '제목을 작성 해주세요');
-      if (body === '<p><br></p>') Toastfy('error', '본문을 작성 해주세요');
-      return;
-    }
-
-    if (category === 'diary' && !selectedBook) {
-      Toastfy('error', '도서를 선택해 주세요.');
+      if (!title) {
+        Toastfy('error', '제목을 작성 해주세요');
+      } else if (body === '<p><br></p>') {
+        Toastfy('error', '본문을 작성 해주세요');
+      } else if (category === 'diary' && !selectedBook) {
+        Toastfy('error', '도서를 선택해 주세요.');
+      }
       return;
     }
 
@@ -73,6 +76,24 @@ export default function WritePost({
       id: selectedBook!.isbn13,
       star: rating,
     };
+
+    // 게시물 수정
+    if (editPostData) {
+      try {
+        const response = await editPost(
+          editPostData.id,
+          title,
+          body,
+          image,
+          category,
+        );
+        console.log(response);
+        navigate(`/channel/${category}/post/${response}`);
+        return;
+      } catch (e) {
+        console.log(e);
+      }
+    }
 
     /* 북클럽 수정 */
     if (bookclubId) {
@@ -109,15 +130,7 @@ export default function WritePost({
           );
           console.log(response);
 
-          if (bookInfo.id) {
-            await supabase.from('book_tag').insert({
-              book_id: bookInfo.id,
-              star: bookInfo.star,
-              reference_category: 'diary',
-              reference_id: response,
-            });
-          }
-          // navigate('/');
+          navigate(`/channel/diary/post/${response}`);
         } catch (e) {
           console.log(e);
           Toastfy('error', '작성에 실패했습니다');
@@ -157,7 +170,22 @@ export default function WritePost({
         setCategory('book-club');
       }
     }
-  }, [bookclubId, isCreateBookClub]);
+
+    if (editPostData?.book) {
+      const seletedBookFind = async () => {
+        const selectedBookId = editPostData!.book!.id;
+        const bookList = await searchBooks(bookTitle!);
+        const selectedBook = bookList.find(
+          (book: BookDetail) => book.isbn13 === selectedBookId,
+        );
+        console.log(editPostData);
+        setSeletedBook(selectedBook);
+        setValue(editPostData.body);
+        setCategory(editPostData.category);
+      };
+      seletedBookFind();
+    }
+  }, [bookclubId, isCreateBookClub, editPostData]);
 
   if (editPostData) {
     return (
@@ -167,7 +195,17 @@ export default function WritePost({
             {!bookclubId && <CategorySelect setCategory={setCategory} />}
             <form
               className="w-ful flex grow-1 flex-col justify-between"
-              onSubmit={submitHandler}
+              onSubmit={(e) => {
+                if (!session || !session.user) {
+                  Toastfy(
+                    'error',
+                    '로그인 세션이 만료되었습니다. 다시 로그인 해주세요.',
+                  );
+                  navigate('/');
+                  return;
+                }
+                submitHandler(e);
+              }}
             >
               <div className="flex h-full flex-col">
                 <input
@@ -178,7 +216,7 @@ export default function WritePost({
                   className="h-fir mx-auto my-[20px] block w-[1200px] max-w-[1200px] pl-[5px] text-[24px] text-[#666666]"
                 />
 
-                {selectedBook && category === 'diary' ? (
+                {selectedBook ? (
                   <SelectBookInfo
                     setShowModal={setShowModal}
                     setSeletedBook={setSeletedBook}
@@ -242,7 +280,17 @@ export default function WritePost({
           {!bookclubId && <CategorySelect setCategory={setCategory} />}
           <form
             className="w-ful flex grow-1 flex-col justify-between"
-            onSubmit={submitHandler}
+            onSubmit={(e) => {
+              if (!session || !session.user) {
+                Toastfy(
+                  'error',
+                  '로그인 세션이 만료되었습니다. 다시 로그인 해주세요.',
+                );
+                navigate('/');
+                return;
+              }
+              submitHandler(e);
+            }}
           >
             <div className="flex h-full flex-col">
               <input
