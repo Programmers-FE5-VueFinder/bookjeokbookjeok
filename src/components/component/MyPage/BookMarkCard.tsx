@@ -5,6 +5,9 @@ import type { BookData } from '../../../types/book';
 import { FaStar } from 'react-icons/fa';
 import { getBookStars } from '../../../apis/book-review';
 import supabase from '../../../utils/supabase';
+// import BookPage from '../book-detail/BookPage';
+// import ReactDOM from 'react-dom';
+
 
 export default function BookMarkCard({
   nickname,
@@ -18,6 +21,10 @@ export default function BookMarkCard({
   const [img, setImg] = useState<string | null>(null);
   const [bookTitle, setBookTitle] = useState<string | null>(null);
   const [bookBody, setBookBody] = useState<string | null>(null);
+  // const [isOpen, setIsOpen] = useState(false);
+
+  // const handleOpen = () => setIsOpen(true);
+  // const closeModal = () => setIsOpen(false);
 
   useEffect(() => {
     const getBookData = async () => {
@@ -64,6 +71,7 @@ export default function BookMarkCard({
         style={{
           boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.25)',
         }}
+        // onClick={handleOpen}
       >
         <div className="h-[247px] w-[278px] content-center justify-center overflow-hidden border-b-1 border-[#EAEAEA] text-center">
           {result.length !== 0 ? (
@@ -102,6 +110,15 @@ export default function BookMarkCard({
           </div>
         </div>
       </div>
+      {/* {isOpen &&
+        ReactDOM.createPortal(
+          <BookPage
+            isOpen={isOpen}
+            closeModal={closeModal}
+            bookDetail={result}
+          />,
+          document.body,
+        )} */}
     </>
   );
 }

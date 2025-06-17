@@ -41,18 +41,20 @@ export default function BookMarkArea({
             post?.map((item) => {
               {
                 return (
-                  <BookMarkCard
-                    profileImage={profileImage}
-                    key={item.id}
-                    body={item.book_id}
-                    title={item.id}
-                    nickname={profileName!}
-                    createdAt={new Date(item.created_at).toLocaleDateString(
-                      'ko-KR',
-                    )}
-                    id={id}
-                    book_id={item.book_id}
-                  />
+                  <div>
+                    <BookMarkCard
+                      profileImage={profileImage}
+                      key={item.id}
+                      body={item.book_id}
+                      title={item.id}
+                      nickname={profileName!}
+                      createdAt={new Date(item.created_at).toLocaleDateString(
+                        'ko-KR',
+                      )}
+                      id={id}
+                      book_id={item.book_id}
+                    />
+                  </div>
                 );
               }
             })
