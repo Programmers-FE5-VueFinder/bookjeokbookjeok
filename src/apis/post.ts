@@ -1,5 +1,5 @@
-import supabase from "../utils/supabase";
-import type { APIDiaryPost, Book } from "../types/type";
+import supabase from '../utils/supabase';
+import type { APIDiaryPost, Book } from '../types/type';
 
 /* 전체 게시물 조회 */
 export async function fetchPosts(category: string = 'all') {
@@ -51,32 +51,75 @@ export async function fetchPostDetail(id: string) {
 }
 
 /* 게시물 생성 */
+// export async function createPost(
+//   title: string,
+//   body: string,
+//   image: string | null = null,
+//   category: 'diary' | 'community',
+//   book_id: string,
+//   book:string,
+//   book_club_id?: string,
+// ) {
+//   const post = await supabase
+//     .from('post')
+//     .insert({
+//       title: title,
+//       body: body,
+//       image: image,
+//       category: category,
+//       book_id: book_id,
+//       book_club_id: book_club_id,
+//     })
+//     .select()
+//     .single();
+
+//   if (book) {
+//     await supabase.from('book_tag').insert({
+//       book_id: book.id,
+//       star: book.star,
+//       reference_category: 'newPost.data!.category',
+//       reference_id: 'newPost.data!.id',< 여기가 포스트 아이디
+//     });
+//   }
+
+//   return post.data!.id;
+// }
+
 export async function createPost(
+  userId: string,
   title: string,
   body: string,
   image: string | null = null,
-  category: 'diary' | 'community' | 'book_club',
-  book?: {
+  category: 'diary' | 'community',
+  book_id: string,
+  bookInfo: {
     id: string;
-    star?: number;
-  }[],
+    star: number | undefined;
+  },
+  book_club_id?: string,
 ) {
   const post = await supabase
     .from('post')
-    .insert({ title: title, body: body, image: image, category: category })
+    .insert({
+      user_id: userId,
+      title: title,
+      body: body,
+      image: image,
+      category: category,
+      book_id: book_id,
+      book_club_id: book_club_id,
+    })
     .select()
     .single();
 
-  if (book) {
-    for (const b of book) {
-      await supabase.from('book_tag').insert({
-        book_id: b.id,
-        star: b.star,
-        reference_category: 'newPost.data!.category',
-        reference_id: 'newPost.data!.id',
-      });
-    }
-  }
+  // if (bookInfo) {
+  //   await supabase.from('book_tag').insert({
+  //     book_id: bookInfo.id,
+  //     star: bookInfo.star,
+  //     reference_category: category,
+  //     reference_id: post.data!.id,
+  //   });
+  // }
 
   return post.data!.id;
 }
@@ -124,7 +167,8 @@ export async function deletePost(id: string) {
 export async function fetchPopularDiaries(): Promise<APIDiaryPost[]> {
   const { data, error } = await supabase
     .from('post')
-    .select(`
+    .select(
+      `
       id,
       category,
       like(*),
@@ -134,7 +178,8 @@ export async function fetchPopularDiaries(): Promise<APIDiaryPost[]> {
         title,
         description
       )
-    `)
+    `,
+    )
     .eq('category', 'diary')
     .order('created_at', { ascending: false })
     .limit(50); // limit 10 → 50으로 조정
@@ -146,8 +191,8 @@ export async function fetchPopularDiaries(): Promise<APIDiaryPost[]> {
 
   // 1. book이 null인 데이터 제거 + 배열일 경우 첫 요소만 추출
   const adapted = data
-    .filter(post => post.book !== null)
-    .map(post => ({
+    .filter((post) => post.book !== null)
+    .map((post) => ({
       ...post,
       book: Array.isArray(post.book) ? post.book[0] : post.book,
     })) as APIDiaryPost[];
@@ -155,7 +200,7 @@ export async function fetchPopularDiaries(): Promise<APIDiaryPost[]> {
   // 2. categoryName별로 like 수가 가장 높은 post만 추출
   const topPostsMap = new Map<string, APIDiaryPost>();
 
-  adapted.forEach(post => {
+  adapted.forEach((post) => {
     const categoryName = (post.book as Book).categoryName ?? 'Unknown';
     const currentTop = topPostsMap.get(categoryName);
 
