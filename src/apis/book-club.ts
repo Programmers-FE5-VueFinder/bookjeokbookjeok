@@ -77,20 +77,23 @@ export async function deleteBookClub(id: string) {
 export async function createBookClubPost(
   title: string,
   body: string,
+  image: string,
   book_club_id: string,
 ) {
-  const { data: newPost } = await supabase
+  console.log('aa');
+  const { data: post } = await supabase
     .from('post')
     .insert({
       title: title,
       body: body,
-      category: 'book-club',
+      image: image,
+      category: 'book_club',
       book_club_id: book_club_id,
     })
     .select()
     .single();
 
-  return newPost;
+  return post!.id;
 }
 
 /* 북클럽 탈퇴 */

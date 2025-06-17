@@ -27,8 +27,9 @@ export default function WritePost({
   //path : diary, freetalk
   const path = useParams();
   const bookclubId = path.bookclub_id;
+  console.log('bookclubId: ', bookclubId);
   const navigate = useNavigate();
-  const [category, setCategory] = useState('book-club');
+  const [category, setCategory] = useState('');
   const [rating, setRating] = useState<number | undefined>();
   const [value, setValue] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -119,7 +120,8 @@ export default function WritePost({
         return;
       }
       case 'book-club': {
-        createBookClubPost(title, body, bookclubId!);
+        const post = await createBookClubPost(title, body, image, bookclubId!);
+        navigate(`/channel/book_club/post/${post}`);
         return;
       }
       default: {
@@ -129,7 +131,7 @@ export default function WritePost({
     }
   };
 
-  /* 북클럽 정보 수정 */
+  /* bookclubId 있을 시 정보 fetch */
   useEffect(() => {
     if (bookclubId) {
       if (isCreateBookClub) {
@@ -149,7 +151,9 @@ export default function WritePost({
     <>
       <main className="flex h-screen">
         <div className="flex grow-1 flex-col">
-          {!bookclubId && <CategorySelect setCategory={setCategory} />}
+          {!bookclubId && !isCreateBookClub && (
+            <CategorySelect setCategory={setCategory} />
+          )}
           <form
             className="w-ful flex grow-1 flex-col justify-between"
             onSubmit={submitHandler}
