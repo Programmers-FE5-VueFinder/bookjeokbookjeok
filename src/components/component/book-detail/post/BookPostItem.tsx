@@ -8,7 +8,10 @@ export function BookPostItem({ post }: { post: Post }) {
   return (
     <div className="max-h-full w-full flex-col justify-center border-b border-b-[#D8D8D8] py-[15px] text-[16px]">
       <div className="mb-[10px] flex">
-        <div className="flex cursor-pointer items-center gap-[10px]">
+        <div
+          onClick={() => navigate(`/profile/${post.user_id}`)}
+          className="flex cursor-pointer items-center gap-[10px]"
+        >
           <img
             src={post.profile.image!}
             alt="작성자 프로필"
