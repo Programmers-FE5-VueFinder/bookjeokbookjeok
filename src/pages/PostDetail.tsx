@@ -9,6 +9,7 @@ import type { PostDetail } from '../types/post';
 import getElapsedTime from '../utils/format-time';
 import '../css/reactQuillCustom.css';
 import CheckModal from '../components/common/CheckModal';
+import Like from '../components/component/post-detail/Like';
 
 export default function PostDetail() {
   const path = useParams();
@@ -50,6 +51,7 @@ export default function PostDetail() {
           className="h-[700px] max-w-[1200px] pt-[80px] pb-[80px]"
         ></div>
         {/* 본문 */}
+        <Like />
         <PostProfile profile={content!.profile} />
         <div className="flex h-[110px] w-[1200px] items-center">
           <span className="text-[16px] font-semibold text-[#333333]">
