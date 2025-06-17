@@ -11,6 +11,7 @@ import getElapsedTime from '../../../../utils/format-time';
 import { GoPaperAirplane } from 'react-icons/go';
 import { MdOutlineCancel } from 'react-icons/md';
 import type { CommentTypeBase } from '../../../../types/type';
+import { sendReplyNotification } from '../../../../apis/notification';
 
 type Props = {
   comments: CommentTypeBase[];
@@ -169,7 +170,7 @@ export default function Comment({ comments, fetchComments }: Props) {
                   </button>
                   <button
                     className="flex h-[60px] w-[60px] cursor-pointer items-center justify-center rounded-[10px] bg-[#F3F3F3] text-[24px]"
-                    onClick={() => setReplyTo(null)}
+                    onClick={cancelEdit}
                   >
                     <MdOutlineCancel />
                   </button>
@@ -263,7 +264,16 @@ export default function Comment({ comments, fetchComments }: Props) {
 
                 {replyTo === parent.id && (
                   <form
-                    onSubmit={(e) => handleReplySubmit(e, parent.id)}
+                    onSubmit={async (e) => {
+                      handleReplySubmit(e, parent.id);
+                      //답글 알림
+                      if (userId) {
+                        await sendReplyNotification({
+                          parentCommentId: parent.id,
+                          senderId: userId,
+                        });
+                      }
+                    }}
                     className="mt-3 flex gap-[10px] space-y-2"
                   >
                     <input
