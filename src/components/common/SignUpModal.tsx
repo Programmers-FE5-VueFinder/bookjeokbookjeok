@@ -76,21 +76,11 @@ export default function SignUpModal({
 
   return (
     <>
-      <div className="relative flex w-[410px] flex-col rounded-[10px] bg-[#fff] px-[35px] py-[20px] shadow-[0_0_5px_rgba(0,0,0,0.25)]">
-        <div className="absolute top-[11px] right-[12px] cursor-pointer text-[#333]">
-          <IoMdClose />
-        </div>
-
-        <h2 className="my-[18px] mt-[22px] flex w-full cursor-default justify-center font-medium">
-          이메일 회원가입
-        </h2>
-
-        <form
-          noValidate
-          onSubmit={handleSubmit(async (data) => {
-            console.log(data);
-          })}
-          className="flex w-full flex-col gap-[10px] text-[#333]"
+      {
+        <div
+          ref={background}
+          onClick={onClose}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
         >
           <div
             onClick={(e) => e.stopPropagation()}
@@ -378,8 +368,8 @@ export default function SignUpModal({
               </div>
             </form>
           </div>
-        </form>
-      </div>
+        </div>
+      }
     </>
   );
 }
