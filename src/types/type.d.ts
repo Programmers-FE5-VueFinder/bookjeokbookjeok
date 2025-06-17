@@ -66,6 +66,7 @@ export interface PostDetail extends Post {
 }
 
 export interface PopularDiaryCardProps {
+    id: string;
     genre: string | null;  
     title: string;
     content: string | null | undefined;
