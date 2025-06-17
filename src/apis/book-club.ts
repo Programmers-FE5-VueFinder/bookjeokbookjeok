@@ -130,6 +130,23 @@ export async function getApplyState(book_club_id: string) {
 }
 
 /* 북클럽 신청 조회 */
+export async function fetchApplyList(book_club_id: string) {
+  const { data: applys } = await supabase
+    .from('notification')
+    .select('sender_id')
+    .eq('type', 'book-club')
+    .eq('object_id', book_club_id)
+    .order('created_at', { ascending: false });
+
+  const senderIds = applys!.map((n) => n.sender_id);
+
+  const { data: users } = await supabase
+    .from('profile')
+    .select('*')
+    .in('id', senderIds);
+
+  return users;
+}
 
 /* 북클럽 신청 승인 */
 

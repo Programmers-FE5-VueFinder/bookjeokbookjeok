@@ -5,6 +5,7 @@ import { IoMdPerson } from 'react-icons/io';
 import { IoMdPersonAdd } from 'react-icons/io';
 import {
   deleteBookClub,
+  fetchApplyList,
   fetchBookClub,
   isBookClubOwner,
   leaveBookClub,
@@ -19,6 +20,7 @@ export default function BookClub() {
 
   const bookclub_id = useParams().bookclub_id;
   const [bookclub, setBookclub] = useState<Bookclub>();
+  const [applyList, setApplyList] = useState<User[]>([]);
   const [isOwner, setIsOwner] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -43,6 +45,7 @@ export default function BookClub() {
     const fetchBookclub = async () => {
       setBookclub(await fetchBookClub(bookclub_id!));
       setIsOwner(await isBookClubOwner(bookclub_id!));
+      setApplyList((await fetchApplyList(bookclub_id!)) ?? []);
       setIsLoading(false);
     };
     fetchBookclub();
@@ -136,10 +139,17 @@ export default function BookClub() {
                   <IoMdPersonAdd />
                   <p>
                     가입 신청{' '}
-                    <span className="font-bold text-[#08C818]">0</span>명
+                    <span className="font-bold text-[#08C818]">
+                      {applyList.length}
+                    </span>
+                    명
                   </p>
                 </div>
-                <div>{/* 가입 신청 목록 */}</div>
+                <div className="flex flex-row gap-5">
+                  {applyList.map((user) => (
+                    <UserCard key={user.id} user={user} isRecruiting />
+                  ))}
+                </div>
               </div>
 
               <div className="mt-[40px]">
@@ -152,7 +162,7 @@ export default function BookClub() {
                 ></span>
               </div>
               <div
-                className="mt-[40px] scroll-m-[200px]"
+                className="my-[40px] scroll-m-[200px]"
                 id="member"
                 ref={memberRef}
               >
