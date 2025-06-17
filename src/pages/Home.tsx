@@ -30,7 +30,7 @@ const slides = [
     imgSrc: home_main_banner1,
     bgColor: '#FDFF98',
     boxClassName: 'flex justify-end mt-auto mr-[25px]',
-    className: 'flex selfitems-end w-[470px] h-auto',
+    className: 'flex w-[355px] h-auto object-contain',
   },
   {
     title: 'READ\nDIARY',
@@ -38,7 +38,7 @@ const slides = [
     imgSrc: home_main_banner2,
     bgColor: '#D2EAFF',
     boxClassName: 'flex justify-end mt-auto mr-[30px]',
-    className: 'w-[530px] h-auto',
+    className: 'w-[440px] h-auto object-contain',
   },
   {
     title: 'BOOK\nCOMMUNITY',
@@ -46,7 +46,7 @@ const slides = [
     imgSrc: home_main_banner3,
     bgColor: '#FFE8B2',
     boxClassName: 'flex justify-center mt-auto mr-[25px]',
-    className: 'w-[370px] h-auto',
+    className: 'w-[280px] h-auto object-contain',
   },
   {
     title: 'BOOK\nDIARY',
@@ -54,7 +54,7 @@ const slides = [
     imgSrc: home_main_banner4,
     bgColor: '#CCE9FF',
     boxClassName: 'flex justify-end mt-auto',
-    className: 'flex justify-end w-[470px] h-auto',
+    className: 'flex justify-end w-[345px] h-auto object-contain',
   },
 ];
 
@@ -92,7 +92,6 @@ export default function Home() {
         if (isMounted) setIsLoading(false);
       }
     };
-
     getPopularDiaries();
 
     return () => {
@@ -101,12 +100,12 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="mx-auto flex h-fit w-[1220px] justify-center gap-x-[10px] py-[40px]">
+    <div className="mx-auto flex h-fit w-[1220px] justify-center gap-x-[10px] pt-[40px]">
       {/* left side */}
       <div className="flex h-fit w-[590px]">
         <div className="h-fit w-full">
           <div
-            className="flex h-[840px] w-[590px] flex-col rounded-[20px] pt-[37px] pl-[37px]"
+            className="flex h-[650px] w-[590px] flex-col rounded-[20px] pt-[37px] pl-[37px]"
             style={{ backgroundColor: slides[currentSlide].bgColor }}
           >
             <div className="flex flex-col gap-y-[20px]">
@@ -133,7 +132,7 @@ export default function Home() {
           </div>
 
           <div className="flex justify-center">
-            <div className="mt-[30px] flex h-[25px] w-[135px] justify-between text-[20px] font-medium">
+            <div className="my-[30px] flex h-[25px] w-[135px] justify-between text-[20px] font-medium">
               <button
                 onClick={prevSlide}
                 className="flex h-[25px] w-[25px] cursor-pointer items-center justify-center rounded-[5px] bg-[#CDC8C8]/20"
@@ -155,7 +154,7 @@ export default function Home() {
       </div>
 
       {/* right side */}
-      <div className="scroll-hidden flex h-[840px] w-[600px] flex-col items-center overflow-y-auto">
+      <div className="scroll-hidden flex h-[735px] w-[600px] flex-col items-center overflow-y-auto pb-[85px]">
         {/* section 1 */}
         <section className="flex flex-col gap-y-[15px]">
           {isLogin === false && (
@@ -197,31 +196,22 @@ export default function Home() {
           )}
 
           {isLogin === true && (
-            <div
-              className="flex h-[130px] w-[590px] justify-between rounded-[20px] bg-[#70B5FF] px-[26px] pt-[18px]"
-              style={{
-                boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.3)',
-              }}
-            >
+            <div className="flex justify-between w-[590px] h-[130px] px-[26px] pt-[18px] bg-[#70B5FF] rounded-[20px] overflow-hidden">
               <div>
-                <h2 className="text-[20px] leading-[24px] font-semibold text-[#202020]">
-                  환영합니다!
-                  <br />
-                  오늘도 즐거운 독서 되세요
-                </h2>
-                <button
-                  className="mt-[17px] flex h-[30px] w-[100px] cursor-pointer items-center justify-center rounded-[20px] bg-[#F1F1F1]/50 p-2 text-[16px] font-semibold text-[#2C2C2C]"
+                <h2 className="text-[20px] font-semibold leading-[24px] text-[#202020]">환영합니다!<br/>오늘도 즐거운 독서 되세요</h2>
+                <button 
+                  className="flex items-center justify-center w-[100px] h-[30px] p-2 mt-[17px] bg-[#F1F1F1]/50 text-[16px] text-[#2C2C2C] font-semibold rounded-[20px] cursor-pointer"
                   onClick={() => navigate('/channel/diary')}
                 >
                   책 둘러보기
                 </button>
               </div>
-
-              <div className="self-end">
-                <img
-                  src={home_reading_girl}
-                  alt="home_reading_girl"
-                  className="h-[130px] w-[163px]"
+            
+              <div className="self-end translate-y-[30px]">
+                <img 
+                  src={home_reading_girl} 
+                  alt="home_reading_girl" 
+                  className="w-[163px] h-[163px] "
                 />
               </div>
             </div>
@@ -265,6 +255,7 @@ export default function Home() {
             diaries.map((post) => (
               <PopularDiaryCard
                 key={post.id}
+                id={post.id}
                 genre={post.book.categoryName}
                 title={post.book.title}
                 content={
@@ -275,27 +266,6 @@ export default function Home() {
               />
             ))
           )}
-
-          <PopularDiaryCard
-            genre="novel"
-            title="설국"
-            content="접경의 긴 터널을 빠져나오자, 설국이었다"
-          />
-          <PopularDiaryCard
-            genre="education"
-            title="코딩 자율학습 html + css + 자바스크립트"
-            content="누구나 쉽게 배우는 코딩!!"
-          />
-          <PopularDiaryCard
-            genre="development"
-            title="설득의 능력"
-            content="말의 힘!"
-          />
-          <PopularDiaryCard
-            genre="humanities"
-            title="초역 부처의 말"
-            content="염세에서 배우는 불교의 가르침"
-          />
         </div>
 
         {/* section 4 */}
