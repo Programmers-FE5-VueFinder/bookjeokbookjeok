@@ -18,6 +18,7 @@ import {
   fetchDeleteFollow,
   fetchSendFollow,
 } from '../apis/follow';
+import { toast } from 'react-toastify';
 
 export type Post = {
   body: string;
@@ -81,6 +82,10 @@ export default function Profile() {
   };
 
   const handleFollowing = async () => {
+    if (session?.user.id === undefined) {
+      toast.error('로그인 후 이용 가능합니다.');
+      return;
+    }
     if (follow === false) {
       if (session?.user.id !== undefined && userId !== undefined) {
         fetchAddFollow(session.user.id, userId);
