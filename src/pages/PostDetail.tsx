@@ -54,8 +54,8 @@ export default function PostDetail() {
         <Like />
         <PostProfile profile={content!.profile} />
         <div className="flex h-[110px] w-[1200px] items-center">
-          <span className="text-[16px] font-semibold text-[#333333]">
-            N개의 댓글
+          <span className="flex gap-[10px] text-[16px] font-semibold text-[#333333]">
+            N개의 댓글 N개의 좋아요
           </span>
         </div>
         <CommentInput />
