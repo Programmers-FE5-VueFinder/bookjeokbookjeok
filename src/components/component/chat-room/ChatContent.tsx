@@ -31,7 +31,7 @@ export default function ChatContent({
 
   return (
     <>
-      <div className="flex h-[calc(100%-220px)] w-full flex-col gap-5 overflow-y-auto whitespace-pre-line">
+      <div className="flex h-[calc(100%-220px)] w-full flex-col gap-5 overflow-y-scroll pl-[10px] whitespace-pre-line">
         {messageGroup.map((messages) => {
           return (
             <ChatBubbleGroup
