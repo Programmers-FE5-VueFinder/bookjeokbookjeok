@@ -114,19 +114,19 @@ export default function Profile() {
         const user = session?.user;
         if (!user) return;
 
-        const { data: profile, error } = await supabase
-          .from('profile')
-          .select('image, name, intro')
-          .eq('id', userId!)
-          .single();
-        if (error) {
+        try {
+          const { data: profile } = await supabase
+            .from('profile')
+            .select('image, name, intro')
+            .eq('id', userId!)
+            .single();
+          if (profile) {
+            setProfileName(profile.name);
+            setProfileIntro(profile.intro);
+          }
+        } catch (error) {
           console.error('초기 프로필 데이터 로딩 실패:', error);
           return;
-        }
-
-        if (profile) {
-          setProfileName(profile.name);
-          setProfileIntro(profile.intro);
         }
       };
 
@@ -246,7 +246,7 @@ export default function Profile() {
     };
 
     fetchData();
-  }, [userId, content, setProfileName]);
+  }, [userId, setProfileName]);
 
   return (
     <>
@@ -274,28 +274,52 @@ export default function Profile() {
                 </button>
               ) : null}
             </div>
-            <div className="mt-[14px] mb-[14px] flex items-center gap-[6px] font-bold">
-              <span>{profileName} 님</span>
-              {/* <div className="size-[15px] rounded-full border-1"></div> */}
-            </div>
-            <span>{intro}</span>
+            {loading ? (
+              <div className="animate-pulse">
+                <div className="mt-[14px] mb-[14px] h-[24px] w-[120px] rounded-md bg-gray-200"></div>
 
-            <div className="mt-[14px] mb-[14px] flex">
-              <div className="mr-[25px]">
-                <span className="mr-[8px] text-[16px] font-semibold">
-                  팔로워
-                </span>
-                <span className="text-[16px]">{follower}</span>
+                <div className="space-y-2">
+                  <div className="h-[16px] w-full rounded-md bg-gray-200"></div>
+                </div>
               </div>
+            ) : (
               <div>
-                <span className="mr-[8px] text-[16px] font-semibold">
-                  팔로잉
-                </span>
-                <span className="text-[16px]">{following}</span>
+                <div className="mt-[14px] mb-[14px] flex items-center gap-[6px] font-bold">
+                  <span>{profileName} 님</span>
+                  {/* <div className="size-[15px] rounded-full border-1"></div> */}
+                </div>
+                <span>{intro}</span>
               </div>
-            </div>
+            )}
+
+            {loading ? (
+              <div className="animate-pulse">
+                <div className="mt-[14px] mb-[14px] flex">
+                  <div className="h-[24px] w-[225px] rounded-md bg-gray-200"></div>
+                </div>
+              </div>
+            ) : (
+              <div className="mt-[14px] mb-[14px] flex">
+                <div className="mr-[25px]">
+                  <span className="mr-[8px] text-[16px] font-semibold">
+                    팔로워
+                  </span>
+                  <span className="text-[16px]">{follower}</span>
+                </div>
+                <div>
+                  <span className="mr-[8px] text-[16px] font-semibold">
+                    팔로잉
+                  </span>
+                  <span className="text-[16px]">{following}</span>
+                </div>
+              </div>
+            )}
             {session?.user.id !== userId ? (
-              follow ? (
+              loading ? (
+                <div className="animate-pulse">
+                  <div className="h-[40px] w-[200px] rounded-lg bg-gray-200"></div>
+                </div>
+              ) : follow ? (
                 <button
                   className="top-0 right-1 flex h-[40px] w-[200px] cursor-pointer items-center justify-center gap-[3px] rounded-lg bg-gray-200"
                   onClick={handleFollowing}
