@@ -77,7 +77,7 @@ export async function deleteBookClub(id: string) {
 export async function createBookClubPost(
   title: string,
   body: string,
-  image: string,
+  image: string | null,
   book_club_id: string,
 ) {
   console.log('aa');
@@ -95,6 +95,45 @@ export async function createBookClubPost(
 
   return post!.id;
 }
+
+/* 북클럽 신청 */
+export async function applyBookClub(user_id: string, book_club_id: string) {
+  await supabase
+    .from('notification')
+    .insert({ type: 'book-club', user_id: user_id, object_id: book_club_id });
+}
+
+/* 북클럽 신청 상태거나 멤버인지 판별 */
+export async function getApplyState(book_club_id: string) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return 'before';
+
+  const { data: isMember } = await supabase
+    .from('book_club_member')
+    .select()
+    .eq('user_id', user.id)
+    .eq('book_club_id', book_club_id);
+
+  if (isMember && isMember.length > 0) return 'member';
+
+  const { data: isApplying } = await supabase
+    .from('notification')
+    .select()
+    .eq('type', 'book-club')
+    .eq('sender_id', user.id)
+    .eq('object_id', book_club_id);
+
+  if (isApplying && isApplying.length > 0) return 'after';
+  else return 'before';
+}
+
+/* 북클럽 신청 조회 */
+
+/* 북클럽 신청 승인 */
+
+/* 북클럽 신청 거절 */
 
 /* 북클럽 탈퇴 */
 export async function leaveBookClub(id: string) {
