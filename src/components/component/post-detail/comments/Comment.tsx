@@ -32,6 +32,7 @@ export default function Comment({ comments, fetchComments }: Props) {
   const [activeMenuId, setActiveMenuId] = useState<string | null>(null);
   const replyInputRef = useRef<HTMLInputElement | null>(null);
   const editInputRef = useRef<HTMLInputElement | null>(null);
+  const replyEditInputRef = useRef<HTMLInputElement | null>(null);
 
   const toggleMenu = (id: string) => {
     setActiveMenuId((prev) => (prev === id ? null : id));
@@ -119,6 +120,12 @@ export default function Comment({ comments, fetchComments }: Props) {
   useEffect(() => {
     if (editingId && editInputRef.current) {
       editInputRef.current.focus();
+    }
+  }, [editingId]);
+
+  useEffect(() => {
+    if (editingId && replyEditInputRef.current) {
+      replyEditInputRef.current.focus();
     }
   }, [editingId]);
 
@@ -284,6 +291,7 @@ export default function Comment({ comments, fetchComments }: Props) {
                           <input
                             className="ml-[22px] h-[60px] w-full grow-1 rounded-[10px] border border-[#D6D6D6] p-2"
                             value={editBody}
+                            ref={replyEditInputRef}
                             onChange={(e) => setEditBody(e.target.value)}
                             onKeyDown={(e) => {
                               if (e.key === 'Enter') {
