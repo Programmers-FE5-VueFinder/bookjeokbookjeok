@@ -1,8 +1,10 @@
 import { FaRegComment, FaRegHeart } from 'react-icons/fa';
 import getElapsedTime from '../../../../utils/format-time';
 import type { Post } from '../../../../types/post';
+import { useNavigate } from 'react-router';
 
 export function BookPostItem({ post }: { post: Post }) {
+  const navigate = useNavigate();
   return (
     <div className="max-h-full w-full flex-col justify-center border-b border-b-[#D8D8D8] py-[15px] text-[16px]">
       <div className="mb-[10px] flex">
@@ -16,7 +18,10 @@ export function BookPostItem({ post }: { post: Post }) {
         </div>
       </div>
 
-      <div className="flex cursor-pointer flex-col gap-[10px] font-medium">
+      <div
+        onClick={() => navigate(`/channel/${post.category}/post/${post.id}`)}
+        className="flex cursor-pointer flex-col gap-[10px] font-medium"
+      >
         <span className="line-clamp-1 text-[16px] font-semibold">
           {post.title}
         </span>
