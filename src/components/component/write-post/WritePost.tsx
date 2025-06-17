@@ -37,6 +37,7 @@ export default function WritePost({
   const bookclubId = path.bookclub_id;
   const [category, setCategory] = useState('diary');
   const [rating, setRating] = useState<number | undefined>();
+  const [title, setTitle] = useState('');
   const [value, setValue] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [selectedBook, setSeletedBook] = useState<BookDetail | null>(null);
@@ -55,7 +56,6 @@ export default function WritePost({
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const title = titleRef.current?.value;
     const body = value.toString();
     const image = selectedBook?.cover
       ? selectedBook.cover
@@ -157,7 +157,6 @@ export default function WritePost({
   }, [isLogIn]);
 
   useEffect(() => {
-    console.log(editPostData);
     if (bookclubId) {
       if (isCreateBookClub) {
         const setBookClubInfo = async () => {
@@ -178,12 +177,14 @@ export default function WritePost({
         const selectedBook = bookList.find(
           (book: BookDetail) => book.isbn13 === selectedBookId,
         );
-        console.log(editPostData);
         setSeletedBook(selectedBook);
-        setValue(editPostData.body);
-        setCategory(editPostData.category);
       };
       seletedBookFind();
+    }
+    if (editPostData) {
+      setTitle(editPostData.title);
+      setValue(editPostData.body);
+      setCategory(editPostData.category);
     }
   }, [bookclubId, isCreateBookClub, editPostData]);
 
@@ -211,8 +212,9 @@ export default function WritePost({
                 <input
                   ref={titleRef}
                   type="text"
-                  value={`${editPostData?.title ? editPostData?.title : value}`}
-                  placeholder={`${editPostData?.title ? '제목을 입력해 주세요.' : null}`}
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="제목을 입력해 주세요."
                   className="h-fir mx-auto my-[20px] block w-[1200px] max-w-[1200px] pl-[5px] text-[24px] text-[#666666]"
                 />
 
