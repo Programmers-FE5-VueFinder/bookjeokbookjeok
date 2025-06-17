@@ -158,10 +158,10 @@ export default function SearchResult() {
           </div>
         </div>
 
-        <div className="flex w-full flex-col items-center justify-center bg-[#FAFAFA]">
+        <div className="flex w-full flex-col items-center justify-center pt-[50px] bg-[#FAFAFA]">
           {/* 사용자 영역 */}
           {(selectedBtn === '통합 검색' || selectedBtn === '사용자') && (
-            <div className="m-[100px] max-w-[1200px]">
+            <div className="m-[50px] min-w-[1200px] min-h-[305px]">
               <div className='flex justify-between items-center'>
                 <span className="textT2">사용자</span>
                 {selectedBtn === '통합 검색' && (
@@ -180,11 +180,15 @@ export default function SearchResult() {
                     ? Array.from({ length: 6 }).map((_, idx) => (
                         <UserCardSkeleton key={idx} />
                       ))
-                    : (searchKeyword ? filteredUsers : users)
+                    : (searchKeyword ? filteredUsers : users).length === 0 ? (
+                      <div className='col-span-6 text-center text-gray-500 py-10'>검색 결과가 없습니다.</div>
+                    ) : (
+                      (searchKeyword ? filteredUsers : users)
                         .slice(0, selectedBtn === '통합 검색' ? 6 : undefined)
                         .map((user) => (
                           <UserCard key={user.id} user={user} />
-                        ))}
+                      ))
+                    )}
                 </div>
               </div>
             </div>
@@ -192,7 +196,7 @@ export default function SearchResult() {
 
           {/* 게시물 영역 */}
           {(selectedBtn === '통합 검색' || selectedBtn === '게시물') && (
-            <div className="m-[50px] max-w-[1200px]">
+            <div className="m-[50px] min-w-[1200px] min-h-[305px]">
               <div className='flex justify-between items-center'>
                 <span className="textT2">게시물</span>
                 {selectedBtn === '통합 검색' && (
@@ -205,35 +209,39 @@ export default function SearchResult() {
                 )}
               </div>
 
-              <div className="flex flex-col items-center justify-center">
+              <div className="flex flex-col">
                 <div className="mt-[26px] grid gap-[28px] md:grid-cols-2 lg:grid-cols-4">
-                  {isLoading
-                    ? Array.from({ length: 8 }).map((_, idx) => (
-                        <div key={idx} className="h-[320px] w-full bg-gray-200 rounded" />
+                  {isLoading ? (
+                    Array.from({ length: 8 }).map((_, idx) => (
+                      <div key={idx} className="h-[320px] w-full bg-gray-200 rounded" />
+                    ))
+                  ) : (searchKeyword ? filteredPosts : posts).length === 0 ? (
+                    <div className='flex mt-1 col-span-6 text-center text-gray-500 py-10 ml-[49px]'>검색 결과가 없습니다.</div>
+                  ) : (
+                    (searchKeyword ? filteredPosts : posts)
+                      .slice(0, selectedBtn === '통합 검색' ? 8 : undefined)
+                      .map((post) => (
+                        <Link key={post.id} to={`/channel/${post.category}/post/${post.id}`}>
+                          <BookCard
+                            nickname={post.profile.name || '잉크묻은 고양이'}
+                            title={post.title}
+                            body={post.body}
+                            image={
+                              post.category === 'diary'
+                                ? post.book?.cover ?? ''  
+                                : post.image             
+                            }
+                            profileImage={post.profile.image}
+                            likes={post.like.length}
+                            comments={post.comment.length}
+                            id={post.profile.id}
+                            createdAt={new Date(post.created_at).toLocaleDateString()}
+                            category={post.category}
+                            book_id={post.book?.id}
+                          />
+                        </Link>
                       ))
-                    : (searchKeyword ? filteredPosts : posts)
-                        .slice(0, selectedBtn === '통합 검색' ? 8 : undefined)
-                        .map((post) => (
-                          <Link key={post.id} to={`/channel/${post.category}/post/${post.id}`}>
-                            <BookCard
-                              nickname={post.profile.name || '잉크묻은 고양이'}
-                              title={post.title}
-                              body={post.body}
-                              image={
-                                post.category === 'diary'
-                                  ? post.book?.cover ?? ''  
-                                  : post.image             
-                              }
-                              profileImage={post.profile.image}
-                              likes={post.like.length}
-                              comments={post.comment.length}
-                              id={post.profile.id}
-                              createdAt={new Date(post.created_at).toLocaleDateString()}
-                              category={post.category}
-                              book_id={post.book?.id}
-                            />
-                          </Link>
-                        ))}
+                  )}
                 </div>
               </div>
             </div>
