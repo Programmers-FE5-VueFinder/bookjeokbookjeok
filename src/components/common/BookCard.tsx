@@ -20,6 +20,12 @@ export default function BookCard({
 }: BookCardProps) {
   const [img, setImg] = useState<string | null>(null);
 
+  function decodeHTMLEntities(str: string) {
+    const txt = document.createElement('textarea');
+    txt.innerHTML = str;
+    return txt.value;
+  }
+
   useEffect(() => {
     // console.log('book_id:', book_id);  
     const getBookData = async () => {
@@ -73,7 +79,7 @@ export default function BookCard({
         </div>
         <div className="p-[13px] text-start">
           <Link to={`/profile/${id}`}>
-            <div className="flex items-center gap-x-[6px] bg-amber-100">
+            <div className="flex items-center gap-x-[6px]">
               <div className="size-[25px] overflow-hidden rounded-full">
                 <ProfileImg id={id} />
               </div>
@@ -86,7 +92,7 @@ export default function BookCard({
           <div className="mt-[15px] truncate text-[18px] font-bold">
             <span>{title}</span>
           </div>
-          <div className="mt-[15px] line-clamp-2">{body}</div>
+          <div className="mt-[15px] line-clamp-2">{body ? decodeHTMLEntities(body.replace(/<[^>]*>?/g, '')) : ''}</div>
           {/* 좋아요, 댓글 */}
           <div className="absolute bottom-0 left-0 flex size-[12px] pb-[30px] pl-[13px]">
             <div className="mr-[8px] flex items-center space-x-1">
