@@ -13,7 +13,11 @@ import DiaryArea from '../components/component/MyPage/DiaryArea';
 import CommunityArea from '../components/component/MyPage/CommunityArea';
 import BookClubArea from '../components/component/MyPage/BookClubArea';
 import BookMarkArea from '../components/component/MyPage/BookMarkArea';
-import { fetchAddFollow, fetchDeleteFollow } from '../apis/follow';
+import {
+  fetchAddFollow,
+  fetchDeleteFollow,
+  fetchSendFollow,
+} from '../apis/follow';
 
 export type Post = {
   body: string;
@@ -80,6 +84,7 @@ export default function Profile() {
     if (follow === false) {
       if (session?.user.id !== undefined && userId !== undefined) {
         fetchAddFollow(session.user.id, userId);
+        fetchSendFollow(session.user.id, userId);
       }
       const updateFollower = follower + 1;
       setFollower(updateFollower);

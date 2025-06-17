@@ -2,7 +2,7 @@ import { FaRegComment, FaRegHeart } from 'react-icons/fa';
 import type { BookCardProps } from '../../types/type';
 import ProfileImg from '../component/MyPage/ProfileImg';
 import { useEffect, useState } from 'react';
-import type { BookData, BookDetail } from '../../types/book';
+import type { BookData } from '../../types/book';
 import { Link } from 'react-router';
 import supabase from '../../utils/supabase';
 import defaultImg from '../../assets/images/default_post_img.png';
@@ -20,7 +20,7 @@ export default function BookCard({
   book_id,
   category,
 }: BookCardProps) {
-  const [result, setResult] = useState<BookDetail[]>([]);
+  const [result, setResult] = useState<BookData[]>([]);
   const [img, setImg] = useState<string | null>(null);
 
   useEffect(() => {

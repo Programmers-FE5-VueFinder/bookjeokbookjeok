@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 import type { BookCardProps } from '../../../types/type';
 import ProfileImg from '../../component/MyPage/ProfileImg';
-import type { BookData } from '../../../types/book';
+import type { BookData, BookDetail } from '../../../types/book';
 import { FaStar } from 'react-icons/fa';
 import { getBookStars } from '../../../apis/book-review';
 import supabase from '../../../utils/supabase';
-// import BookPage from '../book-detail/BookPage';
-// import ReactDOM from 'react-dom';
-
+import BookPage from '../book-detail/BookPage';
+import { searchBooks } from '../../../apis/book-search';
 
 export default function BookMarkCard({
   nickname,
@@ -17,14 +16,30 @@ export default function BookMarkCard({
   book_id,
 }: BookCardProps) {
   const [result, setResult] = useState<BookData[]>([]);
+  const [bookMark, setBookMark] = useState<BookDetail | null>(null);
   const [avgStar, setAvgStar] = useState<number>(0);
   const [img, setImg] = useState<string | null>(null);
   const [bookTitle, setBookTitle] = useState<string | null>(null);
   const [bookBody, setBookBody] = useState<string | null>(null);
-  // const [isOpen, setIsOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // const handleOpen = () => setIsOpen(true);
-  // const closeModal = () => setIsOpen(false);
+  const handleOpen = () => {
+    const getBookMarkData = async () => {
+      if (book_id !== null && book_id !== undefined) {
+        try {
+          const getBookMark = await searchBooks(book_id);
+          setBookMark(getBookMark);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    };
+    getBookMarkData();
+
+    if (bookMark !== undefined) {
+      setIsModalOpen(true);
+    }
+  };
 
   useEffect(() => {
     const getBookData = async () => {
@@ -54,7 +69,7 @@ export default function BookMarkCard({
       }
     };
     getStars();
-  }, [book_id]);
+  }, []);
 
   useEffect(() => {
     if (result.length !== 0) {
@@ -71,7 +86,7 @@ export default function BookMarkCard({
         style={{
           boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.25)',
         }}
-        // onClick={handleOpen}
+        onClick={handleOpen}
       >
         <div className="h-[247px] w-[278px] content-center justify-center overflow-hidden border-b-1 border-[#EAEAEA] text-center">
           {result.length !== 0 ? (
@@ -110,15 +125,13 @@ export default function BookMarkCard({
           </div>
         </div>
       </div>
-      {/* {isOpen &&
-        ReactDOM.createPortal(
-          <BookPage
-            isOpen={isOpen}
-            closeModal={closeModal}
-            bookDetail={result}
-          />,
-          document.body,
-        )} */}
+      {bookMark && (
+        <BookPage
+          isOpen={isModalOpen}
+          closeModal={() => setIsModalOpen(false)}
+          bookDetail={bookMark[0]}
+        />
+      )}
     </>
   );
 }

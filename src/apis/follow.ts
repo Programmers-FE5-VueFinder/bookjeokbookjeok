@@ -21,3 +21,12 @@ export async function fetchDeleteFollow(
   if (error) throw error;
   return data;
 }
+
+export async function fetchSendFollow(currentUser: string, targetUser: string) {
+  const { data, error } = await supabase
+    .from('notification')
+    .insert([{ user_id: targetUser, sender_id: currentUser, type: 'follow' }])
+    .select();
+  if (error) throw error;
+  return data;
+}
