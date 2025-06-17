@@ -7,7 +7,7 @@ import {
   deleteComment,
   updateComment,
 } from '../../../apis/comment';
-import { getLocalElapsedTime } from '../../../utils/format-time';
+import getElapsedTime from '../../../utils/format-time';
 
 type CommentTypeBase = {
   id: string;
@@ -127,7 +127,7 @@ export default function Comment({ comments, fetchComments }: Props) {
                   <div className="h-[25px] w-[25px] rounded-full bg-black" />
                 )}
                 <span>{parent.profile.name}</span>
-                <time>{getLocalElapsedTime(parent.created_at)}</time>
+                <time>{getElapsedTime(parent.created_at)}</time>
               </div>
 
               <div className="relative">
@@ -199,7 +199,7 @@ export default function Comment({ comments, fetchComments }: Props) {
                         <div className="h-[25px] w-[25px] rounded-full bg-black" />
                       )}
                       <span>{reply.profile.name}</span>
-                      <time>{getLocalElapsedTime(reply.created_at)}</time>
+                      <time>{getElapsedTime(reply.created_at)}</time>
 
                       <div className="relative ml-auto">
                         <RxDotsVertical
