@@ -92,7 +92,6 @@ export default function Home() {
         if (isMounted) setIsLoading(false);
       }
     };
-
     getPopularDiaries();
 
     return () => {
@@ -101,7 +100,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="mx-auto flex h-fit w-[1220px] justify-center gap-x-[10px] py-[40px]">
+    <div className="mx-auto flex h-fit w-[1220px] justify-center gap-x-[10px] py-[37px]">
       {/* left side */}
       <div className="flex h-fit w-[590px]">
         <div className="h-fit w-full">
@@ -197,7 +196,7 @@ export default function Home() {
           )}
 
           {isLogin === true && (
-            <div className="flex justify-between w-[590px] h-[130px] px-[26px] pt-[18px] bg-[#70B5FF] rounded-[20px]">
+            <div className="flex justify-between w-[590px] h-[130px] px-[26px] pt-[18px] bg-[#70B5FF] rounded-[20px] overflow-hidden">
               <div>
                 <h2 className="text-[20px] font-semibold leading-[24px] text-[#202020]">환영합니다!<br/>오늘도 즐거운 독서 되세요</h2>
                 <button 
@@ -208,11 +207,11 @@ export default function Home() {
                 </button>
               </div>
             
-              <div className="self-end">
+              <div className="self-end translate-y-[30px]">
                 <img 
                   src={home_reading_girl} 
                   alt="home_reading_girl" 
-                  className="w-[163px] h-[130px]"
+                  className="w-[163px] h-[163px] "
                 />
               </div>
             </div>
@@ -256,6 +255,7 @@ export default function Home() {
             diaries.map((post) => (
               <PopularDiaryCard
                 key={post.id}
+                id={post.id}
                 genre={post.book.categoryName}
                 title={post.book.title}
                 content={
@@ -266,27 +266,6 @@ export default function Home() {
               />
             ))
           )}
-
-          <PopularDiaryCard
-            genre="novel"
-            title="설국"
-            content="접경의 긴 터널을 빠져나오자, 설국이었다"
-          />
-          <PopularDiaryCard
-            genre="education"
-            title="코딩 자율학습 html + css + 자바스크립트"
-            content="누구나 쉽게 배우는 코딩!!"
-          />
-          <PopularDiaryCard
-            genre="development"
-            title="설득의 능력"
-            content="말의 힘!"
-          />
-          <PopularDiaryCard
-            genre="humanities"
-            title="초역 부처의 말"
-            content="염세에서 배우는 불교의 가르침"
-          />
         </div>
 
         {/* section 4 */}
