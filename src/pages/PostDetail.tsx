@@ -19,9 +19,6 @@ export default function PostDetail() {
   });
   const [loading, setLoading] = useState(false);
 
-  console.log(path.postId); //postId
-  console.log(content);
-
   useEffect(() => {
     async function postDetail() {
       const response = await fetchPostDetail(path.postId as string);

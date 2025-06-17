@@ -36,10 +36,6 @@ const router = createBrowserRouter([
             path: 'post/:postId',
             Component: PostDetail,
           },
-          {
-            path: 'postdev',
-            Component: PostDetail,
-          },
         ],
       },
       {
@@ -49,10 +45,6 @@ const router = createBrowserRouter([
       {
         path: '/signup',
         Component: SignUp,
-      },
-      {
-        path: 'postdev',
-        Component: PostDetail,
       },
       {
         path: '/notification',
@@ -75,10 +67,6 @@ const router = createBrowserRouter([
         Component: BookClub,
       },
       {
-        path: '/create-post',
-        Component: CreatePost,
-      },
-      {
         path: '/create-post/:bookclub_id',
         Component: CreatePost,
       },
@@ -94,6 +82,11 @@ const router = createBrowserRouter([
   },
   {
     path: '/create-post',
+    loader: fetchUserData,
+    Component: CreatePost,
+  },
+  {
+    path: '/editpost/:postId',
     loader: fetchUserData,
     Component: CreatePost,
   },

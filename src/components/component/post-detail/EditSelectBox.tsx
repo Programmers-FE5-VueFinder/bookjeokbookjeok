@@ -28,6 +28,7 @@ export default function EditSelectBox({
           <button
             onClick={(e) => {
               e.preventDefault();
+              navigate(`/editpost/${postId}`);
             }}
             className="flex h-[40px] cursor-pointer items-center justify-center gap-[5px] hover:bg-[#f1f1f1] hover:font-semibold"
           >
