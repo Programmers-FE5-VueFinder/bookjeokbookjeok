@@ -20,6 +20,7 @@ import { getLikeCount } from '../apis/like';
 import DiarySelectBook from '../components/component/post-detail/DiarySelectBook';
 import { useAuthStore } from '../store/authStore';
 import { isFollowing } from '../apis/follow';
+import Toastfy from '../components/common/Toastfy';
 
 export default function PostDetail() {
   const { postId } = useParams();
@@ -30,6 +31,7 @@ export default function PostDetail() {
 
   const handleApplyBookclub = async () => {
     await applyBookClub(content!.profile.id, content!.book_club_id!);
+    Toastfy('success', '신청이 완료되었습니다');
     setApplyState('after');
   };
   const [modalShow, setModalShow] = useState(false);
@@ -126,7 +128,7 @@ export default function PostDetail() {
         ) : null}
         <div
           dangerouslySetInnerHTML={{ __html: content!.body }}
-          className="w-full max-w-[1200px] min-h-[430px] pt-[80px]"
+          className="min-h-[430px] w-full max-w-[1200px] pt-[80px]"
         ></div>
         {content!.book_club_id && (
           <>
