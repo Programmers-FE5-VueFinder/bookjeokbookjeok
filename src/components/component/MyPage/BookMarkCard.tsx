@@ -100,7 +100,7 @@ export default function BookMarkCard({
           ) : null}
         </div>
         <div className="p-[13px] text-start">
-          <div className="flex items-center gap-x-[6px] bg-amber-100">
+          <div className="flex items-center gap-x-[6px]">
             <div className="size-[25px] overflow-hidden rounded-full">
               <ProfileImg id={id} />
             </div>
