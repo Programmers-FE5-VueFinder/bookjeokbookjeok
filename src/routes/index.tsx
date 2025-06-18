@@ -13,6 +13,7 @@ import { fetchUserData } from './loader/auth.loader';
 import BookClub from '../pages/BookClub';
 import CreateBookClub from '../pages/CreateBookClub';
 import BookClubChat from '../pages/BookClubChat';
+import EditPost from '../pages/EditPost';
 import CreatePostLayout from './layouts/CreatPostLayout';
 
 const router = createBrowserRouter([
@@ -25,16 +26,16 @@ const router = createBrowserRouter([
         Component: Home,
       },
       {
+        path: '/post/:postId',
+        Component: PostDetail,
+      },
+      {
         path: '/channel/:channelId',
         Component: ChannelLayout,
         children: [
           {
             index: true,
             Component: PostList,
-          },
-          {
-            path: 'post/:postId',
-            Component: PostDetail,
           },
         ],
       },
@@ -87,6 +88,23 @@ const router = createBrowserRouter([
     Component: BookClubChat,
   },
   {
+<<<<<<< HEAD
+    path: '/bookclub/:bookclub_id/chat',
+    Component: BookClubChat,
+  },
+  {
+    path: '/createpost',
+    loader: fetchUserData,
+    Component: CreatePost,
+  },
+  {
+    path: '/editpost/:post_id',
+    loader: fetchUserData,
+    Component: EditPost,
+  },
+  {
+=======
+>>>>>>> 000ba4860e7783750aa366148cb15135c7bb1f80
     path: '*',
     Component: NotFound,
   },
