@@ -106,9 +106,12 @@ export default function PostList() {
   }, [myProfileId, selectedSort]);
 
   const sortedPosts = useMemo(() => {
+    const currentCategory = channelId ?? '';
     // 팔로잉
     if (selectedSort === '팔로잉') {
-      return [...followingPosts].sort(
+      return [...followingPosts]
+      .filter((post) => post.category === currentCategory)
+      .sort(
         (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
     }
@@ -120,7 +123,7 @@ export default function PostList() {
     return [...posts].sort(
       (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
     );
-  }, [posts, followingPosts, selectedSort]);
+  }, [posts, followingPosts, selectedSort, channelId]);
 
   return (
     <>
