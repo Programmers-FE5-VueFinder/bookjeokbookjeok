@@ -32,6 +32,7 @@ export interface Review {
   review: string;
   date: string;
   rating: number;
+  user_id: string;
   author: {
     name: string;
     image: string | null;

@@ -20,6 +20,7 @@ export default function SettingModal({ onClose }: SettingModalProps) {
   const [show, isShow] = useState<boolean>(false);
   const [pass, setPass] = useState<boolean>(false);
   const [validate, setValidate] = useState<boolean>(false);
+  const [isChecked, setIsChecked] = useState<boolean>(false);
   // const [prof, setProf] = useState<number | undefined>(0);
   const { session } = useAuthStore();
   const { profileCache, setProfileToCache } = useProfileImgStore();
@@ -58,6 +59,7 @@ export default function SettingModal({ onClose }: SettingModalProps) {
   };
 
   const handleCheckNickName = async () => {
+    setIsChecked(true);
     const name = nameRef.current?.value;
     const valName = /^[A-Za-z가-힣0-9]{2,10}$/;
     let prof: number | undefined = 0;
@@ -86,7 +88,11 @@ export default function SettingModal({ onClose }: SettingModalProps) {
   };
 
   const handleSave = async () => {
-    if (pass) {
+    if (isChecked === false && nameRef.current!.value.length !== 0) {
+      toast.error('중복 확인을 해주세요');
+      return;
+    }
+    if (pass && nameRef.current!.value.length !== 0) {
       const user = session?.user;
       if (!user) {
         alert('사용자 정보가 없습니다. 다시 로그인해주세요.');
@@ -146,9 +152,29 @@ export default function SettingModal({ onClose }: SettingModalProps) {
           alert(`오류 발생: ${error.message}`);
         }
       }
+    } else if (nameRef.current!.value.length === 0 && newIntro.length !== 0) {
+      const user = session?.user;
+      if (!user) {
+        alert('사용자 정보가 없습니다. 다시 로그인해주세요');
+        return;
+      }
+      try {
+        const { error: textUpdateError } = await supabase
+          .from('profile')
+          .update({ intro: newIntro })
+          .eq('id', user.id);
+        if (textUpdateError) throw textUpdateError;
+        setGlobalProfileIntro(newIntro);
+      } catch (error) {
+        console.error(error);
+      }
+      toast.success('변경 되었습니다');
+    } else if (nameRef.current!.value.length === 0 && newIntro === '') {
+      toast.info('변경 사항이 없습니다');
     } else {
       toast.error('다시 시도해주세요');
     }
+    setIsChecked(false);
   };
 
   useEffect(() => {
