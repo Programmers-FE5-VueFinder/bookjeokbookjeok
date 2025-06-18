@@ -22,6 +22,7 @@ export default function PostList() {
   const [posts, setPosts] = useState<PostDetail[]>([]);
   const [followingPosts, setFollowingPosts] = useState<PostDetail[]>([]);
   const myProfileId = useAuthStore((state) => state.session?.user.id);
+  const isLogin = !! myProfileId;
 
   const channelNames: { [key: string]: string } = {
     diary: '다이어리',
@@ -156,7 +157,13 @@ export default function PostList() {
           {loading ? (
             <SkeletonCard />
           ) : sortedPosts.length === 0 ? (
-            <div>게시글이 없습니다.</div>
+            <div className="min-h-[180px] text-[#757575] text-[18px] font-semibold">
+              {selectedSort === '팔로잉' && !isLogin ? (
+                <div>로그인하고 팔로우하는 유저의 게시글을 확인해보세요</div>
+              ) : (
+                <div>게시글이 없습니다.</div>
+              )}
+            </div>
           ) : (
             // 카드 컴포
             <div className="grid h-fit w-[1200px] grid-cols-4 gap-[28px]">
