@@ -46,7 +46,6 @@ export default function PostDetail() {
     async function postDetail() {
       const response = await fetchPostDetail(postId as string);
       setContent(response);
-      setLoading(true);
       await fetchComments();
       setPostLoading(true);
     }

@@ -35,7 +35,7 @@ export default function PostHeader({
     <>
       <section className="flex w-full justify-center pt-[60px]">
         <div className="w-[1200px] border-b border-[#d8d6d6]">
-          <h1 className="mb-[30px] cursor-default text-[40px] font-bold text-[#333]">
+          <h1 className="mb-[55px] cursor-default text-[40px] font-bold text-[#333]">
             {title}
           </h1>
           <div className="mb-[30px]">

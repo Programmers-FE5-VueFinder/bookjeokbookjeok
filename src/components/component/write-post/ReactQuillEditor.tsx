@@ -20,6 +20,7 @@ export default function ReactQuillEditor({
   selectedBook: BookDetail | null;
 }) {
   const quillRef = useRef<ReactQuill | null>(null);
+
   const modules = useMemo(() => {
     return {
       toolbar: {
