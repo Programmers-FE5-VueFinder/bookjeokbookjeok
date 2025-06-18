@@ -113,7 +113,11 @@ export default function Header() {
           <Link to={'/channel/diary'}>다이어리</Link>
           <Link to={'/channel/book_club'}>북클럽</Link>
           <Link to={'/channel/community'}>자유채널</Link>
+<<<<<<< HEAD
           <Link to={'/createpost'}>글작성</Link>
+=======
+          <Link to={'/create-post'}>글작성</Link>
+>>>>>>> 000ba4860e7783750aa366148cb15135c7bb1f80
         </nav>
 
         <div className="flex space-x-4" ref={dropdownRef}>

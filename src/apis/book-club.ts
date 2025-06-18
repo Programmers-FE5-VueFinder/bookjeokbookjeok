@@ -77,20 +77,113 @@ export async function deleteBookClub(id: string) {
 export async function createBookClubPost(
   title: string,
   body: string,
+  image: string | null,
   book_club_id: string,
 ) {
-  const { data: newPost } = await supabase
+  console.log('aa');
+  const { data: post } = await supabase
     .from('post')
     .insert({
       title: title,
       body: body,
-      category: 'book-club',
+      image: image,
+      category: 'book_club',
       book_club_id: book_club_id,
     })
     .select()
     .single();
 
-  return newPost;
+  return post!.id;
+}
+
+/* 북클럽 신청 */
+export async function applyBookClub(user_id: string, book_club_id: string) {
+  await supabase
+    .from('notification')
+    .insert({ type: 'book-club', user_id: user_id, object_id: book_club_id });
+}
+
+/* 북클럽 신청 상태거나 멤버인지 판별 */
+export async function getApplyState(book_club_id: string) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return 'before';
+
+  const { data: isMember } = await supabase
+    .from('book_club_member')
+    .select()
+    .eq('user_id', user.id)
+    .eq('book_club_id', book_club_id);
+
+  if (isMember && isMember.length > 0) return 'member';
+
+  const { data: isApplying } = await supabase
+    .from('notification')
+    .select()
+    .eq('type', 'book-club')
+    .eq('sender_id', user.id)
+    .eq('object_id', book_club_id);
+
+  if (isApplying && isApplying.length > 0) return 'after';
+  else return 'before';
+}
+
+/* 북클럽 신청 조회 */
+export async function fetchApplyList(book_club_id: string) {
+  const { data: applys } = await supabase
+    .from('notification')
+    .select('sender_id')
+    .eq('type', 'book-club')
+    .eq('object_id', book_club_id)
+    .order('created_at', { ascending: false });
+
+  const senderIds = applys!.map((n) => n.sender_id);
+
+  const { data: users } = await supabase
+    .from('profile')
+    .select('*')
+    .in('id', senderIds);
+
+  return users;
+}
+
+/* 북클럽 신청 승인 */
+export async function approveApply(user_id: string, book_club_id: string) {
+  // 멤버 추가
+  await supabase
+    .from('book_club_member')
+    .insert({ user_id: user_id, book_club_id: book_club_id });
+  // 승인 알림 발송
+  await supabase.from('notification').insert({
+    type: 'book-club-approve',
+    user_id: user_id,
+    object_id: book_club_id,
+  });
+  // 알림 삭제
+  await supabase
+    .from('notification')
+    .delete()
+    .eq('type', 'book-club')
+    .eq('sender_id', user_id)
+    .eq('object_id', book_club_id);
+}
+
+/* 북클럽 신청 거절 */
+export async function rejectApply(user_id: string, book_club_id: string) {
+  // 거절 알림 발송
+  await supabase.from('notification').insert({
+    type: 'book-club-reject',
+    user_id: user_id,
+    object_id: book_club_id,
+  });
+  // 알림 삭제
+  await supabase
+    .from('notification')
+    .delete()
+    .eq('type', 'book-club')
+    .eq('sender_id', user_id)
+    .eq('object_id', book_club_id);
 }
 
 /* 북클럽 탈퇴 */
@@ -103,7 +196,8 @@ export async function fetchChat(id: string) {
   const { data: chat } = await supabase
     .from('book_club_chat')
     .select(`id, profile(*), message, created_at`)
-    .eq('book_club_id', id);
+    .eq('book_club_id', id)
+    .order('created_at', { ascending: true });
 
   return chat;
 }

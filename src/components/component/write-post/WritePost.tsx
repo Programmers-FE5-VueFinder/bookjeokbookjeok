@@ -33,9 +33,9 @@ export default function WritePost({
   //path : diary, freetalk
   const path = useParams();
   const navigate = useNavigate();
-  // const editPostId = path.post_id;
   const bookclubId = path.bookclub_id;
   const [category, setCategory] = useState('diary');
+  console.log('bookclubId: ', bookclubId);
   const [rating, setRating] = useState<number | undefined>();
   const [title, setTitle] = useState('');
   const [value, setValue] = useState('');
@@ -60,6 +60,10 @@ export default function WritePost({
     const image = selectedBook?.cover
       ? selectedBook.cover
       : findThumbnailImage(body);
+    const bookInfo = {
+      id: selectedBook!.isbn13,
+      star: rating,
+    };
 
     if (!title || !body) {
       if (!title) {
@@ -71,11 +75,6 @@ export default function WritePost({
       }
       return;
     }
-
-    const bookInfo = {
-      id: selectedBook!.isbn13,
-      star: rating,
-    };
 
     // 게시물 수정
     if (editPostData) {
@@ -96,12 +95,13 @@ export default function WritePost({
     }
 
     /* 북클럽 수정 */
-    if (bookclubId) {
+    if (bookclubId && isCreateBookClub) {
       editBookClub(bookclubId, title, body);
       navigate(`/bookclub/${bookclubId}`);
       return;
     }
 
+    /* 게시글 생성 */
     switch (category) {
       case 'diary': {
         try {
@@ -142,7 +142,8 @@ export default function WritePost({
         return;
       }
       case 'book-club': {
-        createBookClubPost(title, body, bookclubId!);
+        const post = await createBookClubPost(title, body, image, bookclubId!);
+        navigate(`/channel/book_club/post/${post}`);
         return;
       }
       default: {
@@ -152,6 +153,7 @@ export default function WritePost({
     }
   };
 
+  /* bookclubId 있을 시 정보 fetch */
   useEffect(() => {
     if (!isLogIn) navigate('/');
   }, [isLogIn]);
@@ -279,7 +281,9 @@ export default function WritePost({
     <>
       <main className="flex h-screen">
         <div className="flex grow-1 flex-col">
-          {!bookclubId && <CategorySelect setCategory={setCategory} />}
+          {!bookclubId && !isCreateBookClub && (
+            <CategorySelect setCategory={setCategory} />
+          )}
           <form
             className="w-ful flex grow-1 flex-col justify-between"
             onSubmit={(e) => {
@@ -302,26 +306,30 @@ export default function WritePost({
                 className="h-fir mx-auto my-[20px] block w-[1200px] max-w-[1200px] pl-[5px] text-[24px] text-[#666666]"
               />
 
-              {selectedBook && category === 'diary' ? (
-                <SelectBookInfo
-                  setShowModal={setShowModal}
-                  setSeletedBook={setSeletedBook}
-                  selectedBook={selectedBook}
-                />
-              ) : (
-                <button
-                  style={{ marginLeft: 'calc((100% - 1200px) / 2)' }}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setShowModal(true);
-                  }}
-                  className="flex h-[130px] w-[100px] cursor-pointer flex-col items-center justify-center border border-dashed border-[#333] text-[rgba(153,153,153,.4)]"
-                >
-                  <MdOutlineSearch />
-                  도서 검색
-                </button>
+              {!bookclubId && !isCreateBookClub && (
+                <>
+                  {selectedBook && category === 'diary' ? (
+                    <SelectBookInfo
+                      setShowModal={setShowModal}
+                      setSeletedBook={setSeletedBook}
+                      selectedBook={selectedBook}
+                    />
+                  ) : (
+                    <button
+                      style={{ marginLeft: 'calc((100% - 1200px) / 2)' }}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setShowModal(true);
+                      }}
+                      className="flex h-[130px] w-[100px] cursor-pointer flex-col items-center justify-center border border-dashed border-[#333] text-[rgba(153,153,153,.4)]"
+                    >
+                      <MdOutlineSearch />
+                      도서 검색
+                    </button>
+                  )}
+                  {selectedBook && <BookRating setRating={setRating} />}
+                </>
               )}
-              {selectedBook && <BookRating setRating={setRating} />}
               <ReactQuillEditor
                 category={category}
                 setValue={setValue}
@@ -342,7 +350,7 @@ export default function WritePost({
                   type="submit"
                   className="cursor-pointer rounded-[5px] bg-[#F1F1F1] px-[23px] py-[8px] text-[14px] hover:bg-[#41D94D] hover:font-semibold hover:text-[#fff]"
                 >
-                  발행하기
+                  {bookclubId && isCreateBookClub ? '수정하기' : '발행하기'}
                 </button>
               </div>
             </div>

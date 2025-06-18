@@ -11,6 +11,7 @@ export function BookPost({ isbn }: { isbn: string }) {
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
 
   const fetchPosts = useCallback(async () => {
     if (isLoading || !hasMore) return;
@@ -25,13 +26,19 @@ export function BookPost({ isbn }: { isbn: string }) {
 
       if (newPosts.length < 5) {
         setHasMore(false);
+
+        if (!isFirstLoad && (page > 0 || newPosts.length > 0)) {
+          toast.info('더 이상 불러올 포스트가 없습니다.');
+        }
       }
+
+      setIsFirstLoad(false);
     } catch (error) {
       console.error('포스트 불러오기 실패:', error);
     } finally {
       setIsLoading(false);
     }
-  }, [isbn, page, hasMore, isLoading]);
+  }, [isbn, page, hasMore, isLoading, isFirstLoad]);
 
   const loadMoreRef = useInfiniteScroll({
     hasMore,
@@ -40,15 +47,10 @@ export function BookPost({ isbn }: { isbn: string }) {
   });
 
   useEffect(() => {
-    if (!hasMore && !isLoading && posts.length > 0) {
-      toast.info('더 이상 불러올 포스트가 없습니다.');
-    }
-  }, [hasMore, isLoading, posts.length]);
-
-  useEffect(() => {
     setPosts([]);
     setPage(0);
     setHasMore(true);
+    setIsFirstLoad(true);
   }, [isbn]);
 
   return (
