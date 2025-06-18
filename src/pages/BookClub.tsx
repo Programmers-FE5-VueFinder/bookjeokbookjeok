@@ -4,10 +4,13 @@ import { IoMdInformationCircleOutline } from 'react-icons/io';
 import { IoMdPerson } from 'react-icons/io';
 import { IoMdPersonAdd } from 'react-icons/io';
 import {
+  approveApply,
   deleteBookClub,
+  fetchApplyList,
   fetchBookClub,
   isBookClubOwner,
   leaveBookClub,
+  rejectApply,
 } from '../apis/book-club';
 import { Link, useNavigate, useParams } from 'react-router';
 import UserCard from '../components/common/UserCard';
@@ -19,6 +22,7 @@ export default function BookClub() {
 
   const bookclub_id = useParams().bookclub_id;
   const [bookclub, setBookclub] = useState<Bookclub>();
+  const [applyList, setApplyList] = useState<User[]>([]);
   const [isOwner, setIsOwner] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
@@ -39,10 +43,26 @@ export default function BookClub() {
     leaveBookClub(bookclub_id!);
   };
 
+  const fetchData = async () => {
+    setBookclub(await fetchBookClub(bookclub_id!));
+    setApplyList((await fetchApplyList(bookclub_id!)) ?? []);
+  };
+
+  const handleApprove = async (user_id: string) => {
+    await approveApply(user_id, bookclub_id!);
+    await fetchData();
+  };
+
+  const handleReject = async (user_id: string) => {
+    await rejectApply(user_id, bookclub_id!);
+    await fetchData();
+  };
+
   useEffect(() => {
     const fetchBookclub = async () => {
       setBookclub(await fetchBookClub(bookclub_id!));
       setIsOwner(await isBookClubOwner(bookclub_id!));
+      setApplyList((await fetchApplyList(bookclub_id!)) ?? []);
       setIsLoading(false);
     };
     fetchBookclub();
@@ -131,16 +151,31 @@ export default function BookClub() {
                   </div>
                 </>
               )}
-              <div className="mt-[40px]">
-                <div className="clubInfo">
-                  <IoMdPersonAdd />
-                  <p>
-                    가입 신청{' '}
-                    <span className="font-bold text-[#08C818]">0</span>명
-                  </p>
+              {isOwner && applyList.length > 0 && (
+                <div className="mt-[40px]">
+                  <div className="clubInfo">
+                    <IoMdPersonAdd />
+                    <p>
+                      가입 신청{' '}
+                      <span className="font-bold text-[#08C818]">
+                        {applyList.length}
+                      </span>
+                      명
+                    </p>
+                  </div>
+                  <div className="flex flex-row gap-5">
+                    {applyList.map((user) => (
+                      <UserCard
+                        key={user.id}
+                        user={user}
+                        isRecruiting
+                        handleApprove={handleApprove}
+                        handleReject={handleReject}
+                      />
+                    ))}
+                  </div>
                 </div>
-                <div>{/* 가입 신청 목록 */}</div>
-              </div>
+              )}
 
               <div className="mt-[40px]">
                 <div className="clubInfo">
@@ -152,7 +187,7 @@ export default function BookClub() {
                 ></span>
               </div>
               <div
-                className="mt-[40px] scroll-m-[200px]"
+                className="my-[40px] scroll-m-[200px]"
                 id="member"
                 ref={memberRef}
               >

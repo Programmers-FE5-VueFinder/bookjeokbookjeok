@@ -11,6 +11,7 @@ import type { PostDetail } from '../types/post';
 import getElapsedTime from '../utils/format-time';
 import '../css/reactQuillCustom.css';
 import CheckModal from '../components/common/CheckModal';
+import { applyBookClub, getApplyState } from '../apis/book-club';
 import Like from '../components/component/post-detail/Like';
 import type { CommentTypeBase } from '../types/type';
 import { getComments } from '../apis/comment';
@@ -18,6 +19,13 @@ import { getComments } from '../apis/comment';
 export default function PostDetail() {
   const { postId } = useParams();
   const [content, setContent] = useState<PostDetail | undefined>(undefined);
+  const [postLoading, setPostLoading] = useState(false);
+  const [applyState, setApplyState] = useState('');
+
+  const handleApplyBookclub = async () => {
+    await applyBookClub(content!.profile.id, content!.book_club_id!);
+    setApplyState('after');
+  };
   const [modalShow, setModalShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -38,11 +46,21 @@ export default function PostDetail() {
     async function postDetail() {
       const response = await fetchPostDetail(postId as string);
       setContent(response);
-      setLoading(true);
       await fetchComments();
+      setPostLoading(true);
     }
     postDetail();
   }, [postId, fetchComments, navigate]);
+
+  useEffect(() => {
+    if (postLoading) {
+      const fetchApplyState = async () => {
+        setApplyState(await getApplyState(content!.book_club_id!));
+        setLoading(true);
+      };
+      fetchApplyState();
+    }
+  }, [content, postLoading]);
 
   return (
     loading && (
@@ -69,6 +87,31 @@ export default function PostDetail() {
           dangerouslySetInnerHTML={{ __html: content!.body }}
           className="w-full max-w-[1200px] pt-[80px]"
         ></div>
+        {content!.book_club_id && (
+          <>
+            {applyState === 'before' && (
+              <button
+                className="mb-20 h-[90px] w-[1200px] cursor-pointer rounded-xl bg-[#08c818] text-[20px] font-bold text-white"
+                onClick={handleApplyBookclub}
+              >
+                북클럽 신청하기
+              </button>
+            )}
+            {applyState === 'after' && (
+              <button className="mb-20 h-[90px] w-[1200px] cursor-default rounded-xl bg-[#BDBFBD] text-[20px] font-bold text-white">
+                북클럽 신청완료
+              </button>
+            )}
+            {applyState === 'member' && (
+              <button
+                className="mb-20 h-[90px] w-[1200px] cursor-pointer rounded-xl bg-[#08c818] text-[20px] font-bold text-white"
+                onClick={() => navigate(`/bookclub/${content?.book_club_id}`)}
+              >
+                북클럽으로 이동
+              </button>
+            )}
+          </>
+        )}
         {/* 본문 */}
         <Like />
         <PostProfile profile={content!.profile} />

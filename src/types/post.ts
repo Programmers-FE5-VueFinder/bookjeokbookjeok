@@ -20,6 +20,7 @@ export type PostDetail = {
   category: string;
   like: Like[];
   comment: Comment[];
+  book_club_id: string | null;
   created_at: string;
 } | null;
 
