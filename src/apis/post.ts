@@ -227,6 +227,7 @@ export async function getBookPost(bookId: string, from: number, to: number) {
       title,
       body,
       created_at,
+      category,
       user_id,
       profile (
         name,

@@ -4,6 +4,7 @@ export interface Post {
   body: string;
   created_at: string;
   user_id: string;
+  category: string;
   profile: {
     name: string;
     image: string | null;
