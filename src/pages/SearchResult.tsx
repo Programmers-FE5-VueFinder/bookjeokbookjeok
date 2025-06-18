@@ -39,13 +39,23 @@ export default function SearchResult() {
     console.log('searchKeyword:', searchKeyword);
 
     setFilteredUsers(filteredU);
-    setFilteredPosts(filteredP);
+    setFilteredPosts( 
+      [...filteredP].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+    );    
   };
   
   const handleContentButton = (e: React.MouseEvent<HTMLButtonElement>) => {
     const { name } = e.currentTarget;
     setSelectedBtn(name);
   };
+
+  const sortedPosts = [...posts].sort(
+    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
+  
+  const sortedFilteredPosts = [...filteredPosts].sort(
+    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
 
 
   useEffect(() => {
@@ -101,8 +111,6 @@ export default function SearchResult() {
     };    
     loadPosts();
   }, []);
-  
-  
 
   return (
     <>
@@ -118,12 +126,12 @@ export default function SearchResult() {
               onChange={(e) => {
                 const value = e.target.value;
                 setSearchKeyword(value);
-                // handleSearch();
                 if (value.trim() === '') {
                   setFilteredUsers(users); 
                   setFilteredPosts(posts); 
                 } else {
-                  setFilteredPosts(posts); 
+                  setFilteredUsers(users); 
+                  setFilteredPosts(posts);
                 }
               }}
               onKeyDown={(e) => {
@@ -143,9 +151,7 @@ export default function SearchResult() {
               {buttonName.map((item) => {
                 return (
                   <button
-                    className={twMerge(
-                      item === selectedBtn ? 'button-active' : 'button',
-                    )}
+                    className={twMerge(item === selectedBtn ? 'button-active' : 'button',)}
                     onClick={handleContentButton}
                     key={item}
                     name={item}
@@ -215,10 +221,11 @@ export default function SearchResult() {
                     Array.from({ length: 8 }).map((_, idx) => (
                       <div key={idx} className="h-[320px] w-full bg-gray-200 rounded" />
                     ))
-                  ) : (searchKeyword ? filteredPosts : posts).length === 0 ? (
-                    <div className='flex mt-1 col-span-6 text-center text-gray-500 py-10 ml-[49px]'>검색 결과가 없습니다.</div>
+                  ) : (searchKeyword ? sortedFilteredPosts : sortedPosts).length === 0
+                    ? (
+                        <div className='flex mt-1 col-span-6 text-center text-gray-500 py-10 ml-[49px]'>검색 결과가 없습니다.</div>
                   ) : (
-                    (searchKeyword ? filteredPosts : posts)
+                    (searchKeyword ? sortedFilteredPosts : sortedPosts)
                       .slice(0, selectedBtn === '통합 검색' ? 8 : undefined)
                       .map((post) => (
                         <Link key={post.id} to={`/channel/${post.category}/post/${post.id}`}>
