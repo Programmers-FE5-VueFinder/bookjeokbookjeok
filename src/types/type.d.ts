@@ -59,9 +59,14 @@ export interface PostDetail extends Post {
   };
   like: PostDetailResponse['like'];
   comment: PostDetailResponse['comment'];
+  book?: {
+    id: string;
+    cover: string;
+  };
 }
 
 export interface PopularDiaryCardProps {
+  id: string;
   genre: string | null;
   title: string;
   content: string | null | undefined;
@@ -80,6 +85,7 @@ interface Book {
   categoryName: string | null;
   title: string;
   description: string | null;
+  cover: string;
   subInfo?: {
     subTitle: string;
   };

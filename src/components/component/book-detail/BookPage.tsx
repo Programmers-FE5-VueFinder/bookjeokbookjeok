@@ -102,6 +102,7 @@ export default function BookPage({
   useEffect(() => {
     if (isOpen) {
       setVisible(true);
+      setSelectedContent('oneLineReview');
       checkBookmarkStatus();
       loadAverageStar(bookDetail.isbn13).then(setAverageStar);
     } else {

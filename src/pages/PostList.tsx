@@ -32,7 +32,7 @@ export default function PostList() {
   const [selectedSort, setSelectedSort] = useState<string>('');
 
   useEffect(() => {
-    console.log('channelId:', channelId);
+    // console.log('channelId:', channelId);
     const loadPosts = async () => {
       setLoading(true);
       const category = channelId ?? 'all';
@@ -45,9 +45,7 @@ export default function PostList() {
         setLoading(false);
         return;
       }
-      // if (result.data) {
-      //   console.log('백엔드 응답 데이터:', result.data);
-      // }
+      
       const detailPosts: PostDetail[] = await Promise.all(
         result.data.map(async (post: Post) => {
           const detail = await fetchPostDetail(post.id);
@@ -64,6 +62,12 @@ export default function PostList() {
             },
             like: detail?.like ?? [],
             comment: detail?.comment ?? [],
+            book: detail?.book
+              ? {
+                  id: detail.book.id,
+                  cover: detail.book.cover ?? '',
+                }
+              : undefined,
           };
         }),
       );
@@ -80,8 +84,8 @@ export default function PostList() {
     }
   }, [channelId]);
   
-  // // 인기글 정렬
   const sortedPosts = useMemo(() => {
+    // // 인기글 정렬
     if (selectedSort === '인기글') {
       return [...posts].sort((a, b) => b.like.length - a.like.length);
     }
@@ -122,7 +126,7 @@ export default function PostList() {
           )}
         </div>
 
-        <div className="my-[132px] w-[1200px]">
+        <div className="my-[132px] w-full">
           {loading ? (
             <SkeletonCard />
           ) : sortedPosts.length === 0 ? (
@@ -130,33 +134,37 @@ export default function PostList() {
           ) : (
             // 카드 컴포
             <div className="grid h-fit w-[1200px] grid-cols-4 gap-[28px]">
-              {sortedPosts.map((post) => (
-                <Link
-                  key={post.id}
-                  to={`/channel/${post.category}/post/${post.id}`}
-                >
-                  <BookCard
-                    nickname={post.profile.name || '잉크묻은 고양이'}
-                    // badge='' // 임시 뱃지
-                    title={post.title}
-                    body={post.body}
-                    image={post.image}
-                    profileImage={post.profile.image}
-                    likes={post.like.length}
-                    comments={post.comment.length}
-                    id={post.profile.id}
-                    createdAt={new Date(post.created_at).toLocaleDateString()}
-                  />
-                </Link>
-              ))}
+              {sortedPosts.map((post) => {
+                // if (post.category === 'diary') {
+                //   console.log('다이어리 book.cover:', post.book?.cover);
+                // }
+                return (
+                  <Link key={post.id} to={`/channel/${post.category}/post/${post.id}`}>
+                    <BookCard
+                      nickname={post.profile.name || '잉크묻은 고양이'}
+                      title={post.title}
+                      body={post.body}
+                      image={
+                        post.category === 'diary'
+                          ? post.book?.cover ?? ''  
+                          : post.image             
+                      }
+                      profileImage={post.profile.image}
+                      likes={post.like.length}
+                      comments={post.comment.length}
+                      id={post.profile.id}
+                      createdAt={new Date(post.created_at).toLocaleDateString()}
+                      category={post.category}
+                      book_id={post.book?.id}
+                    />
+                  </Link>
+                );
+              })}
+
             </div>
           )}
         </div>
       </div>
-
-      {/* <Link to={`/channel/${params.channelId}/post/1`}>
-        {params.channelId}채널 1번글
-      </Link> */}
     </>
   );
 }
