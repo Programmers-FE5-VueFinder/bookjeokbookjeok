@@ -163,7 +163,7 @@ export default function BookClub() {
                       명
                     </p>
                   </div>
-                  <div className="flex flex-row gap-5">
+                  <div className="flex flex-row flex-wrap gap-5">
                     {applyList.map((user) => (
                       <UserCard
                         key={user.id}
@@ -201,7 +201,7 @@ export default function BookClub() {
                     명
                   </p>
                 </div>
-                <div className="flex flex-row gap-5">
+                <div className="flex flex-row flex-wrap gap-5">
                   {bookclub!.member?.map((member) => (
                     <UserCard key={member.id} user={member} />
                   ))}
