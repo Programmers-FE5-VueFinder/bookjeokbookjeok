@@ -29,17 +29,18 @@ export default function AlarmList({ alarm }: { alarm: Alarm }) {
       <div className="absolute top-[8px] h-[5px] w-[5px] rounded-full bg-[#FF3333]" />
       <div className="ml-3 flex flex-col gap-1">
         <p className="line-clamp-2 cursor-pointer break-all">
-          {alarm.type !== 'book-club-approve' && alarm.type !== '' && (
-            <>
-              <Link
-                to={`/profile/${alarm.sender!.id}`}
-                className="font-semibold"
-              >
-                {alarm.sender!.name}
-              </Link>
-              <span>님이</span>
-            </>
-          )}
+          {alarm.type !== 'book-club-approve' &&
+            alarm.type !== 'book-club-reject' && (
+              <>
+                <Link
+                  to={`/profile/${alarm.sender!.id}`}
+                  className="font-semibold"
+                >
+                  {alarm.sender!.name}
+                </Link>
+                <span>님이</span>
+              </>
+            )}
           {alarm.type === 'comment' && (
             <span onClick={handleReadAlarm}>
               {' '}
