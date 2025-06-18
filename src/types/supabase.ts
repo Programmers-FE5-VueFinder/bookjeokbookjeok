@@ -337,37 +337,27 @@ export type Database = {
         Row: {
           created_at: string;
           id: string;
-          reference_category: string;
-          reference_id: string;
+          post_id: string;
           user_id: string;
         };
         Insert: {
           created_at?: string;
           id?: string;
-          reference_category: string;
-          reference_id: string;
+          post_id: string;
           user_id: string;
         };
         Update: {
           created_at?: string;
           id?: string;
-          reference_category?: string;
-          reference_id?: string;
+          post_id?: string;
           user_id?: string;
         };
         Relationships: [
           {
-            foreignKeyName: 'like_reference_id_fkey';
-            columns: ['reference_id'];
+            foreignKeyName: 'like_post_id_fkey';
+            columns: ['post_id'];
             isOneToOne: false;
             referencedRelation: 'post';
-            referencedColumns: ['id'];
-          },
-          {
-            foreignKeyName: 'like_reference_id_fkey1';
-            columns: ['reference_id'];
-            isOneToOne: false;
-            referencedRelation: 'review';
             referencedColumns: ['id'];
           },
           {
@@ -485,6 +475,7 @@ export type Database = {
       profile: {
         Row: {
           appellation: string | null;
+          book_club_id: string[] | null;
           created_at: string;
           email: string | null;
           id: string;
@@ -494,6 +485,7 @@ export type Database = {
         };
         Insert: {
           appellation?: string | null;
+          book_club_id?: string[] | null;
           created_at?: string;
           email?: string | null;
           id?: string;
@@ -503,6 +495,7 @@ export type Database = {
         };
         Update: {
           appellation?: string | null;
+          book_club_id?: string[] | null;
           created_at?: string;
           email?: string | null;
           id?: string;
