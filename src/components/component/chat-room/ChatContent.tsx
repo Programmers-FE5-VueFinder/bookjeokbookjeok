@@ -10,12 +10,20 @@ export default function ChatContent({
 }) {
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  const messageGroup = chats.reduce<{ [key: string]: Chat[] }>((acc, chat) => {
-    const userId = chat.profile.id;
-    if (!acc[userId]) acc[userId] = [];
-    acc[userId].push(chat);
-    return acc;
-  }, {});
+  const messageGroup: Chat[][] = [];
+  let lastId = '';
+  let message: Chat[] = [];
+
+  for (const chat of chats) {
+    if (chat.profile.id !== lastId) {
+      if (message.length) messageGroup.push([...message]);
+      message = [chat];
+      lastId = chat.profile.id;
+    } else {
+      message.push(chat);
+    }
+  }
+  if (message.length) messageGroup.push(message);
 
   useEffect(() => {
     bottomRef.current!.scrollIntoView({ behavior: 'smooth' });
@@ -23,19 +31,21 @@ export default function ChatContent({
 
   return (
     <>
-      <div className="flex h-[calc(100%-220px)] w-full flex-col gap-5 overflow-y-auto whitespace-pre-line">
-        {Object.entries(messageGroup).map(([userId, messages]) => (
-          <ChatBubbleGroup
-            key={`${userId}-${messages[0].id}`}
-            isMy={userId === myId}
-            user={messages[0].profile}
-            message={messages.map((msg) => ({
-              id: msg.id,
-              message: msg.message,
-              time: msg.created_at,
-            }))}
-          />
-        ))}
+      <div className="flex h-[calc(100%-220px)] w-full flex-col gap-5 overflow-y-scroll pl-[10px] whitespace-pre-line">
+        {messageGroup.map((messages) => {
+          return (
+            <ChatBubbleGroup
+              key={`${messages[0].profile.id}-${messages[0].id}`}
+              isMy={messages[0].profile.id === myId}
+              user={messages[0].profile}
+              message={messages.map((msg) => ({
+                id: msg.id,
+                message: msg.message,
+                time: msg.created_at,
+              }))}
+            />
+          );
+        })}
         <div ref={bottomRef} />
       </div>
     </>
