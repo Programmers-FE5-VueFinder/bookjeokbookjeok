@@ -9,6 +9,13 @@ import supabase from '../../utils/supabase';
 import { isEmailDuplicated, isNameDuplicated } from '../../apis/profile';
 import { useAuthStore } from '../../store/authStore';
 
+const DEFAULT_IMAGE_URL = [
+  'https://nnmxnwggcalqmvwecxur.supabase.co/storage/v1/object/public/image/public/default_avatars/profile1.png',
+  'https://nnmxnwggcalqmvwecxur.supabase.co/storage/v1/object/public/image/public/default_avatars/profile2.png',
+  'https://nnmxnwggcalqmvwecxur.supabase.co/storage/v1/object/public/image/public/default_avatars/profile3.png',
+  'https://nnmxnwggcalqmvwecxur.supabase.co/storage/v1/object/public/image/public/default_avatars/profile4.png',
+];
+
 type ConsentKey = 'use' | 'personal' | 'marketing';
 
 interface SignUpModalProps {
@@ -131,9 +138,21 @@ export default function SignUpModal({
                   return;
                 }
 
+                const randomIndex = Math.floor(
+                  Math.random() * DEFAULT_IMAGE_URL.length,
+                );
+                const randomImage = DEFAULT_IMAGE_URL[randomIndex];
+
                 const { error: profileError } = await supabase
                   .from('profile')
-                  .upsert([{ id: userId, name: name, email: email }]);
+                  .upsert([
+                    {
+                      id: userId,
+                      name: name,
+                      email: email,
+                      image: randomImage,
+                    },
+                  ]);
 
                 if (profileError) {
                   console.error('프로필 저장 실패:', profileError.message);
