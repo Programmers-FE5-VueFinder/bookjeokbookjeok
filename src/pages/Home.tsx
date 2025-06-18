@@ -196,22 +196,26 @@ export default function Home() {
           )}
 
           {isLogin === true && (
-            <div className="flex justify-between w-[590px] h-[130px] px-[26px] pt-[18px] bg-[#70B5FF] rounded-[20px] overflow-hidden">
+            <div className="flex h-[130px] w-[590px] justify-between overflow-hidden rounded-[20px] bg-[#70B5FF] px-[26px] pt-[18px]">
               <div>
-                <h2 className="text-[20px] font-semibold leading-[24px] text-[#202020]">환영합니다!<br/>오늘도 즐거운 독서 되세요</h2>
-                <button 
-                  className="flex items-center justify-center w-[100px] h-[30px] p-2 mt-[17px] bg-[#F1F1F1]/50 text-[16px] text-[#2C2C2C] font-semibold rounded-[20px] cursor-pointer"
+                <h2 className="text-[20px] leading-[24px] font-semibold text-[#202020]">
+                  환영합니다!
+                  <br />
+                  오늘도 즐거운 독서 되세요
+                </h2>
+                <button
+                  className="mt-[17px] flex h-[30px] w-[100px] cursor-pointer items-center justify-center rounded-[20px] bg-[#F1F1F1]/50 p-2 text-[16px] font-semibold text-[#2C2C2C]"
                   onClick={() => navigate('/channel/diary')}
                 >
                   책 둘러보기
                 </button>
               </div>
-            
-              <div className="self-end translate-y-[30px]">
-                <img 
-                  src={home_reading_girl} 
-                  alt="home_reading_girl" 
-                  className="w-[163px] h-[163px] "
+
+              <div className="translate-y-[30px] self-end">
+                <img
+                  src={home_reading_girl}
+                  alt="home_reading_girl"
+                  className="h-[163px] w-[163px]"
                 />
               </div>
             </div>
