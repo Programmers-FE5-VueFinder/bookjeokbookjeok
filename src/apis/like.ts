@@ -54,3 +54,17 @@ export const hasUserLikedPost = async (user_id: string, post_id: string) => {
 
   return !!data;
 };
+
+export async function getLikeCount(postId: string) {
+  const { count, error } = await supabase
+    .from('like')
+    .select('*', { count: 'exact', head: true })
+    .eq('post_id', postId);
+
+  if (error) {
+    console.error('좋아요 수 조회 실패:', error);
+    return 0;
+  }
+
+  return count ?? 0;
+}
