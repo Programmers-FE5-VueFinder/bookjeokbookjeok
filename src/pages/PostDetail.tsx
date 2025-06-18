@@ -15,12 +15,14 @@ import { applyBookClub, getApplyState } from '../apis/book-club';
 import Like from '../components/component/post-detail/Like';
 import type { CommentTypeBase } from '../types/type';
 import { getComments } from '../apis/comment';
+import DiarySelectBook from '../components/component/post-detail/DiarySelectBook';
 
 export default function PostDetail() {
   const { postId } = useParams();
   const [content, setContent] = useState<PostDetail | undefined>(undefined);
   const [postLoading, setPostLoading] = useState(false);
   const [applyState, setApplyState] = useState('');
+  console.log(postId);
 
   const handleApplyBookclub = async () => {
     await applyBookClub(content!.profile.id, content!.book_club_id!);
@@ -63,6 +65,7 @@ export default function PostDetail() {
       fetchApplyState();
     }
   }, [content, postLoading]);
+  console.log(content);
 
   return (
     loading && (
@@ -84,10 +87,16 @@ export default function PostDetail() {
           writeUserId={content!.profile.id}
           path={postId!}
         />
-        {/* 본문 */}
+        {content?.book ? (
+          <DiarySelectBook
+            imageSrc={content?.book?.cover}
+            title={content?.book?.title}
+            author={content?.book?.author}
+          />
+        ) : null}
         <div
           dangerouslySetInnerHTML={{ __html: content!.body }}
-          className="w-full max-w-[1200px] pt-[80px]"
+          className="w-full max-w-[1200px]"
         ></div>
         {content!.book_club_id && (
           <>
