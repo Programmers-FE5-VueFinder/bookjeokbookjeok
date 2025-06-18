@@ -3,6 +3,7 @@ import { IoMdHeartEmpty } from 'react-icons/io';
 import { useAuthStore } from '../../../store/authStore';
 import { hasUserLikedPost, toggleLikeToPost } from '../../../apis/like';
 import { toast } from 'react-toastify';
+import { sendLikeNotification } from '../../../apis/notification';
 
 interface LikeProps {
   postId: string;
@@ -42,6 +43,11 @@ export default function Like({ postId, onLikeToggle }: LikeProps) {
     if (result?.status === 'liked') {
       setLikeStatus(true);
       onLikeToggle?.();
+
+      await sendLikeNotification({
+        postId,
+        senderId: userId,
+      });
     } else if (result?.status === 'unliked') {
       setLikeStatus(false);
       onLikeToggle?.();
