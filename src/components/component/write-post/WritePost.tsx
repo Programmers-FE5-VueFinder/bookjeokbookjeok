@@ -374,7 +374,11 @@ export default function WritePost({
                   type="submit"
                   className="cursor-pointer rounded-[5px] bg-[#F1F1F1] px-[23px] py-[8px] text-[14px] hover:bg-[#41D94D] hover:font-semibold hover:text-[#fff]"
                 >
-                  {bookclubId && isCreateBookClub ? '수정하기' : '발행하기'}
+                  {isCreateBookClub
+                    ? bookclubId
+                      ? '수정하기'
+                      : '생성하기'
+                    : '발행하기'}
                 </button>
               </div>
             </div>
