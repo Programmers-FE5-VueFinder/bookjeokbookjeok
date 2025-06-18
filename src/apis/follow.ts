@@ -8,6 +8,21 @@ export async function fetchAddFollow(currentUser: string, targetUser: string) {
   if (error) throw error;
   return follow;
 }
+export async function isFollowing(targetUser: string, currentUser: string) {
+  const { data, error } = await supabase
+    .from('follow')
+    .select('id')
+    .eq('follower_id', currentUser)
+    .eq('following_id', targetUser)
+    .maybeSingle();
+
+  if (error) {
+    console.error('팔로우 여부 조회 실패:', error);
+    return false;
+  }
+
+  return !data;
+}
 
 export async function fetchDeleteFollow(
   currentUser: string,

@@ -92,9 +92,9 @@ export async function createPost(
   body: string,
   image: string | null = null,
   category: 'diary' | 'community',
-  book_id: string,
+  book_id?: string,
   book?: {
-    id: string;
+    id: string | undefined;
     star: number | undefined;
   },
   book_club_id?: string,
@@ -115,7 +115,7 @@ export async function createPost(
 
   if (book) {
     await supabase.from('book_tag').insert({
-      book_id: book.id,
+      book_id: book.id as string,
       star: book.star,
       reference_category: category,
       reference_id: post.data!.id,

@@ -17,12 +17,16 @@ import type { CommentTypeBase } from '../types/type';
 import { getComments } from '../apis/comment';
 import { IoMdHeartEmpty } from 'react-icons/io';
 import { getLikeCount } from '../apis/like';
+import DiarySelectBook from '../components/component/post-detail/DiarySelectBook';
+import { useAuthStore } from '../store/authStore';
+import { isFollowing } from '../apis/follow';
 
 export default function PostDetail() {
   const { postId } = useParams();
   const [content, setContent] = useState<PostDetail | undefined>(undefined);
   const [postLoading, setPostLoading] = useState(false);
   const [applyState, setApplyState] = useState('');
+  const [followToggle, setFollowToggle] = useState(true);
 
   const handleApplyBookclub = async () => {
     await applyBookClub(content!.profile.id, content!.book_club_id!);
@@ -33,6 +37,7 @@ export default function PostDetail() {
   const navigate = useNavigate();
   const [comments, setComments] = useState<CommentTypeBase[]>([]);
   const [likeCount, setLikeCount] = useState(0);
+  const session = useAuthStore((state) => state.session);
 
   const fetchComments = useCallback(async () => {
     if (!postId) return;
@@ -53,6 +58,15 @@ export default function PostDetail() {
       console.error('좋아요 수 불러오기 실패', err);
     }
   }, [postId]);
+
+  useEffect(() => {
+    const response = async () => {
+      const response = await isFollowing(content!.id, '');
+      setFollowToggle(response);
+      return;
+    };
+    response();
+  }, []);
 
   useEffect(() => {
     if (!postId) navigate(-1);
@@ -79,6 +93,7 @@ export default function PostDetail() {
       fetchApplyState();
     }
   }, [content, postLoading]);
+  console.log(content);
 
   return (
     loading && (
@@ -93,6 +108,8 @@ export default function PostDetail() {
         )}
         <PostHeader
           setModalShow={setModalShow}
+          setFollowToggle={setFollowToggle}
+          followToggle={followToggle}
           title={content!.title}
           name={content!.profile.name}
           category={content!.category}
@@ -100,7 +117,13 @@ export default function PostDetail() {
           writeUserId={content!.profile.id}
           path={postId!}
         />
-        {/* 본문 */}
+        {content?.book ? (
+          <DiarySelectBook
+            imageSrc={content?.book?.cover}
+            title={content?.book?.title}
+            author={content?.book?.author}
+          />
+        ) : null}
         <div
           dangerouslySetInnerHTML={{ __html: content!.body }}
           className="w-full max-w-[1200px] min-h-[430px] pt-[80px]"
@@ -132,7 +155,12 @@ export default function PostDetail() {
         )}
         {/* 본문 */}
         <Like postId={postId!} onLikeToggle={fetchLikeCount} />
-        <PostProfile profile={content!.profile} />
+        <PostProfile
+          profile={content!.profile}
+          currentAccount={session?.user.id}
+          setFollowToggle={setFollowToggle}
+          followToggle={followToggle}
+        />
         <div className="flex h-[110px] w-[1200px] items-center">
           <span className="flex items-center gap-[8px] text-[16px] font-semibold text-[#333333]">
             <FaRegComment />
