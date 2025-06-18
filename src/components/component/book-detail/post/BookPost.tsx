@@ -6,7 +6,13 @@ import BookPostSkeleton from './BookPostSkeleton';
 import { BookPostItem } from './BookPostItem';
 import { toast } from 'react-toastify';
 
-export function BookPost({ isbn }: { isbn: string }) {
+export function BookPost({
+  isbn,
+  closeModal,
+}: {
+  isbn: string;
+  closeModal: () => void;
+}) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
@@ -66,7 +72,9 @@ export function BookPost({ isbn }: { isbn: string }) {
           등록된 포스트가 없습니다.
         </p>
       ) : (
-        posts.map((post) => <BookPostItem key={post.id} post={post} />)
+        posts.map((post) => (
+          <BookPostItem key={post.id} post={post} closeModal={closeModal} />
+        ))
       )}
 
       <div ref={loadMoreRef} className="h-[1px]" />

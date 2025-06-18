@@ -7,7 +7,13 @@ import { getCommentCount } from '../../../../apis/comment';
 import ProfileImage from '../../MyPage/ProfileImg';
 import { getLikeCount } from '../../../../apis/like';
 
-export function BookPostItem({ post }: { post: Post }) {
+export function BookPostItem({
+  post,
+  closeModal,
+}: {
+  post: Post;
+  closeModal: () => void;
+}) {
   const navigate = useNavigate();
   const [countComment, setCountComment] = useState(0);
   const [countLike, setCountLike] = useState(0);
@@ -24,7 +30,10 @@ export function BookPostItem({ post }: { post: Post }) {
     <div className="max-h-full w-full flex-col justify-center border-b border-b-[#D8D8D8] py-[15px] text-[16px]">
       <div className="mb-[10px] flex">
         <div
-          onClick={() => navigate(`/profile/${post.user_id}`)}
+          onClick={() => {
+            navigate(`/profile/${post.user_id}`);
+            closeModal();
+          }}
           className="flex cursor-pointer items-center gap-[10px]"
         >
           {/* <img

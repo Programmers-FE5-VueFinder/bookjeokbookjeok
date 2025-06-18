@@ -239,13 +239,14 @@ export default function BookPage({
                 isbn={bookDetail.isbn13}
                 bookDetail={bookDetail}
                 onReviewSubmit={refreshAverageStar}
+                closeModal={closeModal}
               />
             )}
             {selectedContent === 'relatedContents' && (
               <RelatedContents genre={bookDetail.categoryId} />
             )}
             {selectedContent === 'post' && (
-              <BookPost isbn={bookDetail.isbn13} />
+              <BookPost isbn={bookDetail.isbn13} closeModal={closeModal} />
             )}
           </div>
 
