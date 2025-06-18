@@ -33,10 +33,6 @@ export default function BookSearchModal({
   }, [query]);
 
   useEffect(() => {
-    if (query.length === 0) {
-      setResults([]);
-    }
-
     const delaySearch = setTimeout(() => {
       if (query.trim()) {
         handleSearch();
@@ -60,7 +56,9 @@ export default function BookSearchModal({
     >
       <div
         className={`relative mt-[20vh] w-[628px] justify-center rounded-[5px] bg-white px-[30px] py-[20px] transition-all duration-200 ${
-          results.length > 0 || isLoading ? 'max-h-[550px]' : 'max-h-[130px]'
+          isLoading || results.length > 0 || query.trim() !== ''
+            ? 'max-h-[550px]'
+            : 'max-h-[130px]'
         } overflow-hidden`}
         onClick={(e) => e.stopPropagation()}
       >
@@ -96,33 +94,35 @@ export default function BookSearchModal({
           <div className="flex h-[300px] items-center justify-center">
             <div className="h-6 w-6 animate-spin rounded-full border-4 border-[#08C818] border-t-transparent"></div>
           </div>
-        ) : (
-          results.length > 0 && (
-            <ul className="max-h-[410px] overflow-y-auto transition-opacity duration-200">
-              {results.map((book: BookDetail) => (
-                <li
-                  key={book.isbn}
-                  className="group flex cursor-pointer p-2 hover:bg-[#08C818]/20"
-                  onClick={() => {
-                    setSeletedBook(book);
-                    console.log(book.isbn);
-                    onClose();
-                    setQuery('');
-                  }}
-                >
-                  <div className="flex w-full flex-col text-left">
-                    <p className="line-clamp-1 max-w-full font-medium group-hover:font-semibold">
-                      {book.title}
-                    </p>
-                    <p className="font-medium whitespace-nowrap text-black/50">
-                      {book.author.split('(')[0]}
-                    </p>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )
-        )}
+        ) : results.length > 0 ? (
+          <ul className="max-h-[410px] overflow-y-auto transition-opacity duration-200">
+            {results.map((book: BookDetail) => (
+              <li
+                key={book.isbn}
+                className="group flex cursor-pointer p-2 hover:bg-[#08C818]/20"
+                onClick={() => {
+                  setSeletedBook(book);
+                  console.log(book.isbn);
+                  onClose();
+                  setQuery('');
+                }}
+              >
+                <div className="flex w-full flex-col text-left">
+                  <p className="line-clamp-1 max-w-full font-medium group-hover:font-semibold">
+                    {book.title}
+                  </p>
+                  <p className="font-medium whitespace-nowrap text-black/50">
+                    {book.author.split('(')[0]}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : !isLoading && query.trim().length > 1 && results.length === 0 ? (
+          <div className="mt-[40px] flex h-[300px] items-center justify-center text-[#999]">
+            검색 결과가 없습니다.
+          </div>
+        ) : null}
       </div>
     </div>
   );
