@@ -6,7 +6,7 @@ import { useNavigate, useParams } from 'react-router';
 import { useAuthStore } from '../store/authStore';
 
 export default function EditPost() {
-  const { post_id } = useParams();
+  const { postId } = useParams();
   const [content, setContent] = useState<PostDetail>();
   const [loading, setLoading] = useState(false);
 
@@ -20,7 +20,7 @@ export default function EditPost() {
   useEffect(() => {
     async function postDetail() {
       try {
-        const response = await fetchPostDetail(post_id as string);
+        const response = await fetchPostDetail(postId as string);
         console.log(response);
         setContent(response);
         setLoading(true);
@@ -29,7 +29,7 @@ export default function EditPost() {
       }
     }
     postDetail();
-  }, [post_id]);
+  }, [postId]);
 
   return (
     <>

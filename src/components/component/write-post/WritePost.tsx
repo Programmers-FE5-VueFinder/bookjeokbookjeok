@@ -30,14 +30,12 @@ export default function WritePost({
   editPostData?: PostDetail;
   bookTitle?: string;
 }) {
-  //path : diary, freetalk
   const path = useParams();
   const navigate = useNavigate();
   const bookclubId = path.bookclub_id;
-  const [category, setCategory] = useState('diary');
+  const [category, setCategory] = useState('');
   console.log('bookclubId: ', bookclubId);
   const [rating, setRating] = useState<number | undefined>();
-  const [title, setTitle] = useState('');
   const [value, setValue] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [selectedBook, setSeletedBook] = useState<BookDetail | null>(null);
@@ -49,6 +47,9 @@ export default function WritePost({
   const onClose = () => setShowModal(false);
 
   const findThumbnailImage = (body: string) => {
+    if (selectedBook) {
+      return selectedBook.cover;
+    }
     const match = body.match(/<img[^>]+src="([^"]+)"[^>]*>/);
     const image = match ? match[1] : null;
     return image;
@@ -56,20 +57,29 @@ export default function WritePost({
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const title = titleRef!.current?.value.toString();
     const body = value.toString();
     const image = selectedBook?.cover
       ? selectedBook.cover
       : findThumbnailImage(body);
     const bookInfo = {
-      id: selectedBook!.isbn13,
+      id: selectedBook?.isbn13,
       star: rating,
     };
 
     if (!title || !body) {
       if (!title) {
-        Toastfy('error', '제목을 작성 해주세요');
+        if (category === 'diary' || category === 'community') {
+          Toastfy('error', '제목을 작성 해주세요');
+        } else {
+          Toastfy('error', '클럽 이름을 작성 해주세요');
+        }
       } else if (body === '<p><br></p>') {
-        Toastfy('error', '본문을 작성 해주세요');
+        if (category === 'diary' || category === 'community') {
+          Toastfy('error', '본문을 작성 해주세요');
+        } else {
+          Toastfy('error', '클럽 정보를 작성 해주세요');
+        }
       } else if (category === 'diary' && !selectedBook) {
         Toastfy('error', '도서를 선택해 주세요.');
       }
@@ -91,6 +101,7 @@ export default function WritePost({
         return;
       } catch (e) {
         console.log(e);
+        Toastfy('error', '수정에 실패했습니다');
       }
     }
 
@@ -98,6 +109,7 @@ export default function WritePost({
     if (bookclubId && isCreateBookClub) {
       editBookClub(bookclubId, title, body);
       navigate(`/bookclub/${bookclubId}`);
+      Toastfy('success', '수정이 완료되었습니다');
       return;
     }
 
@@ -128,9 +140,8 @@ export default function WritePost({
             data!.id,
             bookInfo,
           );
-          console.log(response);
 
-          navigate(`/channel/diary/post/${response}`);
+          navigate(`/post/${response}`);
         } catch (e) {
           console.log(e);
           Toastfy('error', '작성에 실패했습니다');
@@ -139,16 +150,31 @@ export default function WritePost({
       }
       case 'community': {
         // community post 생성 api
+        try {
+          const response = await createPost(
+            session!.user.id,
+            title,
+            body,
+            image,
+            category,
+          );
+          navigate(`/post/${response}`);
+        } catch (e) {
+          console.log(e);
+          Toastfy('error', '작성에 실패했습니다');
+        }
         return;
       }
       case 'book-club': {
         const post = await createBookClubPost(title, body, image, bookclubId!);
-        navigate(`/channel/book_club/post/${post}`);
+        navigate(`/post/${post}`);
+        Toastfy('success', '작성이 완료되었습니다');
         return;
       }
       default: {
         const bookclub_id = await createBookClub(title, body);
         navigate(`/bookclub/${bookclub_id}`);
+        Toastfy('success', '북클럽이 생성되었습니다');
       }
     }
   };
@@ -184,7 +210,7 @@ export default function WritePost({
       seletedBookFind();
     }
     if (editPostData) {
-      setTitle(editPostData.title);
+      titleRef!.current!.value = editPostData.title;
       setValue(editPostData.body);
       setCategory(editPostData.category);
     }
@@ -214,8 +240,6 @@ export default function WritePost({
                 <input
                   ref={titleRef}
                   type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
                   placeholder="제목을 입력해 주세요."
                   className="h-fir mx-auto my-[20px] block w-[1200px] max-w-[1200px] pl-[5px] text-[24px] text-[#666666]"
                 />
@@ -244,7 +268,7 @@ export default function WritePost({
                   category={category}
                   setValue={setValue}
                   value={value}
-                  selectedBook={selectedBook}
+                  selectedBook={selectedBook!}
                 />
               </div>
               <div className="flex h-[60px] min-h-[60px] w-[100%] justify-center border-t border-t-[#D5D5D5]">
@@ -334,7 +358,7 @@ export default function WritePost({
                 category={category}
                 setValue={setValue}
                 value={value}
-                selectedBook={selectedBook}
+                selectedBook={selectedBook!}
               />
             </div>
             <div className="flex h-[60px] min-h-[60px] w-[100%] justify-center border-t border-t-[#D5D5D5]">
@@ -350,7 +374,11 @@ export default function WritePost({
                   type="submit"
                   className="cursor-pointer rounded-[5px] bg-[#F1F1F1] px-[23px] py-[8px] text-[14px] hover:bg-[#41D94D] hover:font-semibold hover:text-[#fff]"
                 >
-                  {bookclubId && isCreateBookClub ? '수정하기' : '발행하기'}
+                  {isCreateBookClub
+                    ? bookclubId
+                      ? '수정하기'
+                      : '생성하기'
+                    : '발행하기'}
                 </button>
               </div>
             </div>

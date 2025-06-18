@@ -14,6 +14,7 @@ import {
 } from '../apis/book-club';
 import { Link, useNavigate, useParams } from 'react-router';
 import UserCard from '../components/common/UserCard';
+import Toastfy from '../components/common/Toastfy';
 
 export default function BookClub() {
   const [selectedBtn, setSelectedBtn] = useState<string>('클럽 정보');
@@ -35,11 +36,13 @@ export default function BookClub() {
 
   const handleDeleteBookclub = () => {
     navigate('/');
+    Toastfy('success', '북클럽이 삭제되었습니다');
     deleteBookClub(bookclub_id!);
   };
 
   const handleLeaveBookclub = () => {
     navigate('/');
+    Toastfy('success', '북클럽에서 탈퇴했습니다');
     leaveBookClub(bookclub_id!);
   };
 
@@ -83,7 +86,41 @@ export default function BookClub() {
     }
   }, [selectedBtn]);
 
-  if (isLoading) return <>로딩중..</>;
+  if (isLoading)
+    return (
+      <div>
+        {/* 클럽 이름 에리어 */}
+        <div className="sticky top-0 flex min-h-[200px] content-center justify-center self-start bg-white">
+          <div className="relative flex content-center justify-center">
+            <span className="mb-[40px] flex items-center justify-center text-[32px] font-bold"></span>
+            {/* 버튼 에리어 */}
+            <div className="absolute bottom-0 flex h-[40px] w-screen content-center items-center justify-center self-start bg-white shadow-lg shadow-gray-100">
+              <div className="flex w-[900px] flex-row">
+                {buttonName.map((item) => {
+                  return (
+                    <button
+                      className={twMerge(
+                        item === selectedBtn ? 'button-active' : 'button',
+                        'cursor-pointer',
+                      )}
+                      key={item}
+                      name={item}
+                    >
+                      {item}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="flex h-screen flex-col items-center justify-center bg-[#FAFAFA]">
+          <div className="flex w-full justify-center text-wrap">
+            <div className="mx-[100px] flex w-[900px] scroll-m-[200px] flex-col"></div>
+          </div>
+        </div>
+      </div>
+    );
   return (
     <>
       <div>
@@ -163,7 +200,7 @@ export default function BookClub() {
                       명
                     </p>
                   </div>
-                  <div className="flex flex-row gap-5">
+                  <div className="flex flex-row flex-wrap gap-5">
                     {applyList.map((user) => (
                       <UserCard
                         key={user.id}
@@ -201,7 +238,7 @@ export default function BookClub() {
                     명
                   </p>
                 </div>
-                <div className="flex flex-row gap-5">
+                <div className="flex flex-row flex-wrap gap-5">
                   {bookclub!.member?.map((member) => (
                     <UserCard key={member.id} user={member} />
                   ))}

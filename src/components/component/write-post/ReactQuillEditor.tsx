@@ -17,7 +17,7 @@ export default function ReactQuillEditor({
   category: string;
   setValue: (value: string) => void;
   value: string;
-  selectedBook: BookDetail | null;
+  selectedBook: BookDetail;
 }) {
   const quillRef = useRef<ReactQuill | null>(null);
   const modules = useMemo(() => {
@@ -96,7 +96,10 @@ export default function ReactQuillEditor({
 
     setTimeout(() => {
       if (!quillRef.current || category !== 'community') return;
+      console.log(selectedBook);
       const quill = quillRef!.current!.getEditor();
+      const range = quill.getSelection();
+      console.log(range?.index);
 
       quill.insertEmbed(0, 'detailBook', {
         bookId: selectedBook.isbn,
