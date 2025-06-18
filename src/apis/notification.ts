@@ -105,3 +105,51 @@ export async function readAllAlarm() {
     .update({ is_read: true })
     .eq('user_id', user!.id);
 }
+
+export async function sendCommentNotification({
+  postId,
+  senderId,
+}: {
+  postId: string;
+  senderId: string;
+}) {
+  const { data: post } = await supabase
+    .from('post')
+    .select('user_id')
+    .eq('id', postId)
+    .single();
+
+  if (!post || post.user_id === senderId) return;
+
+  await supabase.from('notification').insert({
+    user_id: post.user_id,
+    sender_id: senderId,
+    type: 'comment',
+    object_id: postId,
+    is_read: false,
+  });
+}
+
+export async function sendReplyNotification({
+  parentCommentId,
+  senderId,
+}: {
+  parentCommentId: string;
+  senderId: string;
+}) {
+  const { data: parentComment } = await supabase
+    .from('comment')
+    .select('user_id, post_id')
+    .eq('id', parentCommentId)
+    .single();
+
+  if (!parentComment || parentComment.user_id === senderId) return;
+
+  await supabase.from('notification').insert({
+    user_id: parentComment.user_id,
+    sender_id: senderId,
+    type: 'reply',
+    object_id: parentComment.post_id,
+    is_read: false,
+  });
+}
