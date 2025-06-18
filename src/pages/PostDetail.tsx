@@ -18,23 +18,29 @@ import { getComments } from '../apis/comment';
 import { IoMdHeartEmpty } from 'react-icons/io';
 import { getLikeCount } from '../apis/like';
 import Toastfy from '../components/common/Toastfy';
+import { useAuthStore } from '../store/authStore';
 
 export default function PostDetail() {
   const { postId } = useParams();
   const [content, setContent] = useState<PostDetail | undefined>(undefined);
   const [postLoading, setPostLoading] = useState(false);
   const [applyState, setApplyState] = useState('');
-
-  const handleApplyBookclub = async () => {
-    await applyBookClub(content!.profile.id, content!.book_club_id!);
-    Toastfy('success', '신청이 완료되었습니다');
-    setApplyState('after');
-  };
   const [modalShow, setModalShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [comments, setComments] = useState<CommentTypeBase[]>([]);
   const [likeCount, setLikeCount] = useState(0);
+  const isLogIn = useAuthStore((state) => state.isLogin);
+
+  const handleApplyBookclub = async () => {
+    if (isLogIn) {
+      await applyBookClub(content!.profile.id, content!.book_club_id!);
+      Toastfy('success', '신청이 완료되었습니다');
+      setApplyState('after');
+    } else {
+      Toastfy('error', '로그인이 필요합니다.');
+    }
+  };
 
   const fetchComments = useCallback(async () => {
     if (!postId) return;
