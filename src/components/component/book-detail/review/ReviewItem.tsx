@@ -31,8 +31,12 @@ export function ReviewItem({ item }: { item: Review }) {
             className="mt-[5px]"
           />
         </div>
-        <p className="ml-[40px] text-[16px] text-[#333333]">{item.review}</p>
-        <p className="ml-[40px] text-[16px]">{getElapsedTime(item.date)}</p>
+        <p className="ml-[35px] text-left text-[16px] text-[#333333]">
+          {item.review}
+        </p>
+        <p className="ml-[35px] text-left text-[16px]">
+          {getElapsedTime(item.date)}
+        </p>
       </div>
     </div>
   );

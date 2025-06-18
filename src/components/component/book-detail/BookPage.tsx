@@ -148,7 +148,7 @@ export default function BookPage({
               </div>
               <div className="custom-scrollbar relative max-h-[500px] overflow-auto px-[32px] pt-[20px]">
                 <div className="flex flex-col gap-[20px] text-[16px] font-semibold">
-                  <span className="text-[#08C818]">
+                  <span className="text-left text-[#08C818]">
                     {bookDetail.categoryName.split('>')[1]}
                   </span>
                   <div className="flex gap-[5px]">
@@ -183,7 +183,7 @@ export default function BookPage({
                     </div>
                   </span>
                 </div>
-                <div className="mt-[15px] max-h-[200px] pb-[20px] text-[16px] font-medium">
+                <div className="mt-[15px] max-h-[200px] pb-[20px] text-left text-[16px] font-medium">
                   {bookDetail.description.length !== 0
                     ? bookDetail.description
                     : '등록된 도서 소개가 없습니다.'}

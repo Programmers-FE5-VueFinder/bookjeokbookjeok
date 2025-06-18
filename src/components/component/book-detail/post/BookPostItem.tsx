@@ -44,10 +44,10 @@ export function BookPostItem({ post }: { post: Post }) {
         onClick={() => navigate(`/post/${post.id}`)}
         className="flex cursor-pointer flex-col gap-[10px] font-medium"
       >
-        <span className="line-clamp-1 text-[16px] font-semibold">
+        <span className="line-clamp-1 text-left text-[16px] font-semibold">
           {post.title}
         </span>
-        <span className="line-clamp-2 text-[16px]">{post.body}</span>
+        <span className="line-clamp-2 text-left text-[16px]">{post.body}</span>
         <div className="flex justify-between text-[14px] font-medium">
           <div className="flex items-center justify-center gap-[4px]">
             <FaRegHeart fontSize="small" className="mt-[2px]" />
