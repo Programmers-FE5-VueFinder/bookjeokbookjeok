@@ -56,6 +56,7 @@ export default function DiaryArea({
                       id={id}
                       book_id={item.book_id}
                       category={item.category}
+                      post_id={item.id}
                     />
                   </Link>
                 );

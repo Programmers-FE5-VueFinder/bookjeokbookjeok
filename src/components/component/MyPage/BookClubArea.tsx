@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import SkeletonCard from '../../common/CardSkeleton2';
-import BookCard from '../../common/BookCard';
+// import BookCard from '../../common/BookCard';
 import type { book_club } from '../../../pages/Profile';
 import { Link } from 'react-router';
+import BookClubCard from './BookClubCard';
 
 export default function BookClubArea({
   post,
@@ -43,7 +44,7 @@ export default function BookClubArea({
               {
                 return (
                   <Link to={`/bookclub/${item.id}`}>
-                    <BookCard
+                    <BookClubCard
                       profileImage={profileImage}
                       key={item.id}
                       body={item.info}
@@ -53,6 +54,7 @@ export default function BookClubArea({
                         'ko-KR',
                       )}
                       id={id}
+                      post_id={item.id}
                     />
                   </Link>
                 );

@@ -54,6 +54,7 @@ export default function CommunityArea({
                       )}
                       id={id}
                       book_id={item.book_id}
+                      post_id={item.id}
                     />
                   </Link>
                 );
