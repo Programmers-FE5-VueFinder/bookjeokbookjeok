@@ -5,13 +5,16 @@ import { useNavigate } from 'react-router';
 import { useCallback, useEffect, useState } from 'react';
 import { getCommentCount } from '../../../../apis/comment';
 import ProfileImage from '../../MyPage/ProfileImg';
+import { getLikeCount } from '../../../../apis/like';
 
 export function BookPostItem({ post }: { post: Post }) {
   const navigate = useNavigate();
   const [countComment, setCountComment] = useState(0);
+  const [countLike, setCountLike] = useState(0);
 
   const commentAmount = useCallback(async () => {
     setCountComment(await getCommentCount(post.id));
+    setCountLike(await getLikeCount(post.id));
   }, [post.id]);
 
   useEffect(() => {
@@ -48,7 +51,7 @@ export function BookPostItem({ post }: { post: Post }) {
         <div className="flex justify-between text-[14px] font-medium">
           <div className="flex items-center justify-center gap-[4px]">
             <FaRegHeart fontSize="small" className="mt-[2px]" />
-            <span className="mr-[4px]">34</span>
+            <span className="mr-[4px]">{countLike}</span>
             <FaRegComment fontSize="small" className="mt-[2px]" />
             <span>{countComment}</span>
           </div>
