@@ -26,6 +26,12 @@ export function BookPostItem({
   useEffect(() => {
     commentAmount();
   }, [post.id, commentAmount]);
+
+  function decodeHTMLEntities(str: string) {
+    const txt = document.createElement('textarea');
+    txt.innerHTML = str;
+    return txt.value;
+  }
   return (
     <div className="max-h-full w-full flex-col justify-center border-b border-b-[#D8D8D8] py-[15px] text-[16px]">
       <div className="mb-[10px] flex">
@@ -56,7 +62,11 @@ export function BookPostItem({
         <span className="line-clamp-1 text-left text-[16px] font-semibold">
           {post.title}
         </span>
-        <span className="line-clamp-2 text-left text-[16px]">{post.body}</span>
+        <span className="line-clamp-2 text-left text-[16px]">
+          {decodeHTMLEntities(
+            decodeHTMLEntities(post.body.replace(/<[^>]*>?/g, '')),
+          )}
+        </span>
         <div className="flex justify-between text-[14px] font-medium">
           <div className="flex items-center justify-center gap-[4px]">
             <FaRegHeart fontSize="small" className="mt-[2px]" />
