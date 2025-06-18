@@ -43,18 +43,18 @@ export default function BookClubArea({
             post?.map((item) => {
               {
                 return (
-                  <Link to={`/bookclub/${item[0].id}`}>
+                  <Link to={`/bookclub/${item.id}`}>
                     <BookClubCard
                       profileImage={profileImage}
-                      key={item[0].id}
-                      body={item[0].info}
-                      title={item[0].name}
+                      key={item.id}
+                      body={item.info}
+                      title={item.name}
                       nickname={profileName!}
-                      createdAt={new Date(item[0].created_at).toLocaleDateString(
+                      createdAt={new Date(item.created_at).toLocaleDateString(
                         'ko-KR',
                       )}
                       id={id}
-                      post_id={item[0].id}
+                      post_id={item.id}
                     />
                   </Link>
                 );

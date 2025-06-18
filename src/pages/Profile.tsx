@@ -239,8 +239,7 @@ export default function Profile() {
           for (let i = 0; i < clubIds.length; i++) {
             bookClubs.push(book_club?.filter((club) => club.id === clubIds[i]));
           }
-        setBookClub(bookClubs);
-        console.log(bookClub);
+        setBookClub(bookClubs.flat());
       };
 
       await Promise.all([
