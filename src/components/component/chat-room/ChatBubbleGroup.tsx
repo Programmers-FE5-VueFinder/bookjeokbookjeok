@@ -21,10 +21,9 @@ export default function ChatBubbleGroup({
       <div className="flex w-full flex-row gap-3">
         {!isMy && (
           <Link to={`/profile/${user.id}`}>
-            <div className="size-[50px] rounded-full">
+            <div className="size-[50px] overflow-hidden rounded-full">
               <ProfileImage id={user.id} />
             </div>
-            {/* <Avatar src={user.image!} /> */}
           </Link>
         )}
         <div className="flex w-full flex-col gap-1">
@@ -40,10 +39,9 @@ export default function ChatBubbleGroup({
         </div>
         {isMy && (
           <Link to={`/profile/${user.id}`}>
-            <div className="size-[50px] rounded-full">
+            <div className="size-[50px] overflow-hidden rounded-full">
               <ProfileImage id={user.id} />
             </div>
-            {/* <Avatar src={user.image!} /> */}
           </Link>
         )}
       </div>
