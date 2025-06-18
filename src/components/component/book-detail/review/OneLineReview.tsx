@@ -10,6 +10,7 @@ import { insertBookIfNotExists } from '../../../../apis/add-book-if-not-exists';
 import { ReviewInput } from './ReviewInput';
 import type { BookDetail, Review } from '../../../../types/book';
 import { toast } from 'react-toastify';
+import { useAuthStore } from '../../../../store/authStore';
 
 interface OneLineReviewProps {
   isbn: string;
@@ -32,6 +33,7 @@ export function OneLineReview({
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
+  const session = useAuthStore((state) => state.session);
   const getReviews = useCallback(async () => {
     if (isLoading || !hasMore) return;
     setIsLoading(true);
@@ -69,6 +71,10 @@ export function OneLineReview({
   };
 
   const handleSubmitReview = async () => {
+    if (!session) {
+      toast.warn('로그인 후 리뷰를 작성할 수 있습니다.');
+      return;
+    }
     if (!review || selectedRating === 0) {
       toast.warn('리뷰와 별점을 모두 입력해주세요!');
       return;
