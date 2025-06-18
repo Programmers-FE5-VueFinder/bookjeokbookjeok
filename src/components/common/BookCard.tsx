@@ -57,7 +57,7 @@ export default function BookCard({
       setLikeCount(likes);
     };
     getBookLike();
-  }, [book_id]);
+  }, [book_id, post_id]);
 
   return (
     <>
@@ -74,7 +74,10 @@ export default function BookCard({
                 <img src={img} className="h-full w-full blur-xs" />
                 <img
                   src={img}
-                  className="absolute top-[13%] left-[30%] h-[166px] w-[113px]"
+                  className="absolute top-[13%] left-[30%] h-[166px] w-[113px] rounded-[3px]"
+                  style={{
+                    boxShadow: '0px 0px 8px 2px rgba(0, 0, 0, 0.3)'
+                  }}
                 />
               </div>
             ) : (
