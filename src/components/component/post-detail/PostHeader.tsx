@@ -1,25 +1,35 @@
 import { RxDotsVertical } from 'react-icons/rx';
 import FollowButton from './FollowButton';
 import EditSelectBox from './EditSelectBox';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { type Dispatch, type SetStateAction } from 'react';
+import { useAuthStore } from '../../../store/authStore';
 
 export default function PostHeader({
   title,
   name,
   time,
   category,
-  setter,
-  active,
+  setModalShow,
+  writeUserId,
+  path,
 }: {
   title: string;
   name: string;
   time: string;
   category: string;
-  setter: Dispatch<SetStateAction<{ show: boolean; active: boolean }>>;
-  active: boolean;
+  setModalShow: Dispatch<SetStateAction<boolean>>;
+  writeUserId: string;
+  path: string;
 }) {
   const [selectBoxShow, setSelectBoxShow] = useState(false);
+  const accountValid = useRef(false);
+  const session = useAuthStore((state) => state.session);
+  console.log(accountValid.current);
+
+  useEffect(() => {
+    accountValid.current = writeUserId === session?.user.id ? true : false;
+  }, [path]);
 
   return (
     <>
@@ -38,18 +48,22 @@ export default function PostHeader({
                 <span className="text-[16px] text-[#565656]">{time}</span>
               </div>
               <div className="flex items-center gap-[5px]">
-                <FollowButton />
-                <div
-                  onClick={() => setSelectBoxShow((prev) => !prev)}
-                  className="relative"
-                >
-                  <RxDotsVertical className="cursor-pointer" />
-                  <EditSelectBox
-                    selectBoxShow={selectBoxShow}
-                    setter={setter}
-                    active={active}
-                  />
-                </div>
+                {accountValid.current ? (
+                  <div
+                    onClick={() => setSelectBoxShow((prev) => !prev)}
+                    className="relative"
+                  >
+                    <RxDotsVertical className="cursor-pointer" />
+                    {selectBoxShow && (
+                      <EditSelectBox
+                        setSelectBoxShow={setSelectBoxShow}
+                        setModalShow={setModalShow}
+                      />
+                    )}
+                  </div>
+                ) : (
+                  <FollowButton />
+                )}
               </div>
             </div>
           </div>

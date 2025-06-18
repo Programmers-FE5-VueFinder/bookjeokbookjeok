@@ -157,9 +157,8 @@ export async function editPost(
 
 /* 게시물 삭제 */
 export async function deletePost(id: string) {
-  await supabase.from('like').delete().eq('post_id', id);
+  await supabase.from('like').delete().eq('reference_id', id);
   await supabase.from('comment').delete().eq('post_id', id);
-  await supabase.from('book_tag').delete().eq('reference_id', id);
   await supabase.from('post').delete().eq('id', id);
 }
 
@@ -228,6 +227,7 @@ export async function getBookPost(bookId: string, from: number, to: number) {
       title,
       body,
       created_at,
+      category,
       user_id,
       profile (
         name,

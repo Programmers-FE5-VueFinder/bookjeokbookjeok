@@ -253,6 +253,7 @@ export type Database = {
           body: string;
           created_at: string;
           id: string;
+          parent_comment_id: string | null;
           post_id: string;
           user_id: string;
         };
@@ -260,6 +261,7 @@ export type Database = {
           body: string;
           created_at?: string;
           id?: string;
+          parent_comment_id?: string | null;
           post_id: string;
           user_id: string;
         };
@@ -267,10 +269,18 @@ export type Database = {
           body?: string;
           created_at?: string;
           id?: string;
+          parent_comment_id?: string | null;
           post_id?: string;
           user_id?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: 'comment_parent_comment_id_fkey';
+            columns: ['parent_comment_id'];
+            isOneToOne: false;
+            referencedRelation: 'comment';
+            referencedColumns: ['id'];
+          },
           {
             foreignKeyName: 'comment_post_id_fkey';
             columns: ['post_id'];

@@ -27,6 +27,7 @@ export function OneLineReview({
   const [reviewList, setReviewList] = useState<Review[]>([]);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
 
   const getReviews = useCallback(async () => {
@@ -43,16 +44,17 @@ export function OneLineReview({
       if (newReviews.length < 5) {
         setHasMore(false);
 
-        if (page > 0 || newReviews.length > 0) {
+        if (!isFirstLoad && (page > 0 || newReviews.length > 0)) {
           toast.info('더 이상 불러올 리뷰가 없습니다.');
         }
       }
+      setIsFirstLoad(false);
     } catch (error) {
       console.error('리뷰 불러오기 실패:', error);
     } finally {
       setIsLoading(false);
     }
-  }, [isbn, page, hasMore, isLoading]);
+  }, [isbn, page, hasMore, isLoading, isFirstLoad]);
 
   const loadMoreRef = useInfiniteScroll({
     hasMore,
@@ -78,6 +80,7 @@ export function OneLineReview({
       setPage(0);
       setHasMore(true);
       setReviewList([]);
+      setIsFirstLoad(true);
       await onReviewSubmit?.();
     } catch (error) {
       console.error('리뷰 등록 실패:', error);
@@ -88,6 +91,7 @@ export function OneLineReview({
     setReviewList([]);
     setPage(0);
     setHasMore(true);
+    setIsFirstLoad(true);
   }, [isbn]);
 
   return (
