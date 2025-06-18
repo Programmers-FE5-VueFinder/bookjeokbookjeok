@@ -20,6 +20,7 @@ export interface BookCardProps {
   id: string | undefined;
   book_id?: string | null;
   category?: string;
+  post_id?: string;
 }
 
 export interface PostDetailResponse {
