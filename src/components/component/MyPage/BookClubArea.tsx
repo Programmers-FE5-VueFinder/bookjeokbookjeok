@@ -11,7 +11,7 @@ export default function BookClubArea({
   profileName,
   id,
 }: {
-  post: book_club[] | null;
+  post: book_club[] | null | undefined;
   profileImage: string | null;
   profileName: string | null;
   id: string | undefined;
@@ -43,18 +43,18 @@ export default function BookClubArea({
             post?.map((item) => {
               {
                 return (
-                  <Link to={`/bookclub/${item.id}`}>
+                  <Link to={`/bookclub/${item[0].id}`}>
                     <BookClubCard
                       profileImage={profileImage}
-                      key={item.id}
-                      body={item.info}
-                      title={item.name}
+                      key={item[0].id}
+                      body={item[0].info}
+                      title={item[0].name}
                       nickname={profileName!}
-                      createdAt={new Date(item.created_at).toLocaleDateString(
+                      createdAt={new Date(item[0].created_at).toLocaleDateString(
                         'ko-KR',
                       )}
                       id={id}
-                      post_id={item.id}
+                      post_id={item[0].id}
                     />
                   </Link>
                 );

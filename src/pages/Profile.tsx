@@ -54,7 +54,7 @@ export default function Profile() {
   const [following, setFollowing] = useState<number>(0);
   const [post, setPost] = useState<Post[] | null>([]);
   const [bookMark, setBookMark] = useState<BookMark[] | null>([]);
-  const [bookClub, setBookClub] = useState<book_club[] | null>([]);
+  const [bookClub, setBookClub] = useState<book_club[] | null>();
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedBtn, setSelectedBtn] = useState<string>('다이어리');
   const [content, setContent] = useState<string>('diary');
@@ -234,10 +234,13 @@ export default function Profile() {
             clubIds.push(clubId[i].book_club_id);
           }
         }
+        const bookClubs = [];
         if (book_club?.length !== undefined)
           for (let i = 0; i < clubIds.length; i++) {
-            setBookClub(book_club?.filter((club) => club.id === clubIds[i]));
+            bookClubs.push(book_club?.filter((club) => club.id === clubIds[i]));
           }
+        setBookClub(bookClubs);
+        console.log(bookClub);
       };
 
       await Promise.all([
