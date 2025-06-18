@@ -33,7 +33,7 @@ export default function PostHeader({
 
   return (
     <>
-      <section className="flex w-full justify-center pt-[60px]">
+      <section className="mb-[40px] flex w-full justify-center pt-[60px]">
         <div className="w-[1200px] border-b border-[#d8d6d6]">
           <h1 className="mb-[30px] cursor-default text-[40px] font-bold text-[#333]">
             {title}
@@ -62,7 +62,7 @@ export default function PostHeader({
                     )}
                   </div>
                 ) : (
-                  <FollowButton />
+                  <FollowButton writeUserId={writeUserId} />
                 )}
               </div>
             </div>
