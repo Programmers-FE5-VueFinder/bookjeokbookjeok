@@ -19,6 +19,7 @@ import {
   fetchSendFollow,
 } from '../apis/follow';
 import { toast } from 'react-toastify';
+import { useProfileImgStore } from '../store/profileImgStore';
 
 export type Post = {
   body: string;
@@ -250,7 +251,7 @@ export default function Profile() {
     };
 
     fetchData();
-  }, [userId, content, setProfileName]);
+  }, [userId, content, setProfileName, setProfileIntro, session?.user]);
 
   return (
     <>
@@ -263,7 +264,7 @@ export default function Profile() {
               {loading ? (
                 <ProfileSkeleton />
               ) : (
-                <div className="justify-center overflow-hidden rounded-full">
+                <div className="size-[100px] content-center items-center justify-center overflow-hidden rounded-full">
                   <ProfileImg id={userId} />
                 </div>
               )}
@@ -287,11 +288,11 @@ export default function Profile() {
                 </div>
               </div>
             ) : (
-              <div>
-                <div className="mt-[14px] mb-[14px] flex items-center gap-[6px] font-bold">
-                  <span>{profileName} 님</span>
-                  {/* <div className="size-[15px] rounded-full border-1"></div> */}
-                </div>
+              <div className="items-center justify-center text-center">
+                <span className="mt-[14px] mb-[14px] flex items-center justify-center gap-[6px] text-center font-bold">
+                  {profileName} 님
+                </span>
+                {/* <div className="size-[15px] rounded-full border-1"></div> */}
                 <span>{intro}</span>
               </div>
             )}

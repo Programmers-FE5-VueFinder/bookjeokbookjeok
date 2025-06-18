@@ -10,10 +10,10 @@ import type { BookDetail } from '../../../types/book';
 import { getBestsellerBooks } from '../../../apis/book-search';
 import { MdArrowBackIosNew, MdArrowForwardIos } from 'react-icons/md';
 
-export default function BestsellerSlider () {
+export default function BestsellerSlider() {
   const [bestsellers, setBestsellers] = useState<BookDetail[]>([]);
   const [selectedBook, setSelectedBook] = useState<BookDetail | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);  
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(1);
   const swiperRef = useRef<SwiperCore | null>(null);
 
@@ -56,17 +56,16 @@ export default function BestsellerSlider () {
         observer={true}
         observeParents={true}
       >
-
         {bestsellers.map((book, index) => {
           const isActive = currentIndex - 1 === index;
           return (
-            <SwiperSlide 
+            <SwiperSlide
               key={book.isbn13}
-              className="flex justify-center group"
+              className="group flex justify-center"
             >
               {/* <p className="mt-2 text-center font-medium truncate">{book.title}</p> */}
-              <div 
-                className="flex flex-col items-center cursor-pointer relative"
+              <div
+                className="relative flex cursor-pointer flex-col items-center"
                 onClick={() => {
                   setSelectedBook(book);
                   setIsModalOpen(true);
@@ -75,13 +74,13 @@ export default function BestsellerSlider () {
                 <img
                   src={book.cover}
                   alt={book.title}
-                  className="w-[183px] h-[278px] object-cover rounded-r-[10px]"
+                  className="h-[278px] w-[183px] rounded-r-[10px] object-cover"
                   style={{
                     boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.25)',
-                }}  
+                  }}
                 />
                 {!isActive && (
-                  <div className="absolute justify-center items-center w-[100%] h-[100%] bg-black/40 rounded-r-[10px]" />
+                  <div className="absolute h-[100%] w-[100%] items-center justify-center rounded-r-[10px] bg-black/40" />
                 )}
               </div>
             </SwiperSlide>
@@ -91,19 +90,21 @@ export default function BestsellerSlider () {
 
       {/* slide pagination */}
       <div className="flex justify-center">
-        <div className="flex justify-between w-[135px] h-[25px] text-[20px] font-medium mt-[30px]">
-          <button 
+        <div className="mt-[30px] flex h-[25px] w-[135px] justify-between text-[20px] font-medium">
+          <button
             onClick={() => swiperRef.current?.slidePrev()}
-            className="flex justify-center items-center w-[25px] h-[25px] rounded-[5px] bg-[#FFFFFF]/50 cursor-pointer"
+            className="flex h-[25px] w-[25px] cursor-pointer items-center justify-center rounded-[5px] bg-[#FFFFFF]/50"
           >
-            <MdArrowBackIosNew className="w-[16px]"/>
+            <MdArrowBackIosNew className="w-[16px]" />
           </button>
-          <h3 className="text-[20px] font-medium">{currentIndex} / {bestsellers.length}</h3>
-          <button 
+          <h3 className="text-[20px] font-medium">
+            {currentIndex} / {bestsellers.length}
+          </h3>
+          <button
             onClick={() => swiperRef.current?.slideNext()}
-            className="flex justify-center items-center w-[25px] h-[25px] rounded-[5px] bg-[#FFFFFF]/50 cursor-pointer"
+            className="flex h-[25px] w-[25px] cursor-pointer items-center justify-center rounded-[5px] bg-[#FFFFFF]/50"
           >
-            <MdArrowForwardIos className="w-[16px]"/>
+            <MdArrowForwardIos className="w-[16px]" />
           </button>
         </div>
       </div>

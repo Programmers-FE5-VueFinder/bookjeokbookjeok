@@ -45,7 +45,7 @@ export async function fetchFollowingPosts(myProfileId: string) {
         user_id,
         created_at
       )
-      `
+      `,
     )
     .in('user_id', followingIdList)
     .order('created_at', { ascending: false });
@@ -56,12 +56,13 @@ export async function fetchFollowingPosts(myProfileId: string) {
   }
 
   // 타입 맞춰서 반환
-  return posts.map(post => ({
+  return posts.map((post) => ({
     ...post,
-    like: post.like?.filter(
-      likeItem =>
-        likeItem.reference_category === 'post' &&
-        likeItem.reference_id === post.id
-    ) ?? [],
+    like:
+      post.like?.filter(
+        (likeItem) =>
+          likeItem.reference_category === 'post' &&
+          likeItem.reference_id === post.id,
+      ) ?? [],
   }));
 }

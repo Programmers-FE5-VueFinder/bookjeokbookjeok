@@ -96,7 +96,6 @@ export default function BookCard({
     } else {
       setLikeCount(likeCount);
     }
-    console.log(likes, likeCount, comments, comment?.length);
   }, [book_id]);
 
   return (
