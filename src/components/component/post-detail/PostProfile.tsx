@@ -2,13 +2,18 @@ import FollowButton from './FollowButton';
 import type { Profile } from '../../../types/post';
 import ProfileImage from '../MyPage/ProfileImg';
 import { useNavigate } from 'react-router';
+import type { Dispatch, SetStateAction } from 'react';
 
 export default function PostProfile({
   profile,
   currentAccount,
+  setFollowToggle,
+  followToggle,
 }: {
   profile: Profile;
   currentAccount: string | undefined;
+  setFollowToggle: Dispatch<SetStateAction<boolean>>;
+  followToggle: boolean;
 }) {
   const { image, id } = profile;
   const navigate = useNavigate();
@@ -31,7 +36,11 @@ export default function PostProfile({
           </span>
         </div>
         {currentAccount !== id ? (
-          <FollowButton writeUserId={profile.id} />
+          <FollowButton
+            writeUserId={profile.id}
+            setFollowToggle={setFollowToggle}
+            followToggle={followToggle}
+          />
         ) : null}
       </section>
     </>

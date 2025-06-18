@@ -19,11 +19,14 @@ import { IoMdHeartEmpty } from 'react-icons/io';
 import { getLikeCount } from '../apis/like';
 import DiarySelectBook from '../components/component/post-detail/DiarySelectBook';
 import { useAuthStore } from '../store/authStore';
+import { isFollowing } from '../apis/follow';
+
 export default function PostDetail() {
   const { postId } = useParams();
   const [content, setContent] = useState<PostDetail | undefined>(undefined);
   const [postLoading, setPostLoading] = useState(false);
   const [applyState, setApplyState] = useState('');
+  const [followToggle, setFollowToggle] = useState(true);
 
   const handleApplyBookclub = async () => {
     await applyBookClub(content!.profile.id, content!.book_club_id!);
@@ -55,6 +58,15 @@ export default function PostDetail() {
       console.error('좋아요 수 불러오기 실패', err);
     }
   }, [postId]);
+
+  useEffect(() => {
+    const response = async () => {
+      const response = await isFollowing(content!.id, '');
+      setFollowToggle(response);
+      return;
+    };
+    response();
+  }, []);
 
   useEffect(() => {
     if (!postId) navigate(-1);
@@ -96,6 +108,8 @@ export default function PostDetail() {
         )}
         <PostHeader
           setModalShow={setModalShow}
+          setFollowToggle={setFollowToggle}
+          followToggle={followToggle}
           title={content!.title}
           name={content!.profile.name}
           category={content!.category}
@@ -144,6 +158,8 @@ export default function PostDetail() {
         <PostProfile
           profile={content!.profile}
           currentAccount={session?.user.id}
+          setFollowToggle={setFollowToggle}
+          followToggle={followToggle}
         />
         <div className="flex h-[110px] w-[1200px] items-center">
           <span className="flex items-center gap-[8px] text-[16px] font-semibold text-[#333333]">

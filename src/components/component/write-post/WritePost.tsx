@@ -36,7 +36,6 @@ export default function WritePost({
   const [category, setCategory] = useState('');
   console.log('bookclubId: ', bookclubId);
   const [rating, setRating] = useState<number | undefined>();
-  const [title, setTitle] = useState('');
   const [value, setValue] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [selectedBook, setSeletedBook] = useState<BookDetail | null>(null);
@@ -58,12 +57,13 @@ export default function WritePost({
 
   const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const title = titleRef?.current?.value;
     const body = value.toString();
     const image = selectedBook?.cover
       ? selectedBook.cover
       : findThumbnailImage(body);
     const bookInfo = {
-      id: selectedBook!.isbn13,
+      id: selectedBook?.isbn13,
       star: rating,
     };
 
@@ -132,7 +132,7 @@ export default function WritePost({
             bookInfo,
           );
 
-          navigate(`/channel/diary/post/${response}`);
+          navigate(`/post/${response}`);
         } catch (e) {
           console.log(e);
           Toastfy('error', '작성에 실패했습니다');
@@ -141,6 +141,19 @@ export default function WritePost({
       }
       case 'community': {
         // community post 생성 api
+        try {
+          const response = await createPost(
+            session!.user.id,
+            title,
+            body,
+            image,
+            category,
+          );
+          navigate(`/post/${response}`);
+        } catch (e) {
+          console.log(e);
+          Toastfy('error', '작성에 실패했습니다');
+        }
         return;
       }
       case 'book-club': {
@@ -186,7 +199,7 @@ export default function WritePost({
       seletedBookFind();
     }
     if (editPostData) {
-      setTitle(editPostData.title);
+      titleRef!.current!.value = editPostData.title;
       setValue(editPostData.body);
       setCategory(editPostData.category);
     }
@@ -216,8 +229,6 @@ export default function WritePost({
                 <input
                   ref={titleRef}
                   type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
                   placeholder="제목을 입력해 주세요."
                   className="h-fir mx-auto my-[20px] block w-[1200px] max-w-[1200px] pl-[5px] text-[24px] text-[#666666]"
                 />
@@ -246,7 +257,7 @@ export default function WritePost({
                   category={category}
                   setValue={setValue}
                   value={value}
-                  selectedBook={selectedBook}
+                  selectedBook={selectedBook!}
                 />
               </div>
               <div className="flex h-[60px] min-h-[60px] w-[100%] justify-center border-t border-t-[#D5D5D5]">
@@ -304,8 +315,6 @@ export default function WritePost({
               <input
                 ref={titleRef}
                 type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
                 placeholder={`${isCreateBookClub ? '클럽 이름을 입력해주세요.' : '제목을 입력해주세요.'}`}
                 className="h-fir mx-auto my-[20px] block w-[1200px] max-w-[1200px] pl-[5px] text-[24px] text-[#666666]"
               />
@@ -338,7 +347,7 @@ export default function WritePost({
                 category={category}
                 setValue={setValue}
                 value={value}
-                selectedBook={selectedBook}
+                selectedBook={selectedBook!}
               />
             </div>
             <div className="flex h-[60px] min-h-[60px] w-[100%] justify-center border-t border-t-[#D5D5D5]">

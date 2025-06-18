@@ -11,7 +11,9 @@ export default function PostHeader({
   time,
   category,
   setModalShow,
+  setFollowToggle,
   writeUserId,
+  followToggle,
   path,
 }: {
   title: string;
@@ -19,6 +21,8 @@ export default function PostHeader({
   time: string;
   category: string;
   setModalShow: Dispatch<SetStateAction<boolean>>;
+  setFollowToggle: Dispatch<SetStateAction<boolean>>;
+  followToggle: boolean;
   writeUserId: string;
   path: string;
 }) {
@@ -62,7 +66,11 @@ export default function PostHeader({
                     )}
                   </div>
                 ) : (
-                  <FollowButton writeUserId={writeUserId} />
+                  <FollowButton
+                    writeUserId={writeUserId}
+                    setFollowToggle={setFollowToggle}
+                    followToggle={followToggle}
+                  />
                 )}
               </div>
             </div>

@@ -1,29 +1,22 @@
-import { useEffect, useState } from 'react';
-import {
-  fetchDeleteFollow,
-  fetchAddFollow,
-  isFollowing,
-} from '../../../apis/follow';
+import { type Dispatch, type SetStateAction } from 'react';
+import { fetchDeleteFollow, fetchAddFollow } from '../../../apis/follow';
 import { useAuthStore } from '../../../store/authStore';
 import Toastfy from '../../common/Toastfy';
 
-export default function FollowButton({ writeUserId }: { writeUserId: string }) {
-  const [toggle, setToggle] = useState(true);
+export default function FollowButton({
+  writeUserId,
+  followToggle,
+  setFollowToggle,
+}: {
+  writeUserId: string;
+  setFollowToggle: Dispatch<SetStateAction<boolean>>;
+  followToggle: boolean;
+}) {
   const session = useAuthStore((state) => state.session);
-  console.log(session);
-
-  useEffect(() => {
-    const response = async () => {
-      const response = await isFollowing(writeUserId, '');
-      setToggle(response);
-      return;
-    };
-    response();
-  }, [session]);
 
   return (
     <>
-      {toggle ? (
+      {followToggle ? (
         <button
           onClick={() => {
             if (!session?.user.id) {
@@ -31,7 +24,7 @@ export default function FollowButton({ writeUserId }: { writeUserId: string }) {
               return;
             }
             fetchAddFollow(session?.user.id, writeUserId);
-            setToggle((prev) => !prev);
+            setFollowToggle((prev) => !prev);
           }}
           className="flex h-[30px] cursor-pointer items-center justify-center rounded-[5px] bg-[#f1f1f1] px-[15px] text-[16px] hover:bg-[#08C818] hover:text-[#fff]"
         >
@@ -45,7 +38,7 @@ export default function FollowButton({ writeUserId }: { writeUserId: string }) {
               return;
             }
             fetchDeleteFollow(session?.user.id, writeUserId);
-            setToggle((prev) => !prev);
+            setFollowToggle((prev) => !prev);
           }}
           className="flex h-[30px] cursor-pointer items-center justify-center rounded-[5px] bg-[#f1f1f1] px-[15px] text-[16px] hover:bg-[#08C818] hover:text-[#fff]"
         >
