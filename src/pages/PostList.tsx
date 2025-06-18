@@ -3,7 +3,11 @@ import { Link, useParams } from 'react-router';
 import { useEffect, useState, useMemo } from 'react';
 import BookCard from '../components/common/BookCard';
 import type { Post, PostDetail } from '../types/type';
-import { fetchPostDetail, fetchPosts, fetchMyBookClubPosts } from '../apis/post';
+import {
+  fetchPostDetail,
+  fetchPosts,
+  fetchMyBookClubPosts,
+} from '../apis/post';
 import SkeletonCard from '../components/common/CardSkeleton2';
 import { useAuthStore } from '../store/authStore';
 import { fetchFollowingPosts } from '../apis/following-posts';
@@ -142,7 +146,10 @@ export default function PostList() {
     const loadPosts = async () => {
       setLoading(true);
       const fetchedMyBookClubPosts = await fetchMyBookClubPosts(myProfileId!);
-      console.log('[디버그] fetchMyBookClubPosts 결과:', fetchedMyBookClubPosts);
+      console.log(
+        '[디버그] fetchMyBookClubPosts 결과:',
+        fetchedMyBookClubPosts,
+      );
 
       const detailPosts: PostDetail[] = await Promise.all(
         fetchedMyBookClubPosts.map(async (post) => {
@@ -174,7 +181,11 @@ export default function PostList() {
       setLoading(false);
     };
 
-    if (myProfileId && selectedSort === '내 클럽' && channelId === 'book_club') {
+    if (
+      myProfileId &&
+      selectedSort === '내 클럽' &&
+      channelId === 'book_club'
+    ) {
       console.log('[디버그] 조건 만족 - loadPosts 호출');
       loadPosts();
     }
@@ -185,10 +196,11 @@ export default function PostList() {
     // 팔로잉
     if (selectedSort === '팔로잉') {
       return [...followingPosts]
-      .filter((post) => post.category === currentCategory)
-      .sort(
-        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
+        .filter((post) => post.category === currentCategory)
+        .sort(
+          (a, b) =>
+            new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+        );
     }
     // 인기글
     if (selectedSort === '인기글') {
@@ -198,8 +210,9 @@ export default function PostList() {
     // 내 클럽
     if (selectedSort === '내 클럽' && channelId === 'book_club') {
       return [...myBookClubPosts].sort(
-        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      )
+        (a, b) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+      );
     }
 
     // 최신글(기본)
