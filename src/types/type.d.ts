@@ -111,3 +111,15 @@ type Bestsellers = {
   cover: string;
   isbn13?: string;
 };
+
+type CommentTypeBase = {
+  id: string;
+  body: string;
+  created_at: string;
+  user_id: string;
+  parent_comment_id: string | null;
+  profile: {
+    name: string;
+    image: string | null;
+  };
+};

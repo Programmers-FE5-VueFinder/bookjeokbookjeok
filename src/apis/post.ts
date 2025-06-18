@@ -41,6 +41,7 @@ export async function fetchPostDetail(id: string) {
       like(*),
       comment(*),
       created_at,
+      book_club_id,
       book(*)
     `,
     )
@@ -92,7 +93,7 @@ export async function createPost(
   image: string | null = null,
   category: 'diary' | 'community',
   book_id: string,
-  bookInfo: {
+  book?: {
     id: string;
     star: number | undefined;
   },
@@ -112,14 +113,14 @@ export async function createPost(
     .select()
     .single();
 
-  // if (bookInfo) {
-  //   await supabase.from('book_tag').insert({
-  //     book_id: bookInfo.id,
-  //     star: bookInfo.star,
-  //     reference_category: category,
-  //     reference_id: post.data!.id,
-  //   });
-  // }
+  if (book) {
+    await supabase.from('book_tag').insert({
+      book_id: book.id,
+      star: book.star,
+      reference_category: category,
+      reference_id: post.data!.id,
+    });
+  }
 
   return post.data!.id;
 }
@@ -131,10 +132,6 @@ export async function editPost(
   body: string,
   image: string | null = null,
   category: string,
-  book?: {
-    id: string;
-    star?: number;
-  }[],
 ) {
   const post = await supabase
     .from('post')
@@ -143,16 +140,7 @@ export async function editPost(
     .select()
     .single();
 
-  if (book) {
-    for (const b of book) {
-      await supabase.from('book_tag').insert({
-        book_id: b.id,
-        star: b.star,
-        reference_category: post.data!.category,
-        reference_id: post.data!.id,
-      });
-    }
-  }
+  return post.data!.id;
 }
 
 /* 게시물 삭제 */

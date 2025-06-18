@@ -17,19 +17,27 @@ import {
 } from '../../../apis/book-club.ts';
 import supabase from '../../../utils/supabase';
 import Toastfy from '../../common/Toastfy.tsx';
-import { createPost } from '../../../apis/post.ts';
+import type { PostDetail } from '../../../types/post.ts';
+import { createPost, editPost } from '../../../apis/post.ts';
+import { searchBooks } from '../../../apis/book-search.ts';
 
 export default function WritePost({
   isCreateBookClub,
+  editPostData,
+  bookTitle,
 }: {
   isCreateBookClub?: boolean;
+  editPostData?: PostDetail;
+  bookTitle?: string;
 }) {
   //path : diary, freetalk
   const path = useParams();
-  const bookclubId = path.bookclub_id;
   const navigate = useNavigate();
+  const bookclubId = path.bookclub_id;
   const [category, setCategory] = useState('diary');
+  console.log('bookclubId: ', bookclubId);
   const [rating, setRating] = useState<number | undefined>();
+  const [title, setTitle] = useState('');
   const [value, setValue] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [selectedBook, setSeletedBook] = useState<BookDetail | null>(null);
@@ -37,41 +45,63 @@ export default function WritePost({
 
   const isLogIn = useAuthStore((state) => state.isLogin);
   const session = useAuthStore((state) => state.session);
-  console.log(session?.user.id);
-
-  useEffect(() => {
-    if (!isLogIn) navigate('/');
-  }, [isLogIn]);
 
   const onClose = () => setShowModal(false);
 
-  const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const title = titleRef.current?.value;
-    const body = value.toString();
-
-    //정규식으로 썸네일 뽑기
+  const findThumbnailImage = (body: string) => {
     const match = body.match(/<img[^>]+src="([^"]+)"[^>]*>/);
     const image = match ? match[1] : null;
+    return image;
+  };
 
-    if (!title || !body) {
-      if (!title) Toastfy('error', '제목을 작성 해주세요');
-      if (body === '<p><br></p>') Toastfy('error', '본문을 작성 해주세요');
-      return;
-    }
-
+  const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const body = value.toString();
+    const image = selectedBook?.cover
+      ? selectedBook.cover
+      : findThumbnailImage(body);
     const bookInfo = {
       id: selectedBook!.isbn13,
       star: rating,
     };
 
+    if (!title || !body) {
+      if (!title) {
+        Toastfy('error', '제목을 작성 해주세요');
+      } else if (body === '<p><br></p>') {
+        Toastfy('error', '본문을 작성 해주세요');
+      } else if (category === 'diary' && !selectedBook) {
+        Toastfy('error', '도서를 선택해 주세요.');
+      }
+      return;
+    }
+
+    // 게시물 수정
+    if (editPostData) {
+      try {
+        const response = await editPost(
+          editPostData.id,
+          title,
+          body,
+          image,
+          category,
+        );
+        console.log(response);
+        navigate(`/channel/${category}/post/${response}`);
+        return;
+      } catch (e) {
+        console.log(e);
+      }
+    }
+
     /* 북클럽 수정 */
-    if (bookclubId) {
+    if (bookclubId && isCreateBookClub) {
       editBookClub(bookclubId, title, body);
       navigate(`/bookclub/${bookclubId}`);
       return;
     }
 
+    /* 게시글 생성 */
     switch (category) {
       case 'diary': {
         try {
@@ -82,6 +112,7 @@ export default function WritePost({
               title: selectedBook!.title,
               author: selectedBook!.author,
               description: selectedBook!.description,
+              cover: selectedBook!.cover,
               categoryId: selectedBook!.categoryId,
               categoryName: selectedBook!.categoryName,
             })
@@ -99,15 +130,7 @@ export default function WritePost({
           );
           console.log(response);
 
-          if (bookInfo.id) {
-            await supabase.from('book_tag').insert({
-              book_id: bookInfo.id,
-              star: bookInfo.star,
-              reference_category: 'diary',
-              reference_id: response,
-            });
-          }
-          // navigate('/');
+          navigate(`/channel/diary/post/${response}`);
         } catch (e) {
           console.log(e);
           Toastfy('error', '작성에 실패했습니다');
@@ -119,7 +142,8 @@ export default function WritePost({
         return;
       }
       case 'book-club': {
-        createBookClubPost(title, body, bookclubId!);
+        const post = await createBookClubPost(title, body, image, bookclubId!);
+        navigate(`/channel/book_club/post/${post}`);
         return;
       }
       default: {
@@ -128,6 +152,11 @@ export default function WritePost({
       }
     }
   };
+
+  /* bookclubId 있을 시 정보 fetch */
+  useEffect(() => {
+    if (!isLogIn) navigate('/');
+  }, [isLogIn]);
 
   useEffect(() => {
     if (bookclubId) {
@@ -142,16 +171,132 @@ export default function WritePost({
         setCategory('book-club');
       }
     }
-  }, [bookclubId, isCreateBookClub]);
+
+    if (editPostData?.book) {
+      const seletedBookFind = async () => {
+        const selectedBookId = editPostData!.book!.id;
+        const bookList = await searchBooks(bookTitle!);
+        const selectedBook = bookList.find(
+          (book: BookDetail) => book.isbn13 === selectedBookId,
+        );
+        setSeletedBook(selectedBook);
+      };
+      seletedBookFind();
+    }
+    if (editPostData) {
+      setTitle(editPostData.title);
+      setValue(editPostData.body);
+      setCategory(editPostData.category);
+    }
+  }, [bookclubId, isCreateBookClub, editPostData]);
+
+  if (editPostData) {
+    return (
+      <>
+        <main className="flex h-screen">
+          <div className="flex grow-1 flex-col">
+            {!bookclubId && <CategorySelect setCategory={setCategory} />}
+            <form
+              className="w-ful flex grow-1 flex-col justify-between"
+              onSubmit={(e) => {
+                if (!session || !session.user) {
+                  Toastfy(
+                    'error',
+                    '로그인 세션이 만료되었습니다. 다시 로그인 해주세요.',
+                  );
+                  navigate('/');
+                  return;
+                }
+                submitHandler(e);
+              }}
+            >
+              <div className="flex h-full flex-col">
+                <input
+                  ref={titleRef}
+                  type="text"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="제목을 입력해 주세요."
+                  className="h-fir mx-auto my-[20px] block w-[1200px] max-w-[1200px] pl-[5px] text-[24px] text-[#666666]"
+                />
+
+                {selectedBook ? (
+                  <SelectBookInfo
+                    setShowModal={setShowModal}
+                    setSeletedBook={setSeletedBook}
+                    selectedBook={selectedBook}
+                  />
+                ) : (
+                  <button
+                    style={{ marginLeft: 'calc((100% - 1200px) / 2)' }}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setShowModal(true);
+                    }}
+                    className="flex h-[130px] w-[100px] cursor-pointer flex-col items-center justify-center border border-dashed border-[#333] text-[rgba(153,153,153,.4)]"
+                  >
+                    <MdOutlineSearch />
+                    도서 검색
+                  </button>
+                )}
+                {selectedBook && <BookRating setRating={setRating} />}
+                <ReactQuillEditor
+                  category={category}
+                  setValue={setValue}
+                  value={value}
+                  selectedBook={selectedBook}
+                />
+              </div>
+              <div className="flex h-[60px] min-h-[60px] w-[100%] justify-center border-t border-t-[#D5D5D5]">
+                <div className="flex h-[100%] w-[1200px] items-center justify-between">
+                  <button
+                    onClick={() => navigate(-1)}
+                    className="flex cursor-pointer items-center gap-[10px] py-[20px] text-[16px] hover:font-bold"
+                  >
+                    <MdArrowBack />
+                    뒤로가기
+                  </button>
+                  <button
+                    type="submit"
+                    className="cursor-pointer rounded-[5px] bg-[#F1F1F1] px-[23px] py-[8px] text-[14px] hover:bg-[#41D94D] hover:font-semibold hover:text-[#fff]"
+                  >
+                    수정하기
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+          {/* 책 검색 모달 */}
+          <BookSearchModal
+            showModal={showModal}
+            onClose={onClose}
+            setSeletedBook={setSeletedBook}
+          />
+        </main>
+      </>
+    );
+  }
 
   return (
     <>
       <main className="flex h-screen">
         <div className="flex grow-1 flex-col">
-          {!bookclubId && <CategorySelect setCategory={setCategory} />}
+          {!bookclubId && !isCreateBookClub && (
+            <CategorySelect setCategory={setCategory} />
+          )}
           <form
             className="w-ful flex grow-1 flex-col justify-between"
-            onSubmit={submitHandler}
+            onSubmit={(e) => {
+              if (!session || !session.user) {
+                Toastfy(
+                  'error',
+                  '로그인 세션이 만료되었습니다. 다시 로그인 해주세요.',
+                );
+                navigate('/');
+                return;
+              }
+              submitHandler(e);
+            }}
           >
             <div className="flex h-full flex-col">
               <input
@@ -161,26 +306,30 @@ export default function WritePost({
                 className="h-fir mx-auto my-[20px] block w-[1200px] max-w-[1200px] pl-[5px] text-[24px] text-[#666666]"
               />
 
-              {selectedBook && category === 'diary' ? (
-                <SelectBookInfo
-                  setShowModal={setShowModal}
-                  setSeletedBook={setSeletedBook}
-                  selectedBook={selectedBook}
-                />
-              ) : (
-                <button
-                  style={{ marginLeft: 'calc((100% - 1200px) / 2)' }}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setShowModal(true);
-                  }}
-                  className="flex h-[130px] w-[100px] cursor-pointer flex-col items-center justify-center border border-dashed border-[#333] text-[rgba(153,153,153,.4)]"
-                >
-                  <MdOutlineSearch />
-                  도서 검색
-                </button>
+              {!bookclubId && !isCreateBookClub && (
+                <>
+                  {selectedBook && category === 'diary' ? (
+                    <SelectBookInfo
+                      setShowModal={setShowModal}
+                      setSeletedBook={setSeletedBook}
+                      selectedBook={selectedBook}
+                    />
+                  ) : (
+                    <button
+                      style={{ marginLeft: 'calc((100% - 1200px) / 2)' }}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setShowModal(true);
+                      }}
+                      className="flex h-[130px] w-[100px] cursor-pointer flex-col items-center justify-center border border-dashed border-[#333] text-[rgba(153,153,153,.4)]"
+                    >
+                      <MdOutlineSearch />
+                      도서 검색
+                    </button>
+                  )}
+                  {selectedBook && <BookRating setRating={setRating} />}
+                </>
               )}
-              {selectedBook && <BookRating setRating={setRating} />}
               <ReactQuillEditor
                 category={category}
                 setValue={setValue}
@@ -201,7 +350,7 @@ export default function WritePost({
                   type="submit"
                   className="cursor-pointer rounded-[5px] bg-[#F1F1F1] px-[23px] py-[8px] text-[14px] hover:bg-[#41D94D] hover:font-semibold hover:text-[#fff]"
                 >
-                  발행하기
+                  {bookclubId && isCreateBookClub ? '수정하기' : '발행하기'}
                 </button>
               </div>
             </div>
