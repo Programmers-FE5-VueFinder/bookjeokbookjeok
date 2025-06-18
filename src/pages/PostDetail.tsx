@@ -15,6 +15,8 @@ import { applyBookClub, getApplyState } from '../apis/book-club';
 import Like from '../components/component/post-detail/Like';
 import type { CommentTypeBase } from '../types/type';
 import { getComments } from '../apis/comment';
+import { IoMdHeartEmpty } from 'react-icons/io';
+import { getLikeCount } from '../apis/like';
 
 export default function PostDetail() {
   const { postId } = useParams();
@@ -30,6 +32,7 @@ export default function PostDetail() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [comments, setComments] = useState<CommentTypeBase[]>([]);
+  const [likeCount, setLikeCount] = useState(0);
 
   const fetchComments = useCallback(async () => {
     if (!postId) return;
@@ -41,17 +44,31 @@ export default function PostDetail() {
     }
   }, [postId]);
 
+  const fetchLikeCount = useCallback(async () => {
+    if (!postId) return;
+    try {
+      const count = await getLikeCount(postId);
+      setLikeCount(count);
+    } catch (err) {
+      console.error('좋아요 수 불러오기 실패', err);
+    }
+  }, [postId]);
+
   useEffect(() => {
     if (!postId) navigate(-1);
     async function postDetail() {
       const response = await fetchPostDetail(postId as string);
       setContent(response);
+      if (postId) {
+        const count = await getLikeCount(postId);
+        setLikeCount(count);
+      }
       setLoading(true);
       await fetchComments();
       setPostLoading(true);
     }
     postDetail();
-  }, [postId, fetchComments, navigate]);
+  }, [postId, fetchComments, navigate, fetchLikeCount]);
 
   useEffect(() => {
     if (postLoading) {
@@ -114,12 +131,14 @@ export default function PostDetail() {
           </>
         )}
         {/* 본문 */}
-        <Like postId={postId!} />
+        <Like postId={postId!} onLikeToggle={fetchLikeCount} />
         <PostProfile profile={content!.profile} />
         <div className="flex h-[110px] w-[1200px] items-center">
           <span className="flex items-center gap-[8px] text-[16px] font-semibold text-[#333333]">
             <FaRegComment />
             {comments.length}개의 댓글
+            <IoMdHeartEmpty className="mt-[2px] mr-[-4px] ml-[5px] h-[20px] w-[20px]" />
+            {likeCount}개의 좋아요
           </span>
         </div>
         <CommentInput onSuccess={fetchComments} />

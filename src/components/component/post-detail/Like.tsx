@@ -6,9 +6,10 @@ import { toast } from 'react-toastify';
 
 interface LikeProps {
   postId: string;
+  onLikeToggle: () => void;
 }
 
-export default function Like({ postId }: LikeProps) {
+export default function Like({ postId, onLikeToggle }: LikeProps) {
   const session = useAuthStore((state) => state.session);
   const userId = session?.user?.id;
 
@@ -40,8 +41,10 @@ export default function Like({ postId }: LikeProps) {
 
     if (result?.status === 'liked') {
       setLikeStatus(true);
+      onLikeToggle?.();
     } else if (result?.status === 'unliked') {
       setLikeStatus(false);
+      onLikeToggle?.();
     } else {
       alert('좋아요 처리 중 오류가 발생했습니다.');
     }
