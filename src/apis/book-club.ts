@@ -83,6 +83,7 @@ export async function editBookClub(
 export async function deleteBookClub(id: string) {
   await supabase.from('book_club_chat').delete().eq('book_club_id', id);
   await supabase.from('book_club_member').delete().eq('book_club_id', id);
+  await supabase.from('post').delete().eq('object_id', id);
   await supabase.from('book_club').delete().eq('id', id);
 }
 
