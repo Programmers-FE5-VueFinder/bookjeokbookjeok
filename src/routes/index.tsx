@@ -13,6 +13,7 @@ import { fetchUserData } from './loader/auth.loader';
 import BookClub from '../pages/BookClub';
 import CreateBookClub from '../pages/CreateBookClub';
 import BookClubChat from '../pages/BookClubChat';
+import EditPost from '../pages/EditPost';
 import CreatePostLayout from './layouts/CreatPostLayout';
 
 const router = createBrowserRouter([
@@ -24,6 +25,11 @@ const router = createBrowserRouter([
         path: '/',
         Component: Home,
       },
+
+      {
+        path: '/post/:postId',
+        Component: PostDetail,
+      },
       {
         path: '/channel/:channelId',
         Component: ChannelLayout,
@@ -31,10 +37,6 @@ const router = createBrowserRouter([
           {
             index: true,
             Component: PostList,
-          },
-          {
-            path: 'post/:postId',
-            Component: PostDetail,
           },
         ],
       },
@@ -74,7 +76,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/editpost/:postId',
-        Component: CreatePost,
+        Component: EditPost,
       },
       {
         path: '/edit-bookclub/:bookclub_id',

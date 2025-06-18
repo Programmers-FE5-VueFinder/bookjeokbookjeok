@@ -20,6 +20,7 @@ export interface BookCardProps {
   id: string | undefined;
   book_id?: string | null;
   category?: string;
+  post_id?: string;
 }
 
 export interface PostDetailResponse {
@@ -35,8 +36,7 @@ export interface PostDetailResponse {
     id: string;
     created_at: string;
     user_id: string;
-    reference_category: string;
-    reference_id: string;
+    post_id: string;
   }>;
   comment: Array<{
     id: string;
@@ -93,8 +93,7 @@ interface Book {
 interface Like {
   id: string;
   user_id: string;
-  reference_category: string;
-  reference_id: string;
+  post_id: string;
   created_at: string;
 }
 interface APIDiaryPost {

@@ -169,8 +169,6 @@ export default function SettingModal({ onClose }: SettingModalProps) {
         console.error(error);
       }
       toast.success('변경 되었습니다');
-    } else if (nameRef.current!.value.length === 0 && newIntro === '') {
-      toast.info('변경 사항이 없습니다');
     } else {
       toast.error('다시 시도해주세요');
     }

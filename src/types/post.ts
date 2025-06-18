@@ -22,6 +22,7 @@ export type PostDetail = {
   comment: Comment[];
   book_club_id: string | null;
   created_at: string;
+  book?: book | null;
 } | null;
 
 export type Profile = {
@@ -49,11 +50,20 @@ export type Like = {
   id: string;
   created_at: string;
   user_id: string;
-  reference_category: string;
-  reference_id: string;
+  post_id: string;
 };
 export type LikeInsert = {
   user_id: string;
   reference_category: string;
   reference_id: string;
+};
+export type book = {
+  author: string | null;
+  categoryId: number | null;
+  categoryName: string | null;
+  cover: null | string;
+  created_at: string;
+  description: string | null;
+  id: string;
+  title: string;
 };

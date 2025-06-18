@@ -22,7 +22,7 @@ export default function PostList() {
   const [posts, setPosts] = useState<PostDetail[]>([]);
   const [followingPosts, setFollowingPosts] = useState<PostDetail[]>([]);
   const myProfileId = useAuthStore((state) => state.session?.user.id);
-  const isLogin = !! myProfileId;
+  const isLogin = !!myProfileId;
 
   const channelNames: { [key: string]: string } = {
     diary: '다이어리',
@@ -50,7 +50,7 @@ export default function PostList() {
         setLoading(false);
         return;
       }
-      
+
       const detailPosts: PostDetail[] = await Promise.all(
         result.data.map(async (post: Post) => {
           const detail = await fetchPostDetail(post.id);
@@ -76,23 +76,23 @@ export default function PostList() {
           };
         }),
       );
-      
+
       setPosts(detailPosts);
       setLoading(false);
     };
-    
+
     loadPosts();
-    
+
     const options = sortOptionsMap[channelId ?? ''];
     if (options && options.length > 0) {
       setSelectedSort(options[0]);
     }
   }, [channelId]);
-  
+
   // 팔로잉 포스트 목록
   useEffect(() => {
     const loadFollwingPosts = async () => {
-      if (!myProfileId) return; 
+      if (!myProfileId) return;
       setLoading(true);
 
       const fetchedPosts = await fetchFollowingPosts(myProfileId);
@@ -121,7 +121,8 @@ export default function PostList() {
     }
     // 최신글(기본)
     return [...posts].sort(
-      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
     );
   }, [posts, followingPosts, selectedSort, channelId]);
 
@@ -160,7 +161,7 @@ export default function PostList() {
           {loading ? (
             <SkeletonCard />
           ) : sortedPosts.length === 0 ? (
-            <div className="min-h-[180px] text-[#757575] text-[18px] font-semibold">
+            <div className="min-h-[180px] text-[18px] font-semibold text-[#757575]">
               {selectedSort === '팔로잉' && !isLogin ? (
                 <div>로그인하고 팔로우하는 유저의 게시글을 확인해보세요</div>
               ) : (
@@ -172,15 +173,15 @@ export default function PostList() {
             <div className="grid h-fit w-[1200px] grid-cols-4 gap-[28px]">
               {sortedPosts.map((post) => {
                 return (
-                  <Link key={post.id} to={`/channel/${post.category}/post/${post.id}`}>
+                  <Link key={post.id} to={`/post/${post.id}`}>
                     <BookCard
                       nickname={post.profile.name || '잉크묻은 고양이'}
                       title={post.title}
                       body={post.body}
                       image={
                         post.category === 'diary'
-                          ? post.book?.cover ?? ''  
-                          : post.image             
+                          ? (post.book?.cover ?? '')
+                          : post.image
                       }
                       profileImage={post.profile.image}
                       likes={post.like.length}
@@ -193,7 +194,6 @@ export default function PostList() {
                   </Link>
                 );
               })}
-
             </div>
           )}
         </div>
