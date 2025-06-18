@@ -69,7 +69,6 @@ export default function BookMarkCard({
       }
     };
     getStars();
-    console.log(bookMark);
   }, []);
 
   useEffect(() => {
