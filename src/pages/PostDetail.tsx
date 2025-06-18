@@ -103,7 +103,7 @@ export default function PostDetail() {
         {/* 본문 */}
         <div
           dangerouslySetInnerHTML={{ __html: content!.body }}
-          className="w-full max-w-[1200px] pt-[80px]"
+          className="w-full max-w-[1200px] min-h-[430px] pt-[80px]"
         ></div>
         {content!.book_club_id && (
           <>

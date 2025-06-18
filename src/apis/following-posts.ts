@@ -31,18 +31,17 @@ export async function fetchFollowingPosts(myProfileId: string) {
         appellation,
         created_at
       ),
-      like (
-        id,
-        reference_id,
-        reference_category,
-        user_id,
-        created_at
-      ),
       comment (
         id,
         post_id,
         body,
         user_id,
+        created_at
+      ),
+      like (
+        id,
+        user_id,
+        post_id,
         created_at
       )
       `,
@@ -55,14 +54,5 @@ export async function fetchFollowingPosts(myProfileId: string) {
     return [];
   }
 
-  // 타입 맞춰서 반환
-  return posts.map((post) => ({
-    ...post,
-    like:
-      post.like?.filter(
-        (likeItem) =>
-          likeItem.reference_category === 'post' &&
-          likeItem.reference_id === post.id,
-      ) ?? [],
-  }));
+  return posts;
 }

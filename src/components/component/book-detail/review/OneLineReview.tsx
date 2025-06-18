@@ -15,12 +15,14 @@ interface OneLineReviewProps {
   isbn: string;
   bookDetail: BookDetail;
   onReviewSubmit?: () => Promise<void>;
+  closeModal: () => void;
 }
 
 export function OneLineReview({
   isbn,
   bookDetail,
   onReviewSubmit,
+  closeModal,
 }: OneLineReviewProps) {
   const [review, setReview] = useState('');
   const [selectedRating, setSelectedRating] = useState(0);
@@ -112,7 +114,11 @@ export function OneLineReview({
         </p>
       ) : (
         reviewList.map((item, i) => (
-          <ReviewItem key={`${item.id}-${i}`} item={item} />
+          <ReviewItem
+            key={`${item.id}-${i}`}
+            item={item}
+            closeModal={closeModal}
+          />
         ))
       )}
 
