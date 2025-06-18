@@ -394,7 +394,7 @@ export type Database = {
           id?: string;
           is_read?: boolean;
           object_id?: string | null;
-          sender_id: string;
+          sender_id?: string;
           type: string;
           user_id: string;
         };
