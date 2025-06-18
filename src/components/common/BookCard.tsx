@@ -68,7 +68,7 @@ export default function BookCard({
           console.error(error);
         }
     };
-    if (comments === undefined) {
+    if (comments === undefined || comments === 0) {
       setCommentCount(comment!.length);
     } else {
       setCommentCount(comments);
@@ -91,7 +91,7 @@ export default function BookCard({
         }
     };
     getBookLike();
-    if (likeCount === undefined) {
+    if (likeCount === undefined || likeCount === 0) {
       setLikeCount(likes!);
     } else {
       setLikeCount(likeCount);
