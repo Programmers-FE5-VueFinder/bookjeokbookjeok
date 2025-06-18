@@ -75,7 +75,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/editpost/:postId',
-        Component: CreatePost,
+        Component: EditPost,
       },
       {
         path: '/edit-bookclub/:bookclub_id',
@@ -84,11 +84,6 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: '/bookclub/:bookclub_id/chat',
-    Component: BookClubChat,
-  },
-  {
-<<<<<<< HEAD
     path: '/bookclub/:bookclub_id/chat',
     Component: BookClubChat,
   },
@@ -102,9 +97,8 @@ const router = createBrowserRouter([
     loader: fetchUserData,
     Component: EditPost,
   },
+
   {
-=======
->>>>>>> 000ba4860e7783750aa366148cb15135c7bb1f80
     path: '*',
     Component: NotFound,
   },
