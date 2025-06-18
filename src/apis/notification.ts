@@ -153,3 +153,27 @@ export async function sendReplyNotification({
     is_read: false,
   });
 }
+
+export async function sendLikeNotification({
+  postId,
+  senderId,
+}: {
+  postId: string;
+  senderId: string;
+}) {
+  const { data: post } = await supabase
+    .from('post')
+    .select('user_id')
+    .eq('id', postId)
+    .single();
+
+  if (!post || post.user_id === senderId) return;
+
+  await supabase.from('notification').insert({
+    user_id: post.user_id,
+    sender_id: senderId,
+    type: 'like',
+    object_id: postId,
+    is_read: false,
+  });
+}
