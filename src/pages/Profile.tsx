@@ -220,12 +220,14 @@ export default function Profile() {
       const myBookClub = async () => {
         const { data: book_club } = await supabase
           .from('book_club')
-          .select('*');
+          .select('*')
+          .order('created_at', { ascending: false });
 
         const { data: book_club_member } = await supabase
           .from('book_club_member')
           .select('*')
-          .eq('user_id', userId!);
+          .eq('user_id', userId!)
+          .order('created_at', { ascending: false });
 
         const clubId = book_club_member?.filter((id) => id.user_id === userId);
         const clubIds: string[] = [];
