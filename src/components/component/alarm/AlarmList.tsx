@@ -16,11 +16,8 @@ export default function AlarmList({ alarm }: { alarm: Alarm }) {
       navigate(`/post/${alarm.object_id}`);
     } else if (alarm.type === 'follow') {
       navigate(`/profile/${alarm.sender!.id}`);
-    } else if (alarm.type === 'book-club') {
+    } else if (alarm.type === 'book-club' || alarm.type === 'book-club-approve') {
       navigate(`/bookclub/${alarm.object_id}`);
-    } else if (alarm.type === 'book-club-approve') {
-      navigate(`/bookclub/${alarm.object_id}`);
-    }
   };
 
   return (
