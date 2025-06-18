@@ -35,8 +35,7 @@ export interface PostDetailResponse {
     id: string;
     created_at: string;
     user_id: string;
-    reference_category: string;
-    reference_id: string;
+    post_id: string;
   }>;
   comment: Array<{
     id: string;
@@ -93,8 +92,7 @@ interface Book {
 interface Like {
   id: string;
   user_id: string;
-  reference_category: string;
-  reference_id: string;
+  post_id: string;
   created_at: string;
 }
 interface APIDiaryPost {
