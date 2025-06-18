@@ -42,7 +42,7 @@ export default function PopularDiaryCard({
   if (!genreData) return null;
 
   return (
-    <Link to={`channel/diary/post/${id}`}>
+    <Link to={`/post/${id}`}>
       <div
         className="flex h-[150px] w-[590px] rounded-[20px] px-[8px] py-[10px]"
         style={{
@@ -59,8 +59,12 @@ export default function PopularDiaryCard({
           <h2 className="text-[16px] font-semibold text-[#06BE00]">
             {genreData.label}
           </h2>
-          <h2 className="text-[16px] font-semibold">{content}</h2>
-          <h1 className="font-semibold text-[20[px]">{title}</h1>
+          <div>
+            <h2 className="text-[16px] font-semibold line-clamp-2">{content}</h2>
+          </div>
+          <div>
+            <h1 className="font-semibold text-[20[px] line-clamp-1">{title}</h1>
+          </div>
         </div>
       </div>
     </Link>
