@@ -59,13 +59,18 @@ export interface PostDetail extends Post {
   };
   like: PostDetailResponse['like'];
   comment: PostDetailResponse['comment'];
+  book?: {
+    id: string;
+    cover: string;
+  };
 }
 
 export interface PopularDiaryCardProps {
-    genre: string | null;  
-    title: string;
-    content: string | null | undefined;
-};
+  id: string;
+  genre: string | null;
+  title: string;
+  content: string | null | undefined;
+}
 
 interface DiaryPost {
   id: string;
@@ -80,9 +85,10 @@ interface Book {
   categoryName: string | null;
   title: string;
   description: string | null;
+  cover: string;
   subInfo?: {
     subTitle: string;
-  }
+  };
 }
 interface Like {
   id: string;
@@ -103,4 +109,16 @@ type Bestsellers = {
   author: string;
   cover: string;
   isbn13?: string;
+};
+
+type CommentTypeBase = {
+  id: string;
+  body: string;
+  created_at: string;
+  user_id: string;
+  parent_comment_id: string | null;
+  profile: {
+    name: string;
+    image: string | null;
+  };
 };
