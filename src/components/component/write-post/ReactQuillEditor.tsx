@@ -97,8 +97,9 @@ export default function ReactQuillEditor({
     setTimeout(() => {
       if (!quillRef.current || category !== 'community') return;
       const quill = quillRef!.current!.getEditor();
+      const range = quill.getSelection();
 
-      quill.insertEmbed(0, 'detailBook', {
+      quill.insertEmbed(range!.index, 'detailBook', {
         bookId: selectedBook.isbn,
         imgSrc: selectedBook.cover,
         title: selectedBook.title,
