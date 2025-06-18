@@ -120,22 +120,20 @@ export default function Header() {
           <Link to={'/search'}>
             <SearchIcon className="text-black" />
           </Link>
-          {isLogin && (
-            <div onClick={() => setIsAlarmModalOpen(true)} className="relative">
-              <div className="relative">
-                <NotificationsOutlinedIcon className="cursor-pointer text-black" />
-                {alarms.length > 0 && (
-                  <div className="absolute top-0 right-0 h-[8px] w-[8px] rounded-full bg-red-500" />
-                )}
-              </div>
-              {isAlarmModalOpen && (
-                <AlarmModal
-                  onClose={() => setIsAlarmModalOpen(false)}
-                  alarms={alarms}
-                />
+          <div onClick={() => setIsAlarmModalOpen(true)} className="relative">
+            <div className="relative">
+              <NotificationsOutlinedIcon className="cursor-pointer text-black" />
+              {alarms.length > 0 && (
+                <div className="absolute top-0 right-0 h-[8px] w-[8px] rounded-full bg-red-500" />
               )}
             </div>
-          )}
+            {isAlarmModalOpen && (
+              <AlarmModal
+                onClose={() => setIsAlarmModalOpen(false)}
+                alarms={alarms}
+              />
+            )}
+          </div>
 
           {isLogin ? (
             <div className="relative">
