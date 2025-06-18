@@ -13,6 +13,12 @@ import DiaryArea from '../components/component/MyPage/DiaryArea';
 import CommunityArea from '../components/component/MyPage/CommunityArea';
 import BookClubArea from '../components/component/MyPage/BookClubArea';
 import BookMarkArea from '../components/component/MyPage/BookMarkArea';
+import {
+  fetchAddFollow,
+  fetchDeleteFollow,
+  fetchSendFollow,
+} from '../apis/follow';
+import { toast } from 'react-toastify';
 
 export type Post = {
   body: string;
@@ -52,7 +58,8 @@ export default function Profile() {
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedBtn, setSelectedBtn] = useState<string>('다이어리');
   const [content, setContent] = useState<string>('diary');
-  const buttonName = ['다이어리', '자유채널', '마이 북클럽', '북마크'];
+  const MybuttonName = ['다이어리', '자유채널', '마이 북클럽', '북마크'];
+  const buttonName = ['다이어리', '자유채널', '북마크'];
   const { userId } = useParams();
   const [follow, setFollow] = useState<boolean>(false);
 
@@ -75,25 +82,21 @@ export default function Profile() {
   };
 
   const handleFollowing = async () => {
+    if (session?.user.id === undefined) {
+      toast.error('로그인 후 이용 가능합니다.');
+      return;
+    }
     if (follow === false) {
       if (session?.user.id !== undefined && userId !== undefined) {
-        const { error } = await supabase
-          .from('follow')
-          .insert([{ follower_id: session?.user.id, following_id: userId }])
-          .select();
-        console.error(error);
+        fetchAddFollow(session.user.id, userId);
+        fetchSendFollow(session.user.id, userId);
       }
       const updateFollower = follower + 1;
       setFollower(updateFollower);
       setFollow(true);
     } else if (follow === true) {
       if (session?.user.id !== undefined && userId !== undefined) {
-        const { error } = await supabase
-          .from('follow')
-          .delete()
-          .eq('follower_id', session?.user.id)
-          .eq('following_id', userId);
-        console.error(error);
+        fetchDeleteFollow(session.user.id, userId);
       }
       const updateFollower = follower - 1;
       setFollower(updateFollower);
@@ -114,19 +117,19 @@ export default function Profile() {
         const user = session?.user;
         if (!user) return;
 
-        const { data: profile, error } = await supabase
-          .from('profile')
-          .select('image, name, intro')
-          .eq('id', userId!)
-          .single();
-        if (error) {
+        try {
+          const { data: profile } = await supabase
+            .from('profile')
+            .select('image, name, intro')
+            .eq('id', userId!)
+            .single();
+          if (profile) {
+            setProfileName(profile.name);
+            setProfileIntro(profile.intro);
+          }
+        } catch (error) {
           console.error('초기 프로필 데이터 로딩 실패:', error);
           return;
-        }
-
-        if (profile) {
-          setProfileName(profile.name);
-          setProfileIntro(profile.intro);
         }
       };
 
@@ -175,7 +178,8 @@ export default function Profile() {
           const { data: posts } = await supabase
             .from('post')
             .select('*')
-            .eq('user_id', userId!);
+            .eq('user_id', userId!)
+            .order('created_at', { ascending: false });
           const postDiary = posts?.filter((post) => post.category === 'diary');
           const postCommunity = posts?.filter(
             (post) => post.category === 'community',
@@ -205,7 +209,8 @@ export default function Profile() {
           const { data: bookmark } = await supabase
             .from('bookmark')
             .select('*')
-            .eq('user_id', userId!);
+            .eq('user_id', userId!)
+            .order('created_at', { ascending: false });
           setBookMark(bookmark);
         } catch (error) {
           console.error(error);
@@ -229,9 +234,8 @@ export default function Profile() {
             clubIds.push(clubId[i].book_club_id);
           }
         }
-
         if (book_club?.length !== undefined)
-          for (let i = 0; i < book_club?.length; i++) {
+          for (let i = 0; i < clubIds.length; i++) {
             setBookClub(book_club?.filter((club) => club.id === clubIds[i]));
           }
       };
@@ -274,28 +278,52 @@ export default function Profile() {
                 </button>
               ) : null}
             </div>
-            <div className="mt-[14px] mb-[14px] flex items-center gap-[6px] font-bold">
-              <span>{profileName} 님</span>
-              {/* <div className="size-[15px] rounded-full border-1"></div> */}
-            </div>
-            <span>{intro}</span>
+            {loading ? (
+              <div className="animate-pulse">
+                <div className="mt-[14px] mb-[14px] h-[24px] w-[120px] rounded-md bg-gray-200"></div>
 
-            <div className="mt-[14px] mb-[14px] flex">
-              <div className="mr-[25px]">
-                <span className="mr-[8px] text-[16px] font-semibold">
-                  팔로워
-                </span>
-                <span className="text-[16px]">{follower}</span>
+                <div className="space-y-2">
+                  <div className="h-[16px] w-full rounded-md bg-gray-200"></div>
+                </div>
               </div>
+            ) : (
               <div>
-                <span className="mr-[8px] text-[16px] font-semibold">
-                  팔로잉
-                </span>
-                <span className="text-[16px]">{following}</span>
+                <div className="mt-[14px] mb-[14px] flex items-center gap-[6px] font-bold">
+                  <span>{profileName} 님</span>
+                  {/* <div className="size-[15px] rounded-full border-1"></div> */}
+                </div>
+                <span>{intro}</span>
               </div>
-            </div>
+            )}
+
+            {loading ? (
+              <div className="animate-pulse">
+                <div className="mt-[14px] mb-[14px] flex">
+                  <div className="h-[24px] w-[225px] rounded-md bg-gray-200"></div>
+                </div>
+              </div>
+            ) : (
+              <div className="mt-[14px] mb-[14px] flex">
+                <div className="mr-[25px]">
+                  <span className="mr-[8px] text-[16px] font-semibold">
+                    팔로워
+                  </span>
+                  <span className="text-[16px]">{follower}</span>
+                </div>
+                <div>
+                  <span className="mr-[8px] text-[16px] font-semibold">
+                    팔로잉
+                  </span>
+                  <span className="text-[16px]">{following}</span>
+                </div>
+              </div>
+            )}
             {session?.user.id !== userId ? (
-              follow ? (
+              loading ? (
+                <div className="animate-pulse">
+                  <div className="h-[40px] w-[200px] rounded-lg bg-gray-200"></div>
+                </div>
+              ) : follow ? (
                 <button
                   className="top-0 right-1 flex h-[40px] w-[200px] cursor-pointer items-center justify-center gap-[3px] rounded-lg bg-gray-200"
                   onClick={handleFollowing}
@@ -319,20 +347,35 @@ export default function Profile() {
           {/* 버튼 에리어 */}
           <div className="absolute bottom-0 flex h-[40px] w-full content-center items-center justify-center">
             <div className="flex w-[1200px] items-center justify-center">
-              {buttonName.map((item) => {
-                return (
-                  <button
-                    className={twMerge(
-                      item === selectedBtn ? 'button-active' : 'button',
-                    )}
-                    onClick={handleContentButton}
-                    key={item}
-                    name={item}
-                  >
-                    {item}
-                  </button>
-                );
-              })}
+              {session?.user.id !== userId
+                ? buttonName.map((item) => {
+                    return (
+                      <button
+                        className={twMerge(
+                          item === selectedBtn ? 'button-active' : 'button',
+                        )}
+                        onClick={handleContentButton}
+                        key={item}
+                        name={item}
+                      >
+                        {item}
+                      </button>
+                    );
+                  })
+                : MybuttonName.map((item) => {
+                    return (
+                      <button
+                        className={twMerge(
+                          item === selectedBtn ? 'button-active' : 'button',
+                        )}
+                        onClick={handleContentButton}
+                        key={item}
+                        name={item}
+                      >
+                        {item}
+                      </button>
+                    );
+                  })}
             </div>
           </div>
         </div>

@@ -13,6 +13,8 @@ import { fetchUserData } from './loader/auth.loader';
 import BookClub from '../pages/BookClub';
 import CreateBookClub from '../pages/CreateBookClub';
 import BookClubChat from '../pages/BookClubChat';
+import EditPost from '../pages/EditPost';
+import CreatePostLayout from './layouts/CreatPostLayout';
 
 const router = createBrowserRouter([
   {
@@ -23,6 +25,11 @@ const router = createBrowserRouter([
         path: '/',
         Component: Home,
       },
+
+      {
+        path: '/post/:postId',
+        Component: PostDetail,
+      },
       {
         path: '/channel/:channelId',
         Component: ChannelLayout,
@@ -30,10 +37,6 @@ const router = createBrowserRouter([
           {
             index: true,
             Component: PostList,
-          },
-          {
-            path: 'post/:postId',
-            Component: PostDetail,
           },
         ],
       },
@@ -50,40 +53,40 @@ const router = createBrowserRouter([
         Component: SearchResult,
       },
       {
-        path: '/create-bookclub',
-        Component: CreateBookClub,
-      },
-      {
-        path: '/edit-bookclub/:bookclub_id',
-        Component: CreateBookClub,
-      },
-      {
         path: '/bookclub/:bookclub_id',
         Component: BookClub,
+      },
+    ],
+  },
+  {
+    Component: CreatePostLayout,
+    loader: fetchUserData,
+    children: [
+      {
+        path: '/create-post',
+        Component: CreatePost,
       },
       {
         path: '/create-post/:bookclub_id',
         Component: CreatePost,
+      },
+      {
+        path: '/create-bookclub',
+        Component: CreateBookClub,
+      },
+      {
+        path: '/editpost/:postId',
+        Component: EditPost,
+      },
+      {
+        path: '/edit-bookclub/:bookclub_id',
+        Component: CreateBookClub,
       },
     ],
   },
   {
     path: '/bookclub/:bookclub_id/chat',
     Component: BookClubChat,
-  },
-  {
-    path: '/bookclub/:bookclub_id/chat',
-    Component: BookClubChat,
-  },
-  {
-    path: '/create-post',
-    loader: fetchUserData,
-    Component: CreatePost,
-  },
-  {
-    path: '/editpost/:postId',
-    loader: fetchUserData,
-    Component: CreatePost,
   },
   {
     path: '*',

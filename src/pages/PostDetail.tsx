@@ -1,66 +1,130 @@
-import { useParams } from 'react-router';
-import Comment from '../components/component/post-detail/Comment';
-import CommentInput from '../components/component/post-detail/CommentInput';
+import { useNavigate, useParams } from 'react-router';
+import Comment from '../components/component/post-detail/comments/Comment';
+import CommentInput from '../components/component/post-detail/comments/CommentInput';
 import PostHeader from '../components/component/post-detail/PostHeader';
 import PostProfile from '../components/component/post-detail/PostProfile';
-import { useEffect, useState } from 'react';
+import { FaRegComment } from 'react-icons/fa6';
+import { useCallback, useEffect, useState } from 'react';
 import { fetchPostDetail } from '../apis/post';
+import { deletePost } from '../apis/post';
 import type { PostDetail } from '../types/post';
 import getElapsedTime from '../utils/format-time';
 import '../css/reactQuillCustom.css';
 import CheckModal from '../components/common/CheckModal';
+import { applyBookClub, getApplyState } from '../apis/book-club';
+import Like from '../components/component/post-detail/Like';
+import type { CommentTypeBase } from '../types/type';
+import { getComments } from '../apis/comment';
 
 export default function PostDetail() {
-  const path = useParams();
+  const { postId } = useParams();
   const [content, setContent] = useState<PostDetail | undefined>(undefined);
-  const [modalStatus, setModalStatus] = useState({
-    show: false,
-    active: false,
-  });
+  const [postLoading, setPostLoading] = useState(false);
+  const [applyState, setApplyState] = useState('');
+
+  const handleApplyBookclub = async () => {
+    await applyBookClub(content!.profile.id, content!.book_club_id!);
+    setApplyState('after');
+  };
+  const [modalShow, setModalShow] = useState(false);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const [comments, setComments] = useState<CommentTypeBase[]>([]);
+
+  const fetchComments = useCallback(async () => {
+    if (!postId) return;
+    try {
+      const res = await getComments(postId);
+      setComments(res);
+    } catch (err) {
+      console.error('댓글 불러오기 실패', err);
+    }
+  }, [postId]);
 
   useEffect(() => {
+    if (!postId) navigate(-1);
     async function postDetail() {
-      const response = await fetchPostDetail(path.postId as string);
+      const response = await fetchPostDetail(postId as string);
       setContent(response);
       setLoading(true);
+      await fetchComments();
+      setPostLoading(true);
     }
     postDetail();
-  }, []);
+  }, [postId, fetchComments, navigate]);
+
+  useEffect(() => {
+    if (postLoading) {
+      const fetchApplyState = async () => {
+        setApplyState(await getApplyState(content!.book_club_id!));
+        setLoading(true);
+      };
+      fetchApplyState();
+    }
+  }, [content, postLoading]);
 
   return (
     loading && (
       <main className="relative flex flex-col items-center">
-        <CheckModal
-          message="게시물을 삭제 하시겠습니까?"
-          setter={setModalStatus}
-          show={modalStatus.show}
-        />
+        {modalShow && (
+          <CheckModal
+            message="게시물을 삭제 하시겠습니까?"
+            action={deletePost}
+            setter={setModalShow}
+            postId={postId!}
+          />
+        )}
         <PostHeader
-          setter={setModalStatus}
-          active={modalStatus.active}
+          setModalShow={setModalShow}
           title={content!.title}
           name={content!.profile.name}
           category={content!.category}
           time={getElapsedTime(content!.created_at)}
+          writeUserId={content!.profile.id}
+          path={postId!}
         />
         {/* 본문 */}
         <div
           dangerouslySetInnerHTML={{ __html: content!.body }}
-          className="h-[700px] max-w-[1200px] pt-[80px] pb-[80px]"
+          className="w-full max-w-[1200px] pt-[80px]"
         ></div>
+        {content!.book_club_id && (
+          <>
+            {applyState === 'before' && (
+              <button
+                className="mb-20 h-[90px] w-[1200px] cursor-pointer rounded-xl bg-[#08c818] text-[20px] font-bold text-white"
+                onClick={handleApplyBookclub}
+              >
+                북클럽 신청하기
+              </button>
+            )}
+            {applyState === 'after' && (
+              <button className="mb-20 h-[90px] w-[1200px] cursor-default rounded-xl bg-[#BDBFBD] text-[20px] font-bold text-white">
+                북클럽 신청완료
+              </button>
+            )}
+            {applyState === 'member' && (
+              <button
+                className="mb-20 h-[90px] w-[1200px] cursor-pointer rounded-xl bg-[#08c818] text-[20px] font-bold text-white"
+                onClick={() => navigate(`/bookclub/${content?.book_club_id}`)}
+              >
+                북클럽으로 이동
+              </button>
+            )}
+          </>
+        )}
         {/* 본문 */}
+        <Like />
         <PostProfile profile={content!.profile} />
         <div className="flex h-[110px] w-[1200px] items-center">
-          <span className="text-[16px] font-semibold text-[#333333]">
-            N개의 댓글
+          <span className="flex items-center gap-[8px] text-[16px] font-semibold text-[#333333]">
+            <FaRegComment />
+            {comments.length}개의 댓글
           </span>
         </div>
-        <CommentInput />
+        <CommentInput onSuccess={fetchComments} />
         <div className="mb-[150px]">
-          <Comment />
-          <Comment />
-          <Comment />
+          <Comment comments={comments} fetchComments={fetchComments} />
         </div>
       </main>
     )

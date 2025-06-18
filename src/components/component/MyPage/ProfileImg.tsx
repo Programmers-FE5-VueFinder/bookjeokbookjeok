@@ -5,16 +5,22 @@ import supabase from '../../../utils/supabase';
 import { useProfileImgStore } from '../../../store/profileImgStore';
 import { useAuthStore } from '../../../store/authStore';
 import ProfileSkeleton from '../../common/ProfileSkeleton';
+import { twMerge } from 'tailwind-merge';
 
 type ProfileImageProps = {
   id?: string | null;
   src?: string | null | File;
+  className?: string;
 };
 /**
  * @param {ProfileImageProps} props
  * @param {string} [props.id]
  */
-const ProfileImage: React.FC<ProfileImageProps> = ({ id: propId, src }) => {
+const ProfileImage: React.FC<ProfileImageProps> = ({
+  id: propId,
+  src,
+  className,
+}) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { session } = useAuthStore();
   const { profileCache, setProfileToCache } = useProfileImgStore();
@@ -93,7 +99,10 @@ const ProfileImage: React.FC<ProfileImageProps> = ({ id: propId, src }) => {
         <img
           src={src || imageUrl || session?.user.user_metadata.avatar_url}
           alt={'프로필 이미지'}
-          className="w-[100px] items-center justify-center"
+          className={twMerge(
+            'w-[100px] items-center justify-center',
+            className,
+          )}
         />
       )}
     </div>

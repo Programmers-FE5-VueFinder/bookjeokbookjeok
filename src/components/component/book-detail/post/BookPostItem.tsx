@@ -4,6 +4,7 @@ import type { Post } from '../../../../types/post';
 import { useNavigate } from 'react-router';
 import { useCallback, useEffect, useState } from 'react';
 import { getCommentCount } from '../../../../apis/comment';
+import ProfileImage from '../../MyPage/ProfileImg';
 
 export function BookPostItem({ post }: { post: Post }) {
   const navigate = useNavigate();
@@ -23,9 +24,13 @@ export function BookPostItem({ post }: { post: Post }) {
           onClick={() => navigate(`/profile/${post.user_id}`)}
           className="flex cursor-pointer items-center gap-[10px]"
         >
-          <img
+          {/* <img
             src={post.profile.image!}
             alt="작성자 프로필"
+            className="mt-[2px] h-[25px] w-[25px] rounded-full object-cover"
+          /> */}
+          <ProfileImage
+            id={post.user_id}
             className="mt-[2px] h-[25px] w-[25px] rounded-full object-cover"
           />
           <p className="text-[16px] text-[#333333]">{post.profile.name}</p>
