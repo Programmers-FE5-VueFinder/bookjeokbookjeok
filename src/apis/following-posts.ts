@@ -44,7 +44,7 @@ export async function fetchFollowingPosts(myProfileId: string) {
         post_id,
         created_at
       )
-      `
+      `,
     )
     .in('user_id', followingIdList)
     .order('created_at', { ascending: false });

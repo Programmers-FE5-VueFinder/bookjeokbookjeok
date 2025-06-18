@@ -8,7 +8,7 @@ import type { PostDetail } from '../types/type';
 import UserCard from '../components/common/UserCard';
 import BookCard from '../components/common/BookCard';
 import { fetchPosts, fetchPostDetail } from '../apis/post';
-import { MdOutlineKeyboardArrowRight } from "react-icons/md";
+import { MdOutlineKeyboardArrowRight } from 'react-icons/md';
 import UserCardSkeleton from '../components/common/UserCardSkeleton';
 
 export default function SearchResult() {
@@ -17,46 +17,52 @@ export default function SearchResult() {
   const buttonName = ['통합 검색', '사용자', '게시물'];
   const [isLoading, setIsLoading] = useState(false);
   const [selectedBtn, setSelectedBtn] = useState<string>('통합 검색');
-  
+
   const [searchKeyword, setSearchKeyword] = useState('');
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
-  const [filteredPosts, setFilteredPosts] = useState<PostDetail[]>([]); 
+  const [filteredPosts, setFilteredPosts] = useState<PostDetail[]>([]);
 
   const handleSearch = () => {
     const keyword = searchKeyword.trim().toLowerCase();
 
-    const filteredU = users.filter(user => 
-      user.name?.toLowerCase().includes(keyword) ||
-      user.intro?.toLowerCase().includes(keyword)
+    const filteredU = users.filter(
+      (user) =>
+        user.name?.toLowerCase().includes(keyword) ||
+        user.intro?.toLowerCase().includes(keyword),
     );
 
-    const filteredP = posts.filter(post =>
-      (post.title?.toLowerCase().includes(keyword) ?? false) ||
-      (post.body?.toLowerCase().includes(keyword) ?? false)
+    const filteredP = posts.filter(
+      (post) =>
+        (post.title?.toLowerCase().includes(keyword) ?? false) ||
+        (post.body?.toLowerCase().includes(keyword) ?? false),
     );
-    
+
     console.log('filteredP:', filteredP);
     console.log('searchKeyword:', searchKeyword);
 
     setFilteredUsers(filteredU);
-    setFilteredPosts( 
-      [...filteredP].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-    );    
+    setFilteredPosts(
+      [...filteredP].sort(
+        (a, b) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+      ),
+    );
   };
-  
+
   const handleContentButton = (e: React.MouseEvent<HTMLButtonElement>) => {
     const { name } = e.currentTarget;
     setSelectedBtn(name);
   };
 
   const sortedPosts = [...posts].sort(
-    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-  );
-  
-  const sortedFilteredPosts = [...filteredPosts].sort(
-    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    (a, b) =>
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
   );
 
+  const sortedFilteredPosts = [...filteredPosts].sort(
+    (a, b) =>
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+  );
 
   useEffect(() => {
     const getUsers = async () => {
@@ -108,13 +114,13 @@ export default function SearchResult() {
         }),
       );
       setPosts(detailPosts);
-    };    
+    };
     loadPosts();
   }, []);
 
   return (
     <>
-      <div className="justify-center flex flex-col items-center">
+      <div className="flex flex-col items-center justify-center">
         <div className="relative flex h-[230px] w-full flex-col items-center justify-center gap-[27px] pb-[40px] shadow shadow-gray-200">
           <h1 className="textH1">검색</h1>
           <div className="relative flex rounded-sm border-2 border-[#d2d2d2]">
@@ -127,10 +133,10 @@ export default function SearchResult() {
                 const value = e.target.value;
                 setSearchKeyword(value);
                 if (value.trim() === '') {
-                  setFilteredUsers(users); 
-                  setFilteredPosts(posts); 
+                  setFilteredUsers(users);
+                  setFilteredPosts(posts);
                 } else {
-                  setFilteredUsers(users); 
+                  setFilteredUsers(users);
                   setFilteredPosts(posts);
                 }
               }}
@@ -138,7 +144,7 @@ export default function SearchResult() {
                 if (e.key === 'Enter') handleSearch();
               }}
             />
-            <button 
+            <button
               className="absolute top-[32.5%] right-5 cursor-pointer justify-center"
               onClick={handleSearch}
             >
@@ -151,7 +157,9 @@ export default function SearchResult() {
               {buttonName.map((item) => {
                 return (
                   <button
-                    className={twMerge(item === selectedBtn ? 'button-active' : 'button',)}
+                    className={twMerge(
+                      item === selectedBtn ? 'button-active' : 'button',
+                    )}
                     onClick={handleContentButton}
                     key={item}
                     name={item}
@@ -164,17 +172,17 @@ export default function SearchResult() {
           </div>
         </div>
 
-        <div className="flex w-full flex-col items-center justify-center pt-[50px] bg-[#FAFAFA]">
+        <div className="flex w-full flex-col items-center justify-center bg-[#FAFAFA] pt-[50px]">
           {/* 사용자 영역 */}
           {(selectedBtn === '통합 검색' || selectedBtn === '사용자') && (
-            <div className="m-[50px] min-w-[1200px] min-h-[305px]">
-              <div className='flex justify-between items-center'>
+            <div className="m-[50px] min-h-[305px] min-w-[1200px]">
+              <div className="flex items-center justify-between">
                 <span className="textT2">사용자</span>
                 {selectedBtn === '통합 검색' && (
-                  <MdOutlineKeyboardArrowRight 
-                    size={30} 
-                    color="#1C1C1C" 
-                    className='cursor-pointer'
+                  <MdOutlineKeyboardArrowRight
+                    size={30}
+                    color="#1C1C1C"
+                    className="cursor-pointer"
                     onClick={() => setSelectedBtn('사용자')}
                   />
                 )}
@@ -182,19 +190,19 @@ export default function SearchResult() {
 
               <div className="flex items-center justify-between">
                 <div className="mt-[30px] grid gap-[47px] md:grid-cols-2 lg:grid-cols-6">
-                  {isLoading
-                    ? Array.from({ length: 6 }).map((_, idx) => (
-                        <UserCardSkeleton key={idx} />
-                      ))
-                    : (searchKeyword ? filteredUsers : users).length === 0 ? (
-                      <div className='col-span-6 text-center text-gray-500 py-10'>검색 결과가 없습니다.</div>
-                    ) : (
-                      (searchKeyword ? filteredUsers : users)
-                        .slice(0, selectedBtn === '통합 검색' ? 6 : undefined)
-                        .map((user) => (
-                          <UserCard key={user.id} user={user} />
-                      ))
-                    )}
+                  {isLoading ? (
+                    Array.from({ length: 6 }).map((_, idx) => (
+                      <UserCardSkeleton key={idx} />
+                    ))
+                  ) : (searchKeyword ? filteredUsers : users).length === 0 ? (
+                    <div className="col-span-6 py-10 text-center text-gray-500">
+                      검색 결과가 없습니다.
+                    </div>
+                  ) : (
+                    (searchKeyword ? filteredUsers : users)
+                      .slice(0, selectedBtn === '통합 검색' ? 6 : undefined)
+                      .map((user) => <UserCard key={user.id} user={user} />)
+                  )}
                 </div>
               </div>
             </div>
@@ -202,14 +210,14 @@ export default function SearchResult() {
 
           {/* 게시물 영역 */}
           {(selectedBtn === '통합 검색' || selectedBtn === '게시물') && (
-            <div className="m-[50px] min-w-[1200px] min-h-[305px]">
-              <div className='flex justify-between items-center'>
+            <div className="m-[50px] min-h-[305px] min-w-[1200px]">
+              <div className="flex items-center justify-between">
                 <span className="textT2">게시물</span>
                 {selectedBtn === '통합 검색' && (
-                  <MdOutlineKeyboardArrowRight 
-                    size={30} 
-                    color="#1C1C1C" 
-                    className='cursor-pointer'
+                  <MdOutlineKeyboardArrowRight
+                    size={30}
+                    color="#1C1C1C"
+                    className="cursor-pointer"
                     onClick={() => setSelectedBtn('게시물')}
                   />
                 )}
@@ -219,30 +227,40 @@ export default function SearchResult() {
                 <div className="mt-[26px] grid gap-[28px] md:grid-cols-2 lg:grid-cols-4">
                   {isLoading ? (
                     Array.from({ length: 8 }).map((_, idx) => (
-                      <div key={idx} className="h-[320px] w-full bg-gray-200 rounded" />
+                      <div
+                        key={idx}
+                        className="h-[320px] w-full rounded bg-gray-200"
+                      />
                     ))
-                  ) : (searchKeyword ? sortedFilteredPosts : sortedPosts).length === 0
-                    ? (
-                        <div className='flex mt-1 col-span-6 text-center text-gray-500 py-10 ml-[49px]'>검색 결과가 없습니다.</div>
+                  ) : (searchKeyword ? sortedFilteredPosts : sortedPosts)
+                      .length === 0 ? (
+                    <div className="col-span-6 mt-1 ml-[49px] flex py-10 text-center text-gray-500">
+                      검색 결과가 없습니다.
+                    </div>
                   ) : (
                     (searchKeyword ? sortedFilteredPosts : sortedPosts)
                       .slice(0, selectedBtn === '통합 검색' ? 8 : undefined)
                       .map((post) => (
-                        <Link key={post.id} to={`/channel/${post.category}/post/${post.id}`}>
+                        <Link
+                          key={post.id}
+                          to={`/channel/${post.category}/post/${post.id}`}
+                        >
                           <BookCard
                             nickname={post.profile.name || '잉크묻은 고양이'}
                             title={post.title}
                             body={post.body}
                             image={
                               post.category === 'diary'
-                                ? post.book?.cover ?? ''  
-                                : post.image             
+                                ? (post.book?.cover ?? '')
+                                : post.image
                             }
                             profileImage={post.profile.image}
                             likes={post.like.length}
                             comments={post.comment.length}
                             id={post.profile.id}
-                            createdAt={new Date(post.created_at).toLocaleDateString()}
+                            createdAt={new Date(
+                              post.created_at,
+                            ).toLocaleDateString()}
                             category={post.category}
                             book_id={post.book?.id}
                           />
