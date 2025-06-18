@@ -13,6 +13,7 @@ import { fetchUserData } from './loader/auth.loader';
 import BookClub from '../pages/BookClub';
 import CreateBookClub from '../pages/CreateBookClub';
 import BookClubChat from '../pages/BookClubChat';
+import EditPost from '../pages/EditPost';
 import CreatePostLayout from './layouts/CreatPostLayout';
 
 const router = createBrowserRouter([
@@ -85,6 +86,20 @@ const router = createBrowserRouter([
   {
     path: '/bookclub/:bookclub_id/chat',
     Component: BookClubChat,
+  },
+  {
+    path: '/bookclub/:bookclub_id/chat',
+    Component: BookClubChat,
+  },
+  {
+    path: '/createpost',
+    loader: fetchUserData,
+    Component: CreatePost,
+  },
+  {
+    path: '/editpost/:post_id',
+    loader: fetchUserData,
+    Component: EditPost,
   },
   {
     path: '*',
