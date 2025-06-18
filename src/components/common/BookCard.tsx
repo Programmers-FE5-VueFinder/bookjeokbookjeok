@@ -30,6 +30,7 @@ export default function BookCard({
   const [img, setImg] = useState<string | null>(null);
   const [comment, setComment] = useState<Comment[] | null>([]);
   const [likeCount, setLikeCount] = useState<number>(0);
+  const [commentCount, setCommentCount] = useState<number>(0);
 
   function decodeHTMLEntities(str: string) {
     const txt = document.createElement('textarea');
@@ -67,6 +68,11 @@ export default function BookCard({
           console.error(error);
         }
     };
+    if (comments === undefined) {
+      setCommentCount(comment!.length);
+    } else {
+      setCommentCount(comments);
+    }
     getBookComment();
     const getBookLike = async () => {
       if (post_id !== undefined)
@@ -85,6 +91,12 @@ export default function BookCard({
         }
     };
     getBookLike();
+    if (likeCount === undefined) {
+      setLikeCount(likes!);
+    } else {
+      setLikeCount(likeCount);
+    }
+    console.log(likes, likeCount, comments, comment?.length);
   }, [book_id]);
 
   return (
@@ -142,13 +154,13 @@ export default function BookCard({
               <span>
                 <FaRegHeart fontSize="small" />
               </span>
-              <span>{likeCount || likes}</span>
+              <span>{likeCount}</span>
             </div>
             <div className="flex items-center space-x-1">
               <span>
                 <FaRegComment fontSize="small" />
               </span>
-              <span>{comment?.length || comments}</span>
+              <span>{commentCount}</span>
             </div>
           </div>
           <div>
