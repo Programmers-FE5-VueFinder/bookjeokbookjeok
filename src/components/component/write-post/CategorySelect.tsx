@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IoIosArrowDown } from 'react-icons/io';
+import { useParams } from 'react-router';
 
 export default function CategorySelect({
   setCategory,
@@ -8,6 +9,15 @@ export default function CategorySelect({
 }) {
   const [categoryToggle, setCategoryToggle] = useState(false);
   const [seletText, setSelectText] = useState('채널선택');
+  const path = useParams();
+
+  useEffect(() => {
+    if (path.channelId === 'diary') {
+      setSelectText('다이어리');
+    } else if (path.channelId === 'community') {
+      setSelectText('자유채널');
+    }
+  }, []);
 
   const categoryChangeHandler = (
     e: React.MouseEvent<HTMLLIElement, MouseEvent>,

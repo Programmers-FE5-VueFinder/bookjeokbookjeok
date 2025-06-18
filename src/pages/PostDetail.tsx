@@ -20,6 +20,8 @@ import { getLikeCount } from '../apis/like';
 import DiarySelectBook from '../components/component/post-detail/DiarySelectBook';
 import { useAuthStore } from '../store/authStore';
 import { isFollowing } from '../apis/follow';
+import { searchBooks } from '../apis/book-search';
+import BookPage from '../components/component/book-detail/BookPage';
 
 export default function PostDetail() {
   const { postId } = useParams();
@@ -27,6 +29,7 @@ export default function PostDetail() {
   const [postLoading, setPostLoading] = useState(false);
   const [applyState, setApplyState] = useState('');
   const [followToggle, setFollowToggle] = useState(true);
+  const [bookToggle, setBookToggle] = useState(false);
 
   const handleApplyBookclub = async () => {
     await applyBookClub(content!.profile.id, content!.book_club_id!);
@@ -37,6 +40,7 @@ export default function PostDetail() {
   const navigate = useNavigate();
   const [comments, setComments] = useState<CommentTypeBase[]>([]);
   const [likeCount, setLikeCount] = useState(0);
+  const [bookInfo, setBookInfo] = useState(null);
   const session = useAuthStore((state) => state.session);
 
   const fetchComments = useCallback(async () => {
@@ -73,6 +77,8 @@ export default function PostDetail() {
     async function postDetail() {
       const response = await fetchPostDetail(postId as string);
       setContent(response);
+      const books = await searchBooks(content!.book!.title);
+      setBookInfo(books[0]);
       if (postId) {
         const count = await getLikeCount(postId);
         setLikeCount(count);
@@ -98,6 +104,13 @@ export default function PostDetail() {
   return (
     loading && (
       <main className="relative flex flex-col items-center">
+        {bookToggle && (
+          <BookPage
+            isOpen={bookToggle}
+            closeModal={() => setBookToggle(false)}
+            bookDetail={bookInfo!}
+          />
+        )}
         {modalShow && (
           <CheckModal
             message="게시물을 삭제 하시겠습니까?"
@@ -119,6 +132,7 @@ export default function PostDetail() {
         />
         {content?.book ? (
           <DiarySelectBook
+            onClick={setBookToggle}
             imageSrc={content?.book?.cover}
             title={content?.book?.title}
             author={content?.book?.author}

@@ -11,7 +11,7 @@ export default function EditSelectBox({
   setSelectBoxShow: Dispatch<SetStateAction<boolean>>;
 }) {
   const navigate = useNavigate();
-  const { postId } = useParams();
+  const { postId, channelId } = useParams();
 
   return (
     <>
@@ -22,7 +22,7 @@ export default function EditSelectBox({
         <button
           onClick={(e) => {
             e.preventDefault();
-            navigate(`/editpost/${postId}`);
+            navigate(`/editpost/${channelId}/${postId}`);
           }}
           className="flex h-[40px] cursor-pointer items-center justify-center gap-[5px] hover:bg-[#f1f1f1] hover:font-semibold"
         >

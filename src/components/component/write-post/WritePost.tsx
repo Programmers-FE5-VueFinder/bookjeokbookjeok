@@ -41,6 +41,8 @@ export default function WritePost({
   const [selectedBook, setSeletedBook] = useState<BookDetail | null>(null);
   const titleRef = useRef<HTMLInputElement>(null);
 
+  console.log(category);
+
   const isLogIn = useAuthStore((state) => state.isLogin);
   const session = useAuthStore((state) => state.session);
 
@@ -66,6 +68,7 @@ export default function WritePost({
       id: selectedBook?.isbn13,
       star: rating,
     };
+    console.log(body);
 
     if (!title || !body) {
       if (!title) {
@@ -174,6 +177,7 @@ export default function WritePost({
   }, [isLogIn]);
 
   useEffect(() => {
+    if (path.channelId) setCategory(path.channelId as string);
     if (bookclubId) {
       if (isCreateBookClub) {
         const setBookClubInfo = async () => {
@@ -263,7 +267,10 @@ export default function WritePost({
               <div className="flex h-[60px] min-h-[60px] w-[100%] justify-center border-t border-t-[#D5D5D5]">
                 <div className="flex h-[100%] w-[1200px] items-center justify-between">
                   <button
-                    onClick={() => navigate(-1)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate(-1);
+                    }}
                     className="flex cursor-pointer items-center gap-[10px] py-[20px] text-[16px] hover:font-bold"
                   >
                     <MdArrowBack />
@@ -271,6 +278,10 @@ export default function WritePost({
                   </button>
                   <button
                     type="submit"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate(`/post/${path.postId}`);
+                    }}
                     className="cursor-pointer rounded-[5px] bg-[#F1F1F1] px-[23px] py-[8px] text-[14px] hover:bg-[#41D94D] hover:font-semibold hover:text-[#fff]"
                   >
                     수정하기
@@ -353,7 +364,10 @@ export default function WritePost({
             <div className="flex h-[60px] min-h-[60px] w-[100%] justify-center border-t border-t-[#D5D5D5]">
               <div className="flex h-[100%] w-[1200px] items-center justify-between">
                 <button
-                  onClick={() => navigate(-1)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate(-1);
+                  }}
                   className="flex cursor-pointer items-center gap-[10px] py-[20px] text-[16px] hover:font-bold"
                 >
                   <MdArrowBack />
@@ -361,6 +375,10 @@ export default function WritePost({
                 </button>
                 <button
                   type="submit"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate(`/post/${path.postId}`);
+                  }}
                   className="cursor-pointer rounded-[5px] bg-[#F1F1F1] px-[23px] py-[8px] text-[14px] hover:bg-[#41D94D] hover:font-semibold hover:text-[#fff]"
                 >
                   {bookclubId && isCreateBookClub ? '수정하기' : '발행하기'}

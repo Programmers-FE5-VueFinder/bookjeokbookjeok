@@ -1,7 +1,7 @@
 import { fetchAuthId, logout } from '../../apis/auth';
 import supabase from '../../utils/supabase';
 import LoginModal from '../../pages/LoginModal';
-import { Link, useNavigate } from 'react-router';
+import { Link, useNavigate, useParams } from 'react-router';
 import { useEffect, useRef, useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
 
@@ -19,6 +19,7 @@ export default function Header() {
   const setLogout = useAuthStore((state) => state.setLogout);
   const navigate = useNavigate();
   const { session } = useAuthStore();
+  const path = useParams();
 
   const [isAlarmModalOpen, setIsAlarmModalOpen] = useState(false);
   const [activeModal, setActiveModal] = useState<'login' | 'signup' | null>(
@@ -113,7 +114,15 @@ export default function Header() {
           <Link to={'/channel/diary'}>다이어리</Link>
           <Link to={'/channel/book_club'}>북클럽</Link>
           <Link to={'/channel/community'}>자유채널</Link>
-          <Link to={'/create-post'}>글작성</Link>
+          <Link
+            to={
+              path.channelId
+                ? `/create-post/${path.channelId}/post`
+                : `/create-post/diary/post`
+            }
+          >
+            글작성
+          </Link>
         </nav>
 
         <div className="flex space-x-4" ref={dropdownRef}>

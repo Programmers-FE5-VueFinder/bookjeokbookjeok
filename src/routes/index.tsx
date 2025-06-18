@@ -27,7 +27,7 @@ const router = createBrowserRouter([
       },
 
       {
-        path: '/post/:postId',
+        path: '/post/:channelId/:postId',
         Component: PostDetail,
       },
       {
@@ -63,7 +63,7 @@ const router = createBrowserRouter([
     loader: fetchUserData,
     children: [
       {
-        path: '/create-post',
+        path: '/create-post/:channelId/post',
         Component: CreatePost,
       },
       {
@@ -75,7 +75,11 @@ const router = createBrowserRouter([
         Component: CreateBookClub,
       },
       {
-        path: '/editpost/:postId',
+        path: '/create-post/book_club/post',
+        Component: CreateBookClub,
+      },
+      {
+        path: '/editpost/:channelId/:postId',
         Component: EditPost,
       },
       {
