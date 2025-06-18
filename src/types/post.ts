@@ -4,6 +4,7 @@ export interface Post {
   body: string;
   created_at: string;
   user_id: string;
+  category: string;
   profile: {
     name: string;
     image: string | null;
@@ -19,6 +20,7 @@ export type PostDetail = {
   category: string;
   like: Like[];
   comment: Comment[];
+  book_club_id: string | null;
   created_at: string;
 } | null;
 

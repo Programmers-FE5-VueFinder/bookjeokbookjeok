@@ -35,7 +35,7 @@ export default function BookClubArea({
             </div>
           </div>
         ) : null}
-        <div className="grid gap-[28px] p-[100px] text-center md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid min-h-[calc(100vh-570px)] gap-[28px] p-[100px] text-center md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {loading ? (
             <SkeletonCard />
           ) : (

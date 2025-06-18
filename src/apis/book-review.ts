@@ -131,6 +131,7 @@ export async function fetchReviewsWithStars(
       review: review?.body ?? '',
       date: review?.created_at ?? '',
       rating: tag.star ?? 0,
+      user_id: review?.user_id ?? '',
       author: {
         name: review?.profile?.name ?? '알 수 없음',
         image: review?.profile?.image ?? null,

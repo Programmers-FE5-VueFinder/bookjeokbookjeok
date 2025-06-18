@@ -1,10 +1,15 @@
 import Rating from '@mui/material/Rating';
 import getElapsedTime from '../../../../utils/format-time';
 import type { Review } from '../../../../types/book';
+import { useNavigate } from 'react-router';
 
 export function ReviewItem({ item }: { item: Review }) {
+  const navigate = useNavigate();
   return (
-    <div className="max-h-full border-t border-t-[#D8D8D8] py-[15px]">
+    <div
+      onClick={() => navigate(`/profile/${item.user_id}`)}
+      className="max-h-full border-t border-t-[#D8D8D8] py-[15px]"
+    >
       <div className="flex flex-col gap-[10px] font-medium">
         <div className="flex">
           <div className="flex cursor-pointer">

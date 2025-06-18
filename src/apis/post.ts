@@ -41,6 +41,7 @@ export async function fetchPostDetail(id: string) {
       like(*),
       comment(*),
       created_at,
+      book_club_id,
       book(*)
     `,
     )
@@ -227,6 +228,7 @@ export async function getBookPost(bookId: string, from: number, to: number) {
       title,
       body,
       created_at,
+      category,
       user_id,
       profile (
         name,
