@@ -20,20 +20,33 @@ export async function isBookClubOwner(id: string) {
 export async function fetchBookClub(id: string) {
   const { data: book_club } = await supabase
     .from('book_club')
-    .select(`*, book_club_member(*)`)
+    .select('*')
     .eq('id', id)
     .single();
 
-  const userIds = book_club!.book_club_member.map(
+  const { data: book_club_member } = await supabase
+    .from('book_club_member')
+    .select('*')
+    .eq('book_club_id', id)
+    .order('created_at', { ascending: true });
+
+  const userIds = book_club_member!.map(
     (member: BookclubMember) => member.user_id,
   );
-  const { data: user } = await supabase
+
+  const { data: users } = await supabase
     .from('profile')
     .select('*')
     .in('id', userIds);
 
-  const { book_club_member, ...rest } = book_club;
-  return { ...rest, member: user };
+  const orderedUsers = userIds
+    .map((uid) => users?.find((u) => u.id === uid))
+    .filter(Boolean);
+
+  return {
+    ...book_club,
+    member: orderedUsers,
+  };
 }
 
 /* 북클럽 생성 */
