@@ -27,16 +27,16 @@ const router = createBrowserRouter([
       },
 
       {
+        path: '/post/:postId',
+        Component: PostDetail,
+      },
+      {
         path: '/channel/:channelId',
         Component: ChannelLayout,
         children: [
           {
             index: true,
             Component: PostList,
-          },
-          {
-            path: 'post/:postId',
-            Component: PostDetail,
           },
         ],
       },

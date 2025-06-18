@@ -50,8 +50,7 @@ export type Like = {
   id: string;
   created_at: string;
   user_id: string;
-  reference_category: string;
-  reference_id: string;
+  post_id: string;
 };
 export type LikeInsert = {
   user_id: string;
