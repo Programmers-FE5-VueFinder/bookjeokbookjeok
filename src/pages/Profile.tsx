@@ -19,7 +19,6 @@ import {
   fetchSendFollow,
 } from '../apis/follow';
 import { toast } from 'react-toastify';
-import { useProfileImgStore } from '../store/profileImgStore';
 
 export type Post = {
   body: string;
