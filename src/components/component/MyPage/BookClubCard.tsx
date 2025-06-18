@@ -1,20 +1,19 @@
 import { Link } from 'react-router';
 import { useEffect, useState } from 'react';
-import supabase from '../../utils/supabase';
-import type { BookCardProps } from '../../types/type';
-import ProfileImg from '../component/MyPage/ProfileImg';
-import { FaRegComment, FaRegHeart } from 'react-icons/fa';
-import defaultImg from '../../assets/images/default_post_img.png';
+import supabase from '../../../utils/supabase';
+import type { BookCardProps } from '../../../types/type';
+import ProfileImg from '../../component/MyPage/ProfileImg';
+import defaultImg from '../../../assets/images/default_post_img.png';
+import { IoPeopleSharp } from 'react-icons/io5';
 
-type Comment = {
-  body: string;
+type member = {
+  book_club_id: string;
   created_at: string;
   id: string;
-  post_id: string;
   user_id: string;
 };
 
-export default function BookCard({
+export default function BookClubCard({
   nickname,
   title,
   body,
@@ -24,12 +23,9 @@ export default function BookCard({
   book_id,
   category,
   post_id,
-  likes,
-  comments,
 }: BookCardProps) {
   const [img, setImg] = useState<string | null>(null);
-  const [comment, setComment] = useState<Comment[] | null>([]);
-  const [likeCount, setLikeCount] = useState<number>(0);
+  const [member, setMember] = useState<member[] | null>(null);
 
   function decodeHTMLEntities(str: string) {
     const txt = document.createElement('textarea');
@@ -55,36 +51,18 @@ export default function BookCard({
       }
     };
     getBookData();
-    const getBookComment = async () => {
-      if (post_id !== undefined)
-        try {
-          const { data: comment } = await supabase
-            .from('comment')
-            .select('*')
-            .eq('post_id', post_id!);
-          setComment(comment);
-        } catch (error) {
-          console.error(error);
-        }
+    const getBookClubMember = async () => {
+      try {
+        const { data: book_club_member } = await supabase
+          .from('book_club_member')
+          .select('*')
+          .eq('book_club_id', post_id!);
+        setMember(book_club_member);
+      } catch (error) {
+        console.error(error);
+      }
     };
-    getBookComment();
-    const getBookLike = async () => {
-      if (post_id !== undefined)
-        try {
-          const { data: like } = await supabase
-            .from('like')
-            .select('id')
-            .eq('post_id', post_id!);
-          if (like?.length === 0 || like?.length === undefined) {
-            setLikeCount(0);
-          } else {
-            setLikeCount(like.length);
-          }
-        } catch (error) {
-          console.error(error);
-        }
-    };
-    getBookLike();
+    getBookClubMember();
   }, [book_id]);
 
   return (
@@ -139,16 +117,8 @@ export default function BookCard({
           {/* 좋아요, 댓글 */}
           <div className="absolute bottom-0 left-0 flex size-[12px] pb-[30px] pl-[13px]">
             <div className="mr-[8px] flex items-center space-x-1">
-              <span>
-                <FaRegHeart fontSize="small" />
-              </span>
-              <span>{likeCount || likes}</span>
-            </div>
-            <div className="flex items-center space-x-1">
-              <span>
-                <FaRegComment fontSize="small" />
-              </span>
-              <span>{comment?.length || comments}</span>
+              <IoPeopleSharp />
+              <span>{member?.length}</span>
             </div>
           </div>
           <div>

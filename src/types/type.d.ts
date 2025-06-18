@@ -20,6 +20,7 @@ export interface BookCardProps {
   id: string | undefined;
   book_id?: string | null;
   category?: string;
+  post_id?: string;
 }
 
 export interface PostDetailResponse {
@@ -62,15 +63,15 @@ export interface PostDetail extends Post {
   book?: {
     id: string;
     cover: string;
-  } 
+  };
 }
 
 export interface PopularDiaryCardProps {
-    id: string;
-    genre: string | null;  
-    title: string;
-    content: string | null | undefined;
-};
+  id: string;
+  genre: string | null;
+  title: string;
+  content: string | null | undefined;
+}
 
 interface DiaryPost {
   id: string;
@@ -88,7 +89,7 @@ interface Book {
   cover: string;
   subInfo?: {
     subTitle: string;
-  }
+  };
 }
 interface Like {
   id: string;
