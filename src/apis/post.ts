@@ -233,7 +233,6 @@ export async function getBookPost(bookId: string, from: number, to: number) {
   return data;
 }
 
-
 // 내가 가입한 북클럽 글 가져오기 API
 export const fetchMyBookClubPosts = async (userId: string) => {
   // 가입한 북클럽 id 가져오기
@@ -266,7 +265,7 @@ export const fetchMyBookClubPosts = async (userId: string) => {
     throw postError;
   }
 
-  console.log('내가 가입한 북클럽의 게시물:',posts);
+  console.log('내가 가입한 북클럽의 게시물:', posts);
 
   return posts;
 };

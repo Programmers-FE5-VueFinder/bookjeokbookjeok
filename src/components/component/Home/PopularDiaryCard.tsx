@@ -60,10 +60,12 @@ export default function PopularDiaryCard({
             {genreData.label}
           </h2>
           <div>
-            <h2 className="text-[16px] font-semibold line-clamp-2">{content}</h2>
+            <h2 className="line-clamp-2 text-[16px] font-semibold">
+              {content}
+            </h2>
           </div>
           <div>
-            <h1 className="font-semibold text-[20[px] line-clamp-1">{title}</h1>
+            <h1 className="line-clamp-1 font-semibold text-[20[px]">{title}</h1>
           </div>
         </div>
       </div>
