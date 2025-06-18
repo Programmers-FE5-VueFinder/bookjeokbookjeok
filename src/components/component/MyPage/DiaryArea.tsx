@@ -43,7 +43,7 @@ export default function DiaryArea({
             post?.map((item) => {
               {
                 return (
-                  <Link to={`/channel/diary/post/${item.id}`}>
+                  <Link to={`/post/${item.id}`}>
                     <BookCard
                       profileImage={profileImage}
                       key={item.id}

@@ -4,11 +4,20 @@ import type { Review } from '../../../../types/book';
 import { useNavigate } from 'react-router';
 import ProfileImage from '../../MyPage/ProfileImg';
 
-export function ReviewItem({ item }: { item: Review }) {
+export function ReviewItem({
+  item,
+  closeModal,
+}: {
+  item: Review;
+  closeModal: () => void;
+}) {
   const navigate = useNavigate();
   return (
     <div
-      onClick={() => navigate(`/profile/${item.user_id}`)}
+      onClick={() => {
+        navigate(`/profile/${item.user_id}`);
+        closeModal();
+      }}
       className="max-h-full border-t border-t-[#D8D8D8] py-[15px]"
     >
       <div className="flex flex-col gap-[10px] font-medium">
@@ -31,8 +40,12 @@ export function ReviewItem({ item }: { item: Review }) {
             className="mt-[5px]"
           />
         </div>
-        <p className="ml-[40px] text-[16px] text-[#333333]">{item.review}</p>
-        <p className="ml-[40px] text-[16px]">{getElapsedTime(item.date)}</p>
+        <p className="ml-[35px] text-left text-[16px] text-[#333333]">
+          {item.review}
+        </p>
+        <p className="ml-[35px] text-left text-[16px]">
+          {getElapsedTime(item.date)}
+        </p>
       </div>
     </div>
   );

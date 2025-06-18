@@ -5,14 +5,8 @@ import type { BookCardProps } from '../../types/type';
 import ProfileImg from '../component/MyPage/ProfileImg';
 import { FaRegComment, FaRegHeart } from 'react-icons/fa';
 import defaultImg from '../../assets/images/default_post_img.png';
-
-type Comment = {
-  body: string;
-  created_at: string;
-  id: string;
-  post_id: string;
-  user_id: string;
-};
+import { getLikeCount } from '../../apis/like';
+import { getCommentCount } from '../../apis/comment';
 
 export default function BookCard({
   nickname,
@@ -24,12 +18,10 @@ export default function BookCard({
   book_id,
   category,
   post_id,
-  likes,
-  comments,
 }: BookCardProps) {
   const [img, setImg] = useState<string | null>(null);
-  const [comment, setComment] = useState<Comment[] | null>([]);
   const [likeCount, setLikeCount] = useState<number>(0);
+  const [commentCount, setCommentCount] = useState<number>(0);
 
   function decodeHTMLEntities(str: string) {
     const txt = document.createElement('textarea');
@@ -56,36 +48,16 @@ export default function BookCard({
     };
     getBookData();
     const getBookComment = async () => {
-      if (post_id !== undefined)
-        try {
-          const { data: comment } = await supabase
-            .from('comment')
-            .select('*')
-            .eq('post_id', post_id!);
-          setComment(comment);
-        } catch (error) {
-          console.error(error);
-        }
+      const comments = await getCommentCount(post_id!);
+      setCommentCount(comments);
     };
     getBookComment();
     const getBookLike = async () => {
-      if (post_id !== undefined)
-        try {
-          const { data: like } = await supabase
-            .from('like')
-            .select('id')
-            .eq('post_id', post_id!);
-          if (like?.length === 0 || like?.length === undefined) {
-            setLikeCount(0);
-          } else {
-            setLikeCount(like.length);
-          }
-        } catch (error) {
-          console.error(error);
-        }
+      const likes = await getLikeCount(post_id!);
+      setLikeCount(likes);
     };
     getBookLike();
-  }, [book_id]);
+  }, [book_id, post_id]);
 
   return (
     <>
@@ -102,7 +74,10 @@ export default function BookCard({
                 <img src={img} className="h-full w-full blur-xs" />
                 <img
                   src={img}
-                  className="absolute top-[13%] left-[30%] h-[166px] w-[113px]"
+                  className="absolute top-[13%] left-[30%] h-[166px] w-[113px] rounded-[3px]"
+                  style={{
+                    boxShadow: '0px 0px 8px 2px rgba(0, 0, 0, 0.3)'
+                  }}
                 />
               </div>
             ) : (
@@ -142,13 +117,13 @@ export default function BookCard({
               <span>
                 <FaRegHeart fontSize="small" />
               </span>
-              <span>{likeCount || likes}</span>
+              <span>{likeCount}</span>
             </div>
             <div className="flex items-center space-x-1">
               <span>
                 <FaRegComment fontSize="small" />
               </span>
-              <span>{comment?.length || comments}</span>
+              <span>{commentCount}</span>
             </div>
           </div>
           <div>
