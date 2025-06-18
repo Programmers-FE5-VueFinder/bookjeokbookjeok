@@ -38,7 +38,7 @@ export function BookPostItem({ post }: { post: Post }) {
       </div>
 
       <div
-        onClick={() => navigate(`/channel/${post.category}/post/${post.id}`)}
+        onClick={() => navigate(`/post/${post.id}`)}
         className="flex cursor-pointer flex-col gap-[10px] font-medium"
       >
         <span className="line-clamp-1 text-[16px] font-semibold">
