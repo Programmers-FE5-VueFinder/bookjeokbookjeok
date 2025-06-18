@@ -184,7 +184,9 @@ export default function BookPage({
                   </span>
                 </div>
                 <div className="mt-[15px] max-h-[200px] pb-[20px] text-[16px] font-medium">
-                  {bookDetail.description}
+                  {bookDetail.description.length !== 0
+                    ? bookDetail.description
+                    : '등록된 도서 소개가 없습니다.'}
                 </div>
               </div>
             </div>
