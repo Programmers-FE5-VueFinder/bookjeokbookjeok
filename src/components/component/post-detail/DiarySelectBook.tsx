@@ -5,6 +5,11 @@ export default function DiarySelectBook({
 }: {
   [key: string]: string | null;
 }) {
+  const bookTitleSlice = (title: string) => {
+    if (title.includes(' (')) return title?.split(' (')[0];
+    if (title.includes(' -')) return title?.split(' -')[0];
+    return title;
+  };
   return (
     <>
       <div className="mb-[40px] flex max-w-[1200px] justify-center rounded-[5px] bg-[#F4F4F4] px-[30px] py-[30px] hover:shadow-[0_0_5px_rgba(0,0,0,.25)]">
@@ -16,7 +21,7 @@ export default function DiarySelectBook({
             ></img>
           </div>
           <span className="mb-[10px] cursor-pointer font-semibold text-[#333]">
-            {title?.split(' -')[0]}
+            {bookTitleSlice(title as string)}
           </span>
           <span className="cursor-pointer font-semibold text-[#666]">
             {author?.split(' (')[0]}

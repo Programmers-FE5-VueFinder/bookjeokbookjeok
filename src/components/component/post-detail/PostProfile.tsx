@@ -3,9 +3,17 @@ import type { Profile } from '../../../types/post';
 import ProfileImage from '../MyPage/ProfileImg';
 import { useNavigate } from 'react-router';
 
-export default function PostProfile({ profile }: { profile: Profile }) {
+export default function PostProfile({
+  profile,
+  currentAccount,
+}: {
+  profile: Profile;
+  currentAccount: string | undefined;
+}) {
   const { image, id } = profile;
   const navigate = useNavigate();
+  console.log(currentAccount, id);
+
   return (
     <>
       <section className="flex w-[1200px] items-center justify-between border-b border-[#d8d6d6] pb-[40px]">
@@ -22,7 +30,9 @@ export default function PostProfile({ profile }: { profile: Profile }) {
             {profile.name}
           </span>
         </div>
-        <FollowButton />
+        {currentAccount !== id ? (
+          <FollowButton writeUserId={profile.id} />
+        ) : null}
       </section>
     </>
   );

@@ -16,13 +16,13 @@ import Like from '../components/component/post-detail/Like';
 import type { CommentTypeBase } from '../types/type';
 import { getComments } from '../apis/comment';
 import DiarySelectBook from '../components/component/post-detail/DiarySelectBook';
+import { useAuthStore } from '../store/authStore';
 
 export default function PostDetail() {
   const { postId } = useParams();
   const [content, setContent] = useState<PostDetail | undefined>(undefined);
   const [postLoading, setPostLoading] = useState(false);
   const [applyState, setApplyState] = useState('');
-  console.log(postId);
 
   const handleApplyBookclub = async () => {
     await applyBookClub(content!.profile.id, content!.book_club_id!);
@@ -32,6 +32,7 @@ export default function PostDetail() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [comments, setComments] = useState<CommentTypeBase[]>([]);
+  const session = useAuthStore((state) => state.session);
 
   const fetchComments = useCallback(async () => {
     if (!postId) return;
@@ -125,7 +126,10 @@ export default function PostDetail() {
         )}
         {/* 본문 */}
         <Like />
-        <PostProfile profile={content!.profile} />
+        <PostProfile
+          profile={content!.profile}
+          currentAccount={session.user.id}
+        />
         <div className="flex h-[110px] w-[1200px] items-center">
           <span className="flex items-center gap-[8px] text-[16px] font-semibold text-[#333333]">
             <FaRegComment />
