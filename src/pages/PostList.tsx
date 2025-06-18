@@ -45,7 +45,7 @@ export default function PostList() {
         setLoading(false);
         return;
       }
-      
+
       const detailPosts: PostDetail[] = await Promise.all(
         result.data.map(async (post: Post) => {
           const detail = await fetchPostDetail(post.id);
@@ -71,19 +71,19 @@ export default function PostList() {
           };
         }),
       );
-      
+
       setPosts(detailPosts);
       setLoading(false);
     };
-    
+
     loadPosts();
-    
+
     const options = sortOptionsMap[channelId ?? ''];
     if (options && options.length > 0) {
       setSelectedSort(options[0]);
     }
   }, [channelId]);
-  
+
   const sortedPosts = useMemo(() => {
     // // 인기글 정렬
     if (selectedSort === '인기글') {
@@ -91,7 +91,8 @@ export default function PostList() {
     }
     // 최신글(기본)
     return [...posts].sort(
-      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+      (a, b) =>
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
     );
   }, [posts, selectedSort]);
 
@@ -139,15 +140,15 @@ export default function PostList() {
                 //   console.log('다이어리 book.cover:', post.book?.cover);
                 // }
                 return (
-                  <Link key={post.id} to={`/channel/${post.category}/post/${post.id}`}>
+                  <Link key={post.id} to={`/post/${post.id}`}>
                     <BookCard
                       nickname={post.profile.name || '잉크묻은 고양이'}
                       title={post.title}
                       body={post.body}
                       image={
                         post.category === 'diary'
-                          ? post.book?.cover ?? ''  
-                          : post.image             
+                          ? (post.book?.cover ?? '')
+                          : post.image
                       }
                       profileImage={post.profile.image}
                       likes={post.like.length}
@@ -160,7 +161,6 @@ export default function PostList() {
                   </Link>
                 );
               })}
-
             </div>
           )}
         </div>

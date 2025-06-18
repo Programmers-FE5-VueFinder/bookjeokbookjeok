@@ -30,10 +30,8 @@ export default function WritePost({
   editPostData?: PostDetail;
   bookTitle?: string;
 }) {
-  //path : diary, freetalk
   const path = useParams();
   const navigate = useNavigate();
-  // const editPostId = path.post_id;
   const bookclubId = path.bookclub_id;
   const [category, setCategory] = useState('diary');
   const [rating, setRating] = useState<number | undefined>();
@@ -49,6 +47,9 @@ export default function WritePost({
   const onClose = () => setShowModal(false);
 
   const findThumbnailImage = (body: string) => {
+    if (selectedBook) {
+      return selectedBook.cover;
+    }
     const match = body.match(/<img[^>]+src="([^"]+)"[^>]*>/);
     const image = match ? match[1] : null;
     return image;
@@ -60,6 +61,7 @@ export default function WritePost({
     const image = selectedBook?.cover
       ? selectedBook.cover
       : findThumbnailImage(body);
+    console.log(title);
 
     if (!title || !body) {
       if (!title) {
@@ -92,6 +94,7 @@ export default function WritePost({
         return;
       } catch (e) {
         console.log(e);
+        Toastfy('error', '수정에 실패했습니다');
       }
     }
 
@@ -128,7 +131,6 @@ export default function WritePost({
             data!.id,
             bookInfo,
           );
-          console.log(response);
 
           navigate(`/channel/diary/post/${response}`);
         } catch (e) {
@@ -298,6 +300,8 @@ export default function WritePost({
               <input
                 ref={titleRef}
                 type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
                 placeholder={`${isCreateBookClub ? '클럽 이름을 입력해주세요.' : '제목을 입력해주세요.'}`}
                 className="h-fir mx-auto my-[20px] block w-[1200px] max-w-[1200px] pl-[5px] text-[24px] text-[#666666]"
               />
