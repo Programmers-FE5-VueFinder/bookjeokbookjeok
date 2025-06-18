@@ -114,7 +114,7 @@ export default function PostDetail() {
           </>
         )}
         {/* 본문 */}
-        <Like />
+        <Like postId={postId!} />
         <PostProfile profile={content!.profile} />
         <div className="flex h-[110px] w-[1200px] items-center">
           <span className="flex items-center gap-[8px] text-[16px] font-semibold text-[#333333]">
