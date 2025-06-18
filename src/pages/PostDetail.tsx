@@ -19,41 +19,27 @@ import { IoMdHeartEmpty } from 'react-icons/io';
 import { getLikeCount } from '../apis/like';
 import DiarySelectBook from '../components/component/post-detail/DiarySelectBook';
 import { isFollowing } from '../apis/follow';
-<<<<<<< HEAD
 import { searchBooks } from '../apis/book-search';
 import BookPage from '../components/component/book-detail/BookPage';
-=======
 import Toastfy from '../components/common/Toastfy';
 import { useAuthStore } from '../store/authStore';
->>>>>>> dev
 
 export default function PostDetail() {
   const { postId } = useParams();
   const [content, setContent] = useState<PostDetail | undefined>(undefined);
   const [postLoading, setPostLoading] = useState(false);
   const [applyState, setApplyState] = useState('');
-<<<<<<< HEAD
   const [followToggle, setFollowToggle] = useState(true);
   const [bookToggle, setBookToggle] = useState(false);
 
-  const handleApplyBookclub = async () => {
-    await applyBookClub(content!.profile.id, content!.book_club_id!);
-    setApplyState('after');
-  };
-=======
->>>>>>> dev
   const [modalShow, setModalShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [comments, setComments] = useState<CommentTypeBase[]>([]);
   const [likeCount, setLikeCount] = useState(0);
-<<<<<<< HEAD
   const [bookInfo, setBookInfo] = useState(null);
-=======
   const isLogIn = useAuthStore((state) => state.isLogin);
->>>>>>> dev
   const session = useAuthStore((state) => state.session);
-  const [followToggle, setFollowToggle] = useState(true);
 
   const handleApplyBookclub = async () => {
     if (isLogIn) {
@@ -97,17 +83,21 @@ export default function PostDetail() {
   useEffect(() => {
     if (!postId) navigate(-1);
     async function postDetail() {
-      const response = await fetchPostDetail(postId as string);
-      setContent(response);
-      const books = await searchBooks(content!.book!.title);
-      setBookInfo(books[0]);
-      if (postId) {
-        const count = await getLikeCount(postId);
-        setLikeCount(count);
+      try {
+        const response = await fetchPostDetail(postId as string);
+        setContent(response);
+        const books = await searchBooks(response!.book!.title);
+        setBookInfo(books[0]);
+        if (postId) {
+          const count = await getLikeCount(postId);
+          setLikeCount(count);
+        }
+        setLoading(true);
+        await fetchComments();
+        setPostLoading(true);
+      } catch (e) {
+        console.log(e);
       }
-      setLoading(true);
-      await fetchComments();
-      setPostLoading(true);
     }
     postDetail();
   }, [postId, fetchComments, navigate, fetchLikeCount]);
