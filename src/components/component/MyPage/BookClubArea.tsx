@@ -11,7 +11,7 @@ export default function BookClubArea({
   profileName,
   id,
 }: {
-  post: book_club[] | null;
+  post: book_club[] | null | undefined;
   profileImage: string | null;
   profileName: string | null;
   id: string | undefined;

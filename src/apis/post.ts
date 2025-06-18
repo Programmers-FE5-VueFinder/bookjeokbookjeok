@@ -232,3 +232,40 @@ export async function getBookPost(bookId: string, from: number, to: number) {
   }
   return data;
 }
+
+// 내가 가입한 북클럽 글 가져오기 API
+export const fetchMyBookClubPosts = async (userId: string) => {
+  // 가입한 북클럽 id 가져오기
+  const { data: myClubs, error: clubError } = await supabase
+    .from('book_club_member')
+    .select('book_club_id')
+    .eq('user_id', userId);
+
+  if (clubError) {
+    console.error('Error fetching my book clubs:', clubError.message);
+    throw clubError;
+  }
+
+  const myClubIds = myClubs?.map((row) => row.book_club_id) ?? [];
+
+  if (myClubIds.length === 0) {
+    return []; // 가입한 북클럽 없으면 빈 배열 반환
+  }
+
+  // 북클럽 글 가져오기
+  const { data: posts, error: postError } = await supabase
+    .from('post')
+    .select('*')
+    .eq('category', 'book_club')
+    .in('book_club_id', myClubIds)
+    .order('created_at', { ascending: false });
+
+  if (postError) {
+    console.error('Error fetching posts:', postError.message);
+    throw postError;
+  }
+
+  console.log('내가 가입한 북클럽의 게시물:', posts);
+
+  return posts;
+};

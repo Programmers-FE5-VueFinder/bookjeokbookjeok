@@ -21,7 +21,7 @@ export default function BookMarkArea({
 
   // const handleOpen = () => setIsOpen(true);
   // const closeModal = () => setIsOpen(false);
-  
+
   useEffect(() => {
     setLoading(true);
     const finish = setTimeout(() => {

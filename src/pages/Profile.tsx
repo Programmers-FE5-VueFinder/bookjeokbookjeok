@@ -54,7 +54,7 @@ export default function Profile() {
   const [following, setFollowing] = useState<number>(0);
   const [post, setPost] = useState<Post[] | null>([]);
   const [bookMark, setBookMark] = useState<BookMark[] | null>([]);
-  const [bookClub, setBookClub] = useState<book_club[] | null>([]);
+  const [bookClub, setBookClub] = useState<book_club[] | null>();
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedBtn, setSelectedBtn] = useState<string>('다이어리');
   const [content, setContent] = useState<string>('diary');
@@ -220,12 +220,14 @@ export default function Profile() {
       const myBookClub = async () => {
         const { data: book_club } = await supabase
           .from('book_club')
-          .select('*');
+          .select('*')
+          .order('created_at', { ascending: false });
 
         const { data: book_club_member } = await supabase
           .from('book_club_member')
           .select('*')
-          .eq('user_id', userId!);
+          .eq('user_id', userId!)
+          .order('created_at', { ascending: false });
 
         const clubId = book_club_member?.filter((id) => id.user_id === userId);
         const clubIds: string[] = [];
@@ -234,10 +236,12 @@ export default function Profile() {
             clubIds.push(clubId[i].book_club_id);
           }
         }
+        const bookClubs = [];
         if (book_club?.length !== undefined)
           for (let i = 0; i < clubIds.length; i++) {
-            setBookClub(book_club?.filter((club) => club.id === clubIds[i]));
+            bookClubs.push(book_club?.filter((club) => club.id === clubIds[i]));
           }
+        setBookClub(bookClubs.flat());
       };
 
       await Promise.all([
@@ -250,7 +254,7 @@ export default function Profile() {
     };
 
     fetchData();
-  }, [userId, content, setProfileName]);
+  }, [userId, content, setProfileName, setProfileIntro, session?.user]);
 
   return (
     <>
@@ -263,7 +267,7 @@ export default function Profile() {
               {loading ? (
                 <ProfileSkeleton />
               ) : (
-                <div className="justify-center overflow-hidden rounded-full">
+                <div className="size-[100px] content-center items-center justify-center overflow-hidden rounded-full">
                   <ProfileImg id={userId} />
                 </div>
               )}
@@ -287,11 +291,11 @@ export default function Profile() {
                 </div>
               </div>
             ) : (
-              <div>
-                <div className="mt-[14px] mb-[14px] flex items-center gap-[6px] font-bold">
-                  <span>{profileName} 님</span>
-                  {/* <div className="size-[15px] rounded-full border-1"></div> */}
-                </div>
+              <div className="items-center justify-center text-center">
+                <span className="mt-[14px] mb-[14px] flex items-center justify-center gap-[6px] text-center font-bold">
+                  {profileName} 님
+                </span>
+                {/* <div className="size-[15px] rounded-full border-1"></div> */}
                 <span>{intro}</span>
               </div>
             )}

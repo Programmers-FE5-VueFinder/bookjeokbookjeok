@@ -18,16 +18,21 @@ import { getComments } from '../apis/comment';
 import { IoMdHeartEmpty } from 'react-icons/io';
 import { getLikeCount } from '../apis/like';
 import DiarySelectBook from '../components/component/post-detail/DiarySelectBook';
-import { useAuthStore } from '../store/authStore';
 import { isFollowing } from '../apis/follow';
+<<<<<<< HEAD
 import { searchBooks } from '../apis/book-search';
 import BookPage from '../components/component/book-detail/BookPage';
+=======
+import Toastfy from '../components/common/Toastfy';
+import { useAuthStore } from '../store/authStore';
+>>>>>>> dev
 
 export default function PostDetail() {
   const { postId } = useParams();
   const [content, setContent] = useState<PostDetail | undefined>(undefined);
   const [postLoading, setPostLoading] = useState(false);
   const [applyState, setApplyState] = useState('');
+<<<<<<< HEAD
   const [followToggle, setFollowToggle] = useState(true);
   const [bookToggle, setBookToggle] = useState(false);
 
@@ -35,13 +40,30 @@ export default function PostDetail() {
     await applyBookClub(content!.profile.id, content!.book_club_id!);
     setApplyState('after');
   };
+=======
+>>>>>>> dev
   const [modalShow, setModalShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [comments, setComments] = useState<CommentTypeBase[]>([]);
   const [likeCount, setLikeCount] = useState(0);
+<<<<<<< HEAD
   const [bookInfo, setBookInfo] = useState(null);
+=======
+  const isLogIn = useAuthStore((state) => state.isLogin);
+>>>>>>> dev
   const session = useAuthStore((state) => state.session);
+  const [followToggle, setFollowToggle] = useState(true);
+
+  const handleApplyBookclub = async () => {
+    if (isLogIn) {
+      await applyBookClub(content!.profile.id, content!.book_club_id!);
+      Toastfy('success', '신청이 완료되었습니다');
+      setApplyState('after');
+    } else {
+      Toastfy('error', '로그인이 필요합니다.');
+    }
+  };
 
   const fetchComments = useCallback(async () => {
     if (!postId) return;
@@ -140,7 +162,7 @@ export default function PostDetail() {
         ) : null}
         <div
           dangerouslySetInnerHTML={{ __html: content!.body }}
-          className="w-full max-w-[1200px]"
+          className="min-h-[430px] w-full max-w-[1200px] pt-[80px]"
         ></div>
         {content!.book_club_id && (
           <>

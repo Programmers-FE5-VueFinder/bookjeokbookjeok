@@ -63,7 +63,7 @@ export default function SettingModal({ onClose }: SettingModalProps) {
     const name = nameRef.current?.value;
     const valName = /^[A-Za-z가-힣0-9]{2,10}$/;
     let prof: number | undefined = 0;
-    if (name !== undefined) {
+    if (name !== undefined && name !== initialName) {
       setValidate(valName.test(name));
       setPass(false);
       if (valName.test(name) === true) {
@@ -73,7 +73,6 @@ export default function SettingModal({ onClose }: SettingModalProps) {
             .select('*')
             .eq('name', name);
           prof = profile?.length;
-          console.log(prof);
           if (prof === 0) {
             setPass(true);
           } else {
@@ -88,11 +87,23 @@ export default function SettingModal({ onClose }: SettingModalProps) {
   };
 
   const handleSave = async () => {
-    if (isChecked === false && nameRef.current!.value.length !== 0) {
+    if (newName === initialName) {
+      setIsChecked(true);
+    }
+
+    if (
+      isChecked === false &&
+      newName !== initialName &&
+      newName.length !== 0
+    ) {
       toast.error('중복 확인을 해주세요');
       return;
     }
-    if (pass && nameRef.current!.value.length !== 0) {
+    if (
+      (pass && nameRef.current!.value.length !== 0) ||
+      (newName === initialName && newIntro !== initialIntro) ||
+      newProfImgFile !== null
+    ) {
       const user = session?.user;
       if (!user) {
         alert('사용자 정보가 없습니다. 다시 로그인해주세요.');
@@ -110,7 +121,6 @@ export default function SettingModal({ onClose }: SettingModalProps) {
             .from('profile')
             .update({ name: newName, intro: newIntro })
             .eq('id', user.id);
-          toast.success('변경되었습니다');
           if (textUpdateError) throw textUpdateError;
           setGlobalProfileName(newName);
           setGlobalProfileIntro(newIntro);
@@ -152,23 +162,9 @@ export default function SettingModal({ onClose }: SettingModalProps) {
           alert(`오류 발생: ${error.message}`);
         }
       }
-    } else if (nameRef.current!.value.length === 0 && newIntro.length !== 0) {
-      const user = session?.user;
-      if (!user) {
-        alert('사용자 정보가 없습니다. 다시 로그인해주세요');
-        return;
-      }
-      try {
-        const { error: textUpdateError } = await supabase
-          .from('profile')
-          .update({ intro: newIntro })
-          .eq('id', user.id);
-        if (textUpdateError) throw textUpdateError;
-        setGlobalProfileIntro(newIntro);
-      } catch (error) {
-        console.error(error);
-      }
       toast.success('변경 되었습니다');
+    } else if (newName === initialName && newIntro === initialIntro) {
+      toast.info('변경 사항이 없습니다');
     } else {
       toast.error('다시 시도해주세요');
     }
@@ -216,7 +212,7 @@ export default function SettingModal({ onClose }: SettingModalProps) {
         </div>
 
         <div className="relative my-[20px]">
-          <div className="size-[100px] overflow-hidden rounded-full">
+          <div className="size-[100px] content-center items-center justify-center overflow-hidden rounded-full">
             <ProfileImg src={previewImage || globalAvatarUrl} />
           </div>
           <label
@@ -241,6 +237,7 @@ export default function SettingModal({ onClose }: SettingModalProps) {
               className="inputBox h-[35px] w-full"
               placeholder="닉네임은 8자 이내로 작성해주세요"
               onChange={(e) => setNewName(e.target.value)}
+              value={newName}
               ref={nameRef}
             />
             <button
@@ -275,6 +272,7 @@ export default function SettingModal({ onClose }: SettingModalProps) {
           className="inputBox mt-[10px] mb-[20px] h-[215px] w-full resize-none pt-[15px]"
           placeholder="자신에 대한 간략한 소개를 써주세요"
           onChange={(e) => setNewIntro(e.target.value)}
+          value={newIntro}
         />
 
         <div className="grid gap-[18px]">

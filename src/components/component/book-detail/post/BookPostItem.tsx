@@ -5,23 +5,41 @@ import { useNavigate } from 'react-router';
 import { useCallback, useEffect, useState } from 'react';
 import { getCommentCount } from '../../../../apis/comment';
 import ProfileImage from '../../MyPage/ProfileImg';
+import { getLikeCount } from '../../../../apis/like';
 
-export function BookPostItem({ post }: { post: Post }) {
+export function BookPostItem({
+  post,
+  closeModal,
+}: {
+  post: Post;
+  closeModal: () => void;
+}) {
   const navigate = useNavigate();
   const [countComment, setCountComment] = useState(0);
+  const [countLike, setCountLike] = useState(0);
 
   const commentAmount = useCallback(async () => {
     setCountComment(await getCommentCount(post.id));
+    setCountLike(await getLikeCount(post.id));
   }, [post.id]);
 
   useEffect(() => {
     commentAmount();
   }, [post.id, commentAmount]);
+
+  function decodeHTMLEntities(str: string) {
+    const txt = document.createElement('textarea');
+    txt.innerHTML = str;
+    return txt.value;
+  }
   return (
     <div className="max-h-full w-full flex-col justify-center border-b border-b-[#D8D8D8] py-[15px] text-[16px]">
       <div className="mb-[10px] flex">
         <div
-          onClick={() => navigate(`/profile/${post.user_id}`)}
+          onClick={() => {
+            navigate(`/profile/${post.user_id}`);
+            closeModal();
+          }}
           className="flex cursor-pointer items-center gap-[10px]"
         >
           {/* <img
@@ -38,17 +56,21 @@ export function BookPostItem({ post }: { post: Post }) {
       </div>
 
       <div
-        onClick={() => navigate(`/channel/${post.category}/post/${post.id}`)}
+        onClick={() => navigate(`/post/${post.id}`)}
         className="flex cursor-pointer flex-col gap-[10px] font-medium"
       >
-        <span className="line-clamp-1 text-[16px] font-semibold">
+        <span className="line-clamp-1 text-left text-[16px] font-semibold">
           {post.title}
         </span>
-        <span className="line-clamp-2 text-[16px]">{post.body}</span>
+        <span className="line-clamp-2 text-left text-[16px]">
+          {decodeHTMLEntities(
+            decodeHTMLEntities(post.body.replace(/<[^>]*>?/g, '')),
+          )}
+        </span>
         <div className="flex justify-between text-[14px] font-medium">
           <div className="flex items-center justify-center gap-[4px]">
             <FaRegHeart fontSize="small" className="mt-[2px]" />
-            <span className="mr-[4px]">34</span>
+            <span className="mr-[4px]">{countLike}</span>
             <FaRegComment fontSize="small" className="mt-[2px]" />
             <span>{countComment}</span>
           </div>
