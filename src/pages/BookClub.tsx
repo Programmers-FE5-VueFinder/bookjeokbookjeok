@@ -14,6 +14,7 @@ import {
 } from '../apis/book-club';
 import { Link, useNavigate, useParams } from 'react-router';
 import UserCard from '../components/common/UserCard';
+import Toastfy from '../components/common/Toastfy';
 
 export default function BookClub() {
   const [selectedBtn, setSelectedBtn] = useState<string>('클럽 정보');
@@ -35,11 +36,13 @@ export default function BookClub() {
 
   const handleDeleteBookclub = () => {
     navigate('/');
+    Toastfy('success', '북클럽이 삭제되었습니다');
     deleteBookClub(bookclub_id!);
   };
 
   const handleLeaveBookclub = () => {
     navigate('/');
+    Toastfy('success', '북클럽에서 탈퇴했습니다');
     leaveBookClub(bookclub_id!);
   };
 

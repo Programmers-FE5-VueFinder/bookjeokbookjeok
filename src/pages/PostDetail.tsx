@@ -17,6 +17,7 @@ import type { CommentTypeBase } from '../types/type';
 import { getComments } from '../apis/comment';
 import { IoMdHeartEmpty } from 'react-icons/io';
 import { getLikeCount } from '../apis/like';
+import Toastfy from '../components/common/Toastfy';
 
 export default function PostDetail() {
   const { postId } = useParams();
@@ -26,6 +27,7 @@ export default function PostDetail() {
 
   const handleApplyBookclub = async () => {
     await applyBookClub(content!.profile.id, content!.book_club_id!);
+    Toastfy('success', '신청이 완료되었습니다');
     setApplyState('after');
   };
   const [modalShow, setModalShow] = useState(false);
