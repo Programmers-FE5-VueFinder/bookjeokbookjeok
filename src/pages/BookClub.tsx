@@ -83,7 +83,41 @@ export default function BookClub() {
     }
   }, [selectedBtn]);
 
-  if (isLoading) return <>로딩중..</>;
+  if (isLoading)
+    return (
+      <div>
+        {/* 클럽 이름 에리어 */}
+        <div className="sticky top-0 flex min-h-[200px] content-center justify-center self-start bg-white">
+          <div className="relative flex content-center justify-center">
+            <span className="mb-[40px] flex items-center justify-center text-[32px] font-bold"></span>
+            {/* 버튼 에리어 */}
+            <div className="absolute bottom-0 flex h-[40px] w-screen content-center items-center justify-center self-start bg-white shadow-lg shadow-gray-100">
+              <div className="flex w-[900px] flex-row">
+                {buttonName.map((item) => {
+                  return (
+                    <button
+                      className={twMerge(
+                        item === selectedBtn ? 'button-active' : 'button',
+                        'cursor-pointer',
+                      )}
+                      key={item}
+                      name={item}
+                    >
+                      {item}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="flex h-screen flex-col items-center justify-center bg-[#FAFAFA]">
+          <div className="flex w-full justify-center text-wrap">
+            <div className="mx-[100px] flex w-[900px] scroll-m-[200px] flex-col"></div>
+          </div>
+        </div>
+      </div>
+    );
   return (
     <>
       <div>
