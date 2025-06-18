@@ -27,7 +27,12 @@ export async function fetchAlarmList() {
     .filter((id): id is string => Boolean(id));
 
   const bookClubIds = alarms!
-    .filter((a) => a.type === 'book-club')
+    .filter(
+      (a) =>
+        a.type === 'book-club' ||
+        a.type === 'book-club-approve' ||
+        a.type === 'book-club-reject',
+    )
     .map((a) => a.object_id)
     .filter((id): id is string => Boolean(id));
 
@@ -52,7 +57,12 @@ export async function fetchAlarmList() {
       alarm.object_id
     ) {
       objectName = posts.find((p) => p.id === alarm.object_id)?.title;
-    } else if (alarm.type === 'book-club' && alarm.object_id) {
+    } else if (
+      (alarm.type === 'book-club' ||
+        alarm.type === 'book-club-approve' ||
+        alarm.type === 'book-club-reject') &&
+      alarm.object_id
+    ) {
       objectName = bookClubs.find((b) => b.id === alarm.object_id)?.name;
     }
 
@@ -62,31 +72,6 @@ export async function fetchAlarmList() {
       objectName: objectName ?? '',
     };
   });
-}
-
-/* 알림 대상 객체 이름 조회 */
-export async function getObjectName(
-  category: 'comment' | 'like' | 'follow' | 'book-club',
-  objectId: string,
-) {
-  let objectName;
-  if (category === 'comment' || category === 'like') {
-    objectName = (
-      await supabase.from('post').select('title').eq('id', objectId).single()
-    ).data!.title;
-  } else if (category === 'book-club') {
-    objectName = (
-      await supabase
-        .from('book_club')
-        .select('name')
-        .eq('id', objectId)
-        .single()
-    ).data!.name;
-  } else {
-    objectName = '';
-  }
-
-  return objectName;
 }
 
 /* 알림 읽음 처리 */
@@ -150,6 +135,30 @@ export async function sendReplyNotification({
     sender_id: senderId,
     type: 'reply',
     object_id: parentComment.post_id,
+    is_read: false,
+  });
+}
+
+export async function sendLikeNotification({
+  postId,
+  senderId,
+}: {
+  postId: string;
+  senderId: string;
+}) {
+  const { data: post } = await supabase
+    .from('post')
+    .select('user_id')
+    .eq('id', postId)
+    .single();
+
+  if (!post || post.user_id === senderId) return;
+
+  await supabase.from('notification').insert({
+    user_id: post.user_id,
+    sender_id: senderId,
+    type: 'like',
+    object_id: postId,
     is_read: false,
   });
 }

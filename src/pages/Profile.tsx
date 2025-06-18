@@ -234,9 +234,8 @@ export default function Profile() {
             clubIds.push(clubId[i].book_club_id);
           }
         }
-
         if (book_club?.length !== undefined)
-          for (let i = 0; i < book_club?.length; i++) {
+          for (let i = 0; i < clubIds.length; i++) {
             setBookClub(book_club?.filter((club) => club.id === clubIds[i]));
           }
       };

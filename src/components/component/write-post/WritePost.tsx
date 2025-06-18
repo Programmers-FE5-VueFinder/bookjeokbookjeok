@@ -33,7 +33,7 @@ export default function WritePost({
   const path = useParams();
   const navigate = useNavigate();
   const bookclubId = path.bookclub_id;
-  const [category, setCategory] = useState('diary');
+  const [category, setCategory] = useState('');
   console.log('bookclubId: ', bookclubId);
   const [rating, setRating] = useState<number | undefined>();
   const [title, setTitle] = useState('');
