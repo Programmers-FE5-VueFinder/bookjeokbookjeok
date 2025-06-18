@@ -42,7 +42,7 @@ export default function CommunityArea({
             post?.map((item) => {
               {
                 return (
-                  <Link to={`/channel/community/post/${item.id}`}>
+                  <Link to={`/post/${item.id}`}>
                     <BookCard
                       profileImage={profileImage}
                       key={item.id}

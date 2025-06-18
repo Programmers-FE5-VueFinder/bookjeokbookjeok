@@ -89,7 +89,7 @@ const ProfileImage: React.FC<ProfileImageProps> = ({
     return () => {
       isMounted = false;
     };
-  }, [targetId]);
+  }, [targetId, profileCache]);
 
   return (
     <div>

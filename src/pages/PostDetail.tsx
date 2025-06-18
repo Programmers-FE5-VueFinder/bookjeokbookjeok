@@ -126,7 +126,7 @@ export default function PostDetail() {
         ) : null}
         <div
           dangerouslySetInnerHTML={{ __html: content!.body }}
-          className="w-full max-w-[1200px]"
+          className="w-full max-w-[1200px] min-h-[430px] pt-[80px]"
         ></div>
         {content!.book_club_id && (
           <>

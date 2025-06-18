@@ -47,7 +47,7 @@ export default function PostHeader({
               <div className="flex cursor-default items-center gap-[30px]">
                 <span className="text-[16px] text-[#565656]">{name}</span>
                 <span className="text-[16px] text-[#565656]">
-                  {category.toLocaleUpperCase()}
+                  {category.toLocaleUpperCase().replace(/_/g, ' ')}
                 </span>
                 <span className="text-[16px] text-[#565656]">{time}</span>
               </div>
