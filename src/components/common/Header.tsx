@@ -113,27 +113,29 @@ export default function Header() {
           <Link to={'/channel/diary'}>다이어리</Link>
           <Link to={'/channel/book_club'}>북클럽</Link>
           <Link to={'/channel/community'}>자유채널</Link>
-          <Link to={'/createpost'}>글작성</Link>
+          <Link to={'/create-post'}>글작성</Link>
         </nav>
 
         <div className="flex space-x-4" ref={dropdownRef}>
           <Link to={'/search'}>
             <SearchIcon className="text-black" />
           </Link>
-          <div onClick={() => setIsAlarmModalOpen(true)} className="relative">
-            <div className="relative">
-              <NotificationsOutlinedIcon className="cursor-pointer text-black" />
-              {alarms.length > 0 && (
-                <div className="absolute top-0 right-0 h-[8px] w-[8px] rounded-full bg-red-500" />
+          {isLogin && (
+            <div onClick={() => setIsAlarmModalOpen(true)} className="relative">
+              <div className="relative">
+                <NotificationsOutlinedIcon className="cursor-pointer text-black" />
+                {alarms.length > 0 && (
+                  <div className="absolute top-0 right-0 h-[8px] w-[8px] rounded-full bg-red-500" />
+                )}
+              </div>
+              {isAlarmModalOpen && (
+                <AlarmModal
+                  onClose={() => setIsAlarmModalOpen(false)}
+                  alarms={alarms}
+                />
               )}
             </div>
-            {isAlarmModalOpen && (
-              <AlarmModal
-                onClose={() => setIsAlarmModalOpen(false)}
-                alarms={alarms}
-              />
-            )}
-          </div>
+          )}
 
           {isLogin ? (
             <div className="relative">
