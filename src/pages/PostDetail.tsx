@@ -51,6 +51,7 @@ export default function PostDetail() {
       setPostLoading(true);
     }
     postDetail();
+    console.log(content);
   }, [postId, fetchComments, navigate]);
 
   useEffect(() => {
