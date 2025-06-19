@@ -30,21 +30,23 @@ export async function fetchBookClub(id: string) {
     .eq('book_club_id', id)
     .order('created_at', { ascending: true });
 
-  const userIds = book_club_member!.map(
-    (member: BookclubMember) => member.user_id,
-  );
+  const userIds = book_club_member?.map((m) => m.user_id) ?? [];
 
   const { data: users } = await supabase
     .from('profile')
-    .select('*')
+    .select('id, name, image, intro, appellation, created_at')
     .in('id', userIds);
 
-  const orderedUsers = userIds
+  const orderedUsers: User[] = userIds
     .map((uid) => users?.find((u) => u.id === uid))
-    .filter(Boolean);
+    .filter((u): u is User => u !== undefined);
 
   return {
-    ...book_club,
+    id: book_club!.id,
+    name: book_club!.name,
+    info: book_club!.info,
+    is_recruiting: book_club!.is_recruiting,
+    created_at: book_club!.created_at,
     member: orderedUsers,
   };
 }
