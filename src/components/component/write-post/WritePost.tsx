@@ -89,6 +89,7 @@ export default function WritePost({
       }
       return;
     }
+    console.log(selectedBook);
 
     // 게시물 수정
     if (editPostData) {
@@ -246,7 +247,7 @@ export default function WritePost({
   if (editPostData) {
     return (
       <>
-        <main className="flex h-screen overflow-hidden">
+        <main className="flex h-screen">
           <div className="flex grow-1 flex-col">
             {!bookclubId && (
               <CategorySelect category={category} setCategory={setCategory} />
