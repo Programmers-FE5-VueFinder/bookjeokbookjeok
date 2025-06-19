@@ -8,7 +8,16 @@ export async function fetchAddFollow(currentUser: string, targetUser: string) {
   if (error) throw error;
   return follow;
 }
+
 export async function isFollowing(targetUser: string, currentUser: string) {
+  if (!targetUser || !currentUser) {
+    console.warn('isFollowing: 유효하지 않은 사용자 ID', {
+      targetUser,
+      currentUser,
+    });
+    return false;
+  }
+
   const { data, error } = await supabase
     .from('follow')
     .select('id')
