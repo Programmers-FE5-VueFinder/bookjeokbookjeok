@@ -243,7 +243,7 @@ export default function SearchResult() {
                       .map((post) => (
                         <Link
                           key={post.id}
-                          to={`/channel/${post.category}/post/${post.id}`}
+                          to={`/post/${post.id}`}
                         >
                           <BookCard
                             nickname={post.profile.name || '잉크묻은 고양이'}
