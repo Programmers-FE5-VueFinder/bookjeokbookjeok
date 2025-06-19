@@ -77,8 +77,15 @@ export default function PostDetail() {
       try {
         const response = await fetchPostDetail(postId as string);
         setContent(response);
-        const following = await isFollowing(response!.id, '');
-        setFollowToggle(following);
+        if (isLogIn && response) {
+          const following = await isFollowing(
+            response.profile.id,
+            session?.user.id as string,
+          );
+          console.log('팔로우 상태:', following);
+          setFollowToggle(following);
+        }
+        console.log(response);
         setLoading(true);
         if (response?.book?.title) {
           const books = await searchBooks(response.book.title);
@@ -96,7 +103,6 @@ export default function PostDetail() {
     }
     postDetail();
   }, [postId, fetchComments, navigate, fetchLikeCount]);
-  console.log(loading);
 
   useEffect(() => {
     if (postLoading) {
