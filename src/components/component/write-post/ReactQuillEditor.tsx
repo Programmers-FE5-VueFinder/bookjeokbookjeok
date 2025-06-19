@@ -90,7 +90,6 @@ export default function ReactQuillEditor({
     };
   };
 
-  //트러블 슈팅-생명주기, 라이브러리 인스턴스 생성 시기
   useEffect(() => {
     if (!selectedBook) return;
 
