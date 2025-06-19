@@ -1,7 +1,7 @@
 export declare global {
   interface User {
     id: string;
-    name: string | null;
+    name: string;
     image: string | null;
     intro: string | null;
     appellation: string | null;

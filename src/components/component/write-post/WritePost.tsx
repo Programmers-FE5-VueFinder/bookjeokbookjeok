@@ -189,7 +189,7 @@ export default function WritePost({
       if (isCreateBookClub) {
         const setBookClubInfo = async () => {
           const bookclub = await fetchBookClub(bookclubId);
-          titleRef!.current!.value = bookclub.name;
+          titleRef!.current!.value = bookclub.name ?? '';
           setValue(bookclub.info!);
         };
         setBookClubInfo();
