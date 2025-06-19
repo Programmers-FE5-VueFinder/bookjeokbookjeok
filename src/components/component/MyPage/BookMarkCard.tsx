@@ -16,7 +16,7 @@ export default function BookMarkCard({
   book_id,
 }: BookCardProps) {
   const [result, setResult] = useState<BookData[]>([]);
-  const [bookMark, setBookMark] = useState<BookDetail | null>(null);
+  const [bookMark, setBookMark] = useState<BookDetail[] | null>(null);
   const [avgStar, setAvgStar] = useState<number>(0);
   const [img, setImg] = useState<string | null>(null);
   const [bookTitle, setBookTitle] = useState<string | null>(null);
