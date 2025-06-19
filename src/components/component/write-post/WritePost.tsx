@@ -89,118 +89,119 @@ export default function WritePost({
       }
       return;
     }
+    console.log(selectedBook);
 
     // 게시물 수정
-    if (editPostData) {
-      try {
-        const response = await editPost(
-          editPostData.id,
-          title,
-          body,
-          image,
-          category,
-        );
-        console.log(response);
-        navigate(`/post/${editPostData.id}`);
-        return;
-      } catch (e) {
-        console.log(e);
-        Toastfy('error', '수정에 실패했습니다');
-      }
-    }
+    // if (editPostData) {
+    //   try {
+    //     const response = await editPost(
+    //       editPostData.id,
+    //       title,
+    //       body,
+    //       image,
+    //       category,
+    //     );
+    //     console.log(response);
+    //     navigate(`/post/${editPostData.id}`);
+    //     return;
+    //   } catch (e) {
+    //     console.log(e);
+    //     Toastfy('error', '수정에 실패했습니다');
+    //   }
+    // }
 
-    /* 북클럽 수정 */
-    if (bookclubId && isCreateBookClub) {
-      editBookClub(bookclubId, title, body);
-      navigate(`/bookclub/${bookclubId}`);
-      Toastfy('success', '수정이 완료되었습니다');
-      return;
-    }
+    // /* 북클럽 수정 */
+    // if (bookclubId && isCreateBookClub) {
+    //   editBookClub(bookclubId, title, body);
+    //   navigate(`/bookclub/${bookclubId}`);
+    //   Toastfy('success', '수정이 완료되었습니다');
+    //   return;
+    // }
 
-    /* 게시글 생성 */
-    switch (category) {
-      case 'diary': {
-        try {
-          const check = await checkBook(selectedBook!.isbn13);
-          if (!check) {
-            const { data } = await supabase
-              .from('book')
-              .upsert({
-                id: selectedBook!.isbn13,
-                title: selectedBook!.title,
-                author: selectedBook!.author,
-                description: selectedBook!.description,
-                cover: selectedBook!.cover,
-                categoryId: selectedBook!.categoryId,
-                categoryName: selectedBook!.categoryName,
-              })
-              .select()
-              .single();
+    // /* 게시글 생성 */
+    // switch (category) {
+    //   case 'diary': {
+    //     try {
+    //       const check = await checkBook(selectedBook!.isbn13);
+    //       if (!check) {
+    //         const { data } = await supabase
+    //           .from('book')
+    //           .upsert({
+    //             id: selectedBook!.isbn13,
+    //             title: selectedBook!.title,
+    //             author: selectedBook!.author,
+    //             description: selectedBook!.description,
+    //             cover: selectedBook!.cover,
+    //             categoryId: selectedBook!.categoryId,
+    //             categoryName: selectedBook!.categoryName,
+    //           })
+    //           .select()
+    //           .single();
 
-            const post_id = await createPost(
-              session!.user.id,
-              title,
-              body,
-              image,
-              category,
-              data!.id,
-              bookInfo,
-            );
-            console.log('book 중첨 x', post_id);
+    //         const post_id = await createPost(
+    //           session!.user.id,
+    //           title,
+    //           body,
+    //           image,
+    //           category,
+    //           data!.id,
+    //           bookInfo,
+    //         );
+    //         console.log('book 중첨 x', post_id);
 
-            navigate(`/post/${post_id}`);
-            return;
-          }
+    //         navigate(`/post/${post_id}`);
+    //         return;
+    //       }
 
-          const post_id = await createPost(
-            session!.user.id,
-            title,
-            body,
-            image,
-            category,
-            selectedBook!.isbn13,
-            bookInfo,
-          );
-          console.log('북 중첩', post_id);
-          console.log(value);
+    //       const post_id = await createPost(
+    //         session!.user.id,
+    //         title,
+    //         body,
+    //         image,
+    //         category,
+    //         selectedBook!.isbn13,
+    //         bookInfo,
+    //       );
+    //       console.log('북 중첩', post_id);
+    //       console.log(value);
 
-          navigate(`/post/${post_id}`);
-        } catch (e) {
-          console.log(e);
-          Toastfy('error', '작성에 실패했습니다');
-        }
-        return;
-      }
-      case 'community': {
-        // community post 생성 api
-        try {
-          const post_id = await createPost(
-            session!.user.id,
-            title,
-            body,
-            image,
-            category,
-          );
-          console.log(post_id);
-          navigate(`/post/${post_id}`);
-        } catch (e) {
-          console.log(e);
-          Toastfy('error', '작성에 실패했습니다');
-        }
-        return;
-      }
-      case 'book-club': {
-        const post = await createBookClubPost(title, body, image, bookclubId!);
-        navigate(`/post/${post}`);
-        Toastfy('success', '작성이 완료되었습니다');
-        return;
-      }
-      default: {
-        const bookclub_id = await createBookClub(title, body);
-        navigate(`/bookclub/${bookclub_id}`);
-        Toastfy('success', '북클럽이 생성되었습니다');
-      }
-    }
+    //       navigate(`/post/${post_id}`);
+    //     } catch (e) {
+    //       console.log(e);
+    //       Toastfy('error', '작성에 실패했습니다');
+    //     }
+    //     return;
+    //   }
+    //   case 'community': {
+    //     // community post 생성 api
+    //     try {
+    //       const post_id = await createPost(
+    //         session!.user.id,
+    //         title,
+    //         body,
+    //         image,
+    //         category,
+    //       );
+    //       console.log(post_id);
+    //       navigate(`/post/${post_id}`);
+    //     } catch (e) {
+    //       console.log(e);
+    //       Toastfy('error', '작성에 실패했습니다');
+    //     }
+    //     return;
+    //   }
+    //   case 'book-club': {
+    //     const post = await createBookClubPost(title, body, image, bookclubId!);
+    //     navigate(`/post/${post}`);
+    //     Toastfy('success', '작성이 완료되었습니다');
+    //     return;
+    //   }
+    //   default: {
+    //     const bookclub_id = await createBookClub(title, body);
+    //     navigate(`/bookclub/${bookclub_id}`);
+    //     Toastfy('success', '북클럽이 생성되었습니다');
+    //   }
+    // }
   };
 
   /* bookclubId 있을 시 정보 fetch */

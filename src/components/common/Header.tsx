@@ -11,6 +11,7 @@ import { MdOutlinePersonOutline } from 'react-icons/md';
 import { fetchAlarmList } from '../../apis/notification';
 import { Link, useNavigate, useParams } from 'react-router';
 import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
+import Toastfy from './Toastfy';
 
 export default function Header() {
   // const session = useAuthStore((state) => state.session); 나중에 프로필 받아올 때 사용
@@ -103,13 +104,9 @@ export default function Header() {
 
   return (
     <header className="flex h-[100px] w-full items-center justify-center border-b-[1px] border-[#EBEBEB]">
-      <div className="flex w-[1200px] content-center justify-between">
+      <div className="flex w-[1200px] content-center items-center justify-between">
         <div className="flex items-center space-x-0">
-          <img 
-            src={logo} 
-            alt="로고" 
-            className="w-[40px] h-auto"
-          />
+          <img src={logo} alt="로고" className="h-auto w-[40px]" />
           <Link to="/" className="text-[20px] font-medium">
             북적북적
           </Link>
@@ -120,6 +117,12 @@ export default function Header() {
           <Link to={'/channel/book_club'}>북클럽</Link>
           <Link to={'/channel/community'}>자유채널</Link>
           <Link
+            onClick={(e) => {
+              if (!session) {
+                e.preventDefault();
+                Toastfy('error', '로그인 후 사용 가능 합니다.');
+              }
+            }}
             to={
               path.channelId
                 ? `/create-post/${path.channelId}/post`
