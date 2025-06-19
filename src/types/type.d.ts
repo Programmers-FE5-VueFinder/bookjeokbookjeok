@@ -69,7 +69,7 @@ export interface PopularDiaryCardProps {
   id: string;
   genre: string | null;
   title: string;
-  content: string | null | undefined;
+  content: string;
 }
 
 interface DiaryPost {
