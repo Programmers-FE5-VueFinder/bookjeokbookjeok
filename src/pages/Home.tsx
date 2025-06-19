@@ -1,7 +1,7 @@
 import home_fire from '../assets/images/home_fire.png';
 import home_login from '../assets/images/home_login.png';
 import home_writing from '../assets/images/home_writing.png';
-import { mainBannerSlides } from '../constants/\bmainBannerSlide';
+import { mainBannerSlides } from '../constants/mainBannerSlide';
 import home_star_shine from '../assets/images/home_star_shine.png';
 import home_search_man from '../assets/images/home_search_man.png';
 import { MdArrowBackIosNew, MdArrowForwardIos } from 'react-icons/md';

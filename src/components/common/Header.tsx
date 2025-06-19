@@ -1,16 +1,16 @@
-import { fetchAuthId, logout } from '../../apis/auth';
+import SignUpModal from './SignUpModal';
 import supabase from '../../utils/supabase';
 import LoginModal from '../../pages/LoginModal';
-import { Link, useNavigate, useParams } from 'react-router';
+import SearchIcon from '@mui/icons-material/Search';
 import { useEffect, useRef, useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
-
-import SearchIcon from '@mui/icons-material/Search';
-import { MdOutlinePersonOutline } from 'react-icons/md';
-import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
+import logo from '../../assets/images/main_logo.png';
+import { fetchAuthId, logout } from '../../apis/auth';
 import AlarmModal from '../component/alarm/AlarmModal';
+import { MdOutlinePersonOutline } from 'react-icons/md';
 import { fetchAlarmList } from '../../apis/notification';
-import SignUpModal from './SignUpModal';
+import { Link, useNavigate, useParams } from 'react-router';
+import NotificationsOutlinedIcon from '@mui/icons-material/NotificationsOutlined';
 
 export default function Header() {
   // const session = useAuthStore((state) => state.session); 나중에 프로필 받아올 때 사용
@@ -104,7 +104,12 @@ export default function Header() {
   return (
     <header className="flex h-[100px] w-full items-center justify-center border-b-[1px] border-[#EBEBEB]">
       <div className="flex w-[1200px] content-center justify-between">
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-0">
+          <img 
+            src={logo} 
+            alt="로고" 
+            className="w-[40px] h-auto"
+          />
           <Link to="/" className="text-[20px] font-medium">
             북적북적
           </Link>
