@@ -27,7 +27,7 @@ const router = createBrowserRouter([
       },
 
       {
-        path: '/post/:channelId/:postId',
+        path: '/post/:postId',
         Component: PostDetail,
       },
       {
@@ -72,10 +72,6 @@ const router = createBrowserRouter([
       },
       {
         path: '/create-bookclub',
-        Component: CreateBookClub,
-      },
-      {
-        path: '/create-post/book_club/post',
         Component: CreateBookClub,
       },
       {

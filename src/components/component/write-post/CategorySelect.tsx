@@ -3,8 +3,10 @@ import { IoIosArrowDown } from 'react-icons/io';
 import { useParams } from 'react-router';
 
 export default function CategorySelect({
+  category,
   setCategory,
 }: {
+  category: string;
   setCategory: (category: string) => void;
 }) {
   const [categoryToggle, setCategoryToggle] = useState(false);
@@ -17,7 +19,14 @@ export default function CategorySelect({
     } else if (path.channelId === 'community') {
       setSelectText('자유채널');
     }
-  }, []);
+
+    if (category === 'diary') {
+      setSelectText('다이어리');
+    } else if (category === 'community') {
+      setSelectText('자유채널');
+    }
+    console.log(category);
+  }, [category]);
 
   const categoryChangeHandler = (
     e: React.MouseEvent<HTMLLIElement, MouseEvent>,

@@ -279,10 +279,7 @@ export default function PostList() {
             <div className="grid h-fit w-[1200px] grid-cols-4 gap-[28px]">
               {sortedPosts.map((post) => {
                 return (
-                  <Link
-                    key={post.id}
-                    to={`/post/${params.channelId}/${post.id}`}
-                  >
+                  <Link key={post.id} to={`/post/${post.id}`}>
                     <BookCard
                       nickname={post.profile.name || '잉크묻은 고양이'}
                       title={post.title}

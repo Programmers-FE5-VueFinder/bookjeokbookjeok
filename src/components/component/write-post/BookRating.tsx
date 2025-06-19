@@ -38,6 +38,7 @@ export default function BookRating({
                 e.preventDefault();
                 setClickIndex(num);
                 setRating(num);
+                console.log(num);
               }}
               className="cursor-pointer"
             >

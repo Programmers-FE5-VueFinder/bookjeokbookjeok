@@ -18,7 +18,7 @@ import {
 import supabase from '../../../utils/supabase';
 import Toastfy from '../../common/Toastfy.tsx';
 import type { PostDetail } from '../../../types/post.ts';
-import { createPost, editPost } from '../../../apis/post.ts';
+import { checkBook, createPost, editPost } from '../../../apis/post.ts';
 import { searchBooks } from '../../../apis/book-search.ts';
 
 export default function WritePost({
@@ -68,16 +68,17 @@ export default function WritePost({
       id: selectedBook?.isbn13,
       star: rating,
     };
-    console.log(body);
 
-    if (!title || !body) {
+    console.log(value.trim() === '<p><br></p>');
+
+    if (!title || value.trim() === '<p><br></p>') {
       if (!title) {
         if (category === 'diary' || category === 'community') {
           Toastfy('error', '제목을 작성 해주세요');
         } else {
           Toastfy('error', '클럽 이름을 작성 해주세요');
         }
-      } else if (body === '<p><br></p>') {
+      } else if (value.trim() === '<p><br></p>') {
         if (category === 'diary' || category === 'community') {
           Toastfy('error', '본문을 작성 해주세요');
         } else {
@@ -100,7 +101,7 @@ export default function WritePost({
           category,
         );
         console.log(response);
-        navigate(`/channel/${category}/post/${response}`);
+        navigate(`/post/${editPostData.id}`);
         return;
       } catch (e) {
         console.log(e);
@@ -120,31 +121,50 @@ export default function WritePost({
     switch (category) {
       case 'diary': {
         try {
-          const { data } = await supabase
-            .from('book')
-            .insert({
-              id: selectedBook!.isbn13,
-              title: selectedBook!.title,
-              author: selectedBook!.author,
-              description: selectedBook!.description,
-              cover: selectedBook!.cover,
-              categoryId: selectedBook!.categoryId,
-              categoryName: selectedBook!.categoryName,
-            })
-            .select()
-            .single();
+          const check = await checkBook(selectedBook!.isbn13);
+          if (!check) {
+            const { data } = await supabase
+              .from('book')
+              .insert({
+                id: selectedBook!.isbn13,
+                title: selectedBook!.title,
+                author: selectedBook!.author,
+                description: selectedBook!.description,
+                cover: selectedBook!.cover,
+                categoryId: selectedBook!.categoryId,
+                categoryName: selectedBook!.categoryName,
+              })
+              .select()
+              .single();
 
-          const response = await createPost(
+            const post_id = await createPost(
+              session!.user.id,
+              title,
+              body,
+              image,
+              category,
+              data!.id,
+              bookInfo,
+            );
+            console.log('book 중첨 x', post_id);
+
+            navigate(`/post/${post_id}`);
+            return;
+          }
+
+          const post_id = await createPost(
             session!.user.id,
             title,
             body,
             image,
             category,
-            data!.id,
+            selectedBook!.isbn13,
             bookInfo,
           );
+          console.log('북 중첩', post_id);
+          console.log(value);
 
-          navigate(`/post/${response}`);
+          navigate(`/post/${post_id}`);
         } catch (e) {
           console.log(e);
           Toastfy('error', '작성에 실패했습니다');
@@ -154,14 +174,15 @@ export default function WritePost({
       case 'community': {
         // community post 생성 api
         try {
-          const response = await createPost(
+          const post_id = await createPost(
             session!.user.id,
             title,
             body,
             image,
             category,
           );
-          navigate(`/post/${response}`);
+          console.log(post_id);
+          navigate(`/post/${post_id}`);
         } catch (e) {
           console.log(e);
           Toastfy('error', '작성에 실패했습니다');
@@ -202,7 +223,13 @@ export default function WritePost({
       }
     }
 
-    if (editPostData?.book) {
+    if (editPostData) {
+      titleRef!.current!.value = editPostData.title;
+      setValue(editPostData.body);
+      setCategory(editPostData.category);
+    }
+
+    if (editPostData?.book && category === 'diary') {
       const seletedBookFind = async () => {
         const selectedBookId = editPostData!.book!.id;
         const bookList = await searchBooks(bookTitle!);
@@ -212,11 +239,7 @@ export default function WritePost({
         setSeletedBook(selectedBook);
       };
       seletedBookFind();
-    }
-    if (editPostData) {
-      titleRef!.current!.value = editPostData.title;
-      setValue(editPostData.body);
-      setCategory(editPostData.category);
+      console.log(category);
     }
   }, [bookclubId, isCreateBookClub, editPostData]);
 
@@ -225,7 +248,9 @@ export default function WritePost({
       <>
         <main className="flex h-screen">
           <div className="flex grow-1 flex-col">
-            {!bookclubId && <CategorySelect setCategory={setCategory} />}
+            {!bookclubId && (
+              <CategorySelect category={category} setCategory={setCategory} />
+            )}
             <form
               className="w-ful flex grow-1 flex-col justify-between"
               onSubmit={(e) => {
@@ -289,10 +314,6 @@ export default function WritePost({
                   </button>
                   <button
                     type="submit"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      navigate(`/post/${path.postId}`);
-                    }}
                     className="cursor-pointer rounded-[5px] bg-[#F1F1F1] px-[23px] py-[8px] text-[14px] hover:bg-[#41D94D] hover:font-semibold hover:text-[#fff]"
                   >
                     수정하기
@@ -317,7 +338,7 @@ export default function WritePost({
       <main className="flex h-screen">
         <div className="flex grow-1 flex-col">
           {!bookclubId && !isCreateBookClub && (
-            <CategorySelect setCategory={setCategory} />
+            <CategorySelect category={category} setCategory={setCategory} />
           )}
           <form
             className="w-ful flex grow-1 flex-col justify-between"
@@ -386,10 +407,6 @@ export default function WritePost({
                 </button>
                 <button
                   type="submit"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    navigate(`/post/${path.postId}`);
-                  }}
                   className="cursor-pointer rounded-[5px] bg-[#F1F1F1] px-[23px] py-[8px] text-[14px] hover:bg-[#41D94D] hover:font-semibold hover:text-[#fff]"
                 >
                   {isCreateBookClub

@@ -6,12 +6,14 @@ import { type Dispatch, type SetStateAction } from 'react';
 export default function EditSelectBox({
   setModalShow,
   setSelectBoxShow,
+  category,
 }: {
   setModalShow: Dispatch<SetStateAction<boolean>>;
   setSelectBoxShow: Dispatch<SetStateAction<boolean>>;
+  category: string;
 }) {
   const navigate = useNavigate();
-  const { postId, channelId } = useParams();
+  const { postId } = useParams();
 
   return (
     <>
@@ -22,7 +24,7 @@ export default function EditSelectBox({
         <button
           onClick={(e) => {
             e.preventDefault();
-            navigate(`/editpost/${channelId}/${postId}`);
+            navigate(`/editpost/${category}/${postId}`);
           }}
           className="flex h-[40px] cursor-pointer items-center justify-center gap-[5px] hover:bg-[#f1f1f1] hover:font-semibold"
         >

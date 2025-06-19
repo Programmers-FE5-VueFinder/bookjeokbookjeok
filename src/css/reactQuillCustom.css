@@ -37,7 +37,7 @@
   border: none !important;
   margin: 0 auto !important;
   width: 1200px !important;
-  height: calc(300px) !important;
+  max-height: 100%;
 }
 .ql-category {
   -o-appearance: none;

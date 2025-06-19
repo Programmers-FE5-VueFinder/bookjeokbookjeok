@@ -72,27 +72,22 @@ export default function PostDetail() {
   }, [postId]);
 
   useEffect(() => {
-    const response = async () => {
-      const response = await isFollowing(content!.id, '');
-      setFollowToggle(response);
-      return;
-    };
-    response();
-  }, []);
-
-  useEffect(() => {
     if (!postId) navigate(-1);
     async function postDetail() {
       try {
         const response = await fetchPostDetail(postId as string);
         setContent(response);
-        const books = await searchBooks(response!.book!.title);
-        setBookInfo(books[0]);
+        const following = await isFollowing(response!.id, '');
+        setFollowToggle(following);
+        setLoading(true);
+        if (response?.book?.title) {
+          const books = await searchBooks(response.book.title);
+          setBookInfo(books[0]);
+        }
         if (postId) {
           const count = await getLikeCount(postId);
           setLikeCount(count);
         }
-        setLoading(true);
         await fetchComments();
         setPostLoading(true);
       } catch (e) {
@@ -101,6 +96,7 @@ export default function PostDetail() {
     }
     postDetail();
   }, [postId, fetchComments, navigate, fetchLikeCount]);
+  console.log(loading);
 
   useEffect(() => {
     if (postLoading) {
@@ -111,7 +107,10 @@ export default function PostDetail() {
       fetchApplyState();
     }
   }, [content, postLoading]);
-  console.log(content);
+
+  useEffect(() => {
+    console.log('loading 상태가 바뀜:', loading);
+  }, [loading]);
 
   return (
     loading && (
@@ -145,7 +144,7 @@ export default function PostDetail() {
         {content?.book ? (
           <DiarySelectBook
             onClick={setBookToggle}
-            imageSrc={content?.book?.cover}
+            imageSrc={content?.image ? content.image : content.book.cover}
             title={content?.book?.title}
             author={content?.book?.author}
           />
