@@ -125,7 +125,7 @@ export default function WritePost({
           if (!check) {
             const { data } = await supabase
               .from('book')
-              .insert({
+              .upsert({
                 id: selectedBook!.isbn13,
                 title: selectedBook!.title,
                 author: selectedBook!.author,

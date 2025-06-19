@@ -138,18 +138,9 @@ export default function PostList() {
   }, [myProfileId, selectedSort]);
 
   useEffect(() => {
-    console.log('[디버그] useEffect 진입', {
-      myProfileId,
-      selectedSort,
-      channelId,
-    });
     const loadPosts = async () => {
       setLoading(true);
       const fetchedMyBookClubPosts = await fetchMyBookClubPosts(myProfileId!);
-      console.log(
-        '[디버그] fetchMyBookClubPosts 결과:',
-        fetchedMyBookClubPosts,
-      );
 
       const detailPosts: PostDetail[] = await Promise.all(
         fetchedMyBookClubPosts.map(async (post) => {
@@ -176,7 +167,6 @@ export default function PostList() {
         }),
       );
 
-      console.log('[디버그] 내 클럽 detailPosts:', detailPosts);
       setMyBookClubPosts(detailPosts);
       setLoading(false);
     };
@@ -186,7 +176,6 @@ export default function PostList() {
       selectedSort === '내 클럽' &&
       channelId === 'book_club'
     ) {
-      console.log('[디버그] 조건 만족 - loadPosts 호출');
       loadPosts();
     }
   }, [myProfileId, selectedSort, channelId]);
