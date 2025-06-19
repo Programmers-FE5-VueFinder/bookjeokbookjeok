@@ -114,9 +114,6 @@ export default function Profile() {
   useEffect(() => {
     const fetchData = async () => {
       const fetchInitialProfile = async () => {
-        const user = session?.user;
-        if (!user) return;
-
         try {
           const { data: profile } = await supabase
             .from('profile')
