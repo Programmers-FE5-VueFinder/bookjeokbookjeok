@@ -10,7 +10,7 @@ export default function EditSelectBox({
 }: {
   setModalShow: Dispatch<SetStateAction<boolean>>;
   setSelectBoxShow: Dispatch<SetStateAction<boolean>>;
-  category: string;
+  category: string | undefined;
 }) {
   const navigate = useNavigate();
   const { postId } = useParams();
