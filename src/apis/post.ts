@@ -51,41 +51,6 @@ export async function fetchPostDetail(id: string) {
   return post.data;
 }
 
-/* 게시물 생성 */
-// export async function createPost(
-//   title: string,
-//   body: string,
-//   image: string | null = null,
-//   category: 'diary' | 'community',
-//   book_id: string,
-//   book:string,
-//   book_club_id?: string,
-// ) {
-//   const post = await supabase
-//     .from('post')
-//     .insert({
-//       title: title,
-//       body: body,
-//       image: image,
-//       category: category,
-//       book_id: book_id,
-//       book_club_id: book_club_id,
-//     })
-//     .select()
-//     .single();
-
-//   if (book) {
-//     await supabase.from('book_tag').insert({
-//       book_id: book.id,
-//       star: book.star,
-//       reference_category: 'newPost.data!.category',
-//       reference_id: 'newPost.data!.id',< 여기가 포스트 아이디
-//     });
-//   }
-
-//   return post.data!.id;
-// }
-
 export async function createPost(
   userId: string,
   title: string,
@@ -123,6 +88,22 @@ export async function createPost(
   }
 
   return post.data!.id;
+}
+
+export async function checkBook(bookId: string): Promise<boolean> {
+  const { data, error } = await supabase
+    .from('book_tag')
+    .select('id')
+    .eq('book_id', bookId)
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    console.error('조회 실패 : ', error.message);
+    return false;
+  }
+
+  return data !== null;
 }
 
 /* 게시물 수정 */

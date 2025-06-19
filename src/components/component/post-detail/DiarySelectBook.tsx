@@ -2,8 +2,12 @@ export default function DiarySelectBook({
   imageSrc,
   title,
   author,
+  onClick,
 }: {
-  [key: string]: string | null;
+  imageSrc: string | null;
+  title: string;
+  author: string | null;
+  onClick: (state: boolean) => void;
 }) {
   const bookTitleSlice = (title: string) => {
     if (title.includes(' (')) return title?.split(' (')[0];
@@ -12,7 +16,10 @@ export default function DiarySelectBook({
   };
   return (
     <>
-      <div className="mb-[40px] flex max-w-[1200px] justify-center rounded-[5px] bg-[#F4F4F4] px-[30px] py-[30px] hover:shadow-[0_0_5px_rgba(0,0,0,.25)]">
+      <div
+        onClick={() => onClick(true)}
+        className="mb-[40px] flex max-w-[1200px] justify-center rounded-[5px] bg-[#F4F4F4] px-[30px] py-[30px] hover:shadow-[0_0_5px_rgba(0,0,0,.25)]"
+      >
         <div className="w-200px flex max-w-[200px] cursor-pointer flex-col items-center gap-[10px] text-center">
           <div className="w-220px cursor-pointerm mb-[5px] max-w-[150px]">
             <img

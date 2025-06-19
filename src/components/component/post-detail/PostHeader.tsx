@@ -60,6 +60,7 @@ export default function PostHeader({
                     <RxDotsVertical className="cursor-pointer" />
                     {selectBoxShow && (
                       <EditSelectBox
+                        category={category}
                         setSelectBoxShow={setSelectBoxShow}
                         setModalShow={setModalShow}
                       />

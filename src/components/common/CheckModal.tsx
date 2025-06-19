@@ -20,7 +20,7 @@ export default function CheckModal({
     if (text === '확인') {
       action(postId);
       setter(false);
-      navigate(-1);
+      navigate('/');
       return;
     }
     if (text === '취소') {
