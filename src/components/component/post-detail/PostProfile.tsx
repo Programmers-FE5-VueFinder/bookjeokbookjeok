@@ -15,7 +15,7 @@ export default function PostProfile({
   setFollowToggle: Dispatch<SetStateAction<boolean>>;
   followToggle: boolean;
 }) {
-  const { image, id } = profile;
+  const { id } = profile;
   const navigate = useNavigate();
   console.log(currentAccount, id);
 
@@ -27,7 +27,6 @@ export default function PostProfile({
           className="flex items-center gap-[10px]"
         >
           <ProfileImage
-            src={image}
             id={id}
             className={'h-[55px] w-[55px] cursor-pointer rounded-[100px]'}
           />
