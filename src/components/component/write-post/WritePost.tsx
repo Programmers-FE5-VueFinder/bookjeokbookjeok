@@ -246,7 +246,7 @@ export default function WritePost({
   if (editPostData) {
     return (
       <>
-        <main className="flex h-screen">
+        <main className="flex h-screen overflow-hidden">
           <div className="flex grow-1 flex-col">
             {!bookclubId && (
               <CategorySelect category={category} setCategory={setCategory} />
@@ -336,12 +336,12 @@ export default function WritePost({
   return (
     <>
       <main className="flex h-screen">
-        <div className="flex grow-1 flex-col">
+        <div className="flex h-full grow-1 flex-col">
           {!bookclubId && !isCreateBookClub && (
             <CategorySelect category={category} setCategory={setCategory} />
           )}
           <form
-            className="w-ful flex grow-1 flex-col justify-between"
+            className="flex w-full grow-1 flex-col justify-between"
             onSubmit={(e) => {
               if (!session || !session.user) {
                 Toastfy(

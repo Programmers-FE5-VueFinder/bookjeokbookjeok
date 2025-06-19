@@ -11,11 +11,20 @@
 }
 .quill {
   flex-grow: 1;
+  max-height: calc(100% - 60px) !important;
 }
 .ql-editor {
   -ms-overflow-style: none;
   overflow-y: scroll !important;
   font-family: 'noto-sans-kr', sans-serif;
+  height: 100%;
+}
+.ql-container {
+  border: none !important;
+  margin: 0 auto !important;
+  width: 1200px !important;
+  max-height: calc(100% - 60px) !important;
+  overflow-y: auto !important;
 }
 .ql-editor::-webkit-scrollbar {
   width: 7px;
@@ -33,12 +42,7 @@
 .ql-editor::placeholder {
   color: red !important;
 }
-.ql-container {
-  border: none !important;
-  margin: 0 auto !important;
-  width: 1200px !important;
-  max-height: 100%;
-}
+
 .ql-category {
   -o-appearance: none;
   -webkit-appearance: none;

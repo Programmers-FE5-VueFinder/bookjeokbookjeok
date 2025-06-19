@@ -112,7 +112,7 @@ export default function ReactQuillEditor({
 
   return (
     <>
-      <div className="flex grow-1 flex-col">
+      <div className="flex h-full flex-col">
         <ReactQuill
           ref={quillRef}
           value={value}
