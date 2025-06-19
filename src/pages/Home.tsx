@@ -1,62 +1,23 @@
 import home_fire from '../assets/images/home_fire.png';
-import home_writing from '../assets/images/home_writing.png';
 import home_login from '../assets/images/home_login.png';
-import home_search_man from '../assets/images/home_search_man.png';
+import home_writing from '../assets/images/home_writing.png';
+import { mainBannerSlides } from '../constants/mainBannerSlide';
 import home_star_shine from '../assets/images/home_star_shine.png';
+import home_search_man from '../assets/images/home_search_man.png';
 import { MdArrowBackIosNew, MdArrowForwardIos } from 'react-icons/md';
-import home_reading_book from '../assets/images/home_reading_book.png';
-import home_main_banner1 from '../assets/images/home_main_banner1.png';
-import home_main_banner2 from '../assets/images/home_main_banner2.png';
-import home_main_banner3 from '../assets/images/home_main_banner3.png';
-import home_main_banner4 from '../assets/images/home_main_banner4.png';
-import home_start_shine3 from '../assets/images/home_star_shine_x3.png';
 import home_reading_girl from '../assets/images/home_reading_girl.png';
-
+import home_reading_book from '../assets/images/home_reading_book.png';
+import home_start_shine3 from '../assets/images/home_star_shine_x3.png';
 import LoginModal from './LoginModal';
 import { useNavigate } from 'react-router';
 import { useState, useEffect } from 'react';
 import type { DiaryPost } from '../types/type';
 import { useAuthStore } from '../store/authStore';
 import { fetchPopularDiaries } from '../apis/post';
+import SignUpModal from '../components/common/SignUpModal';
 import BestsellerSlider from '../components/component/Home/BestsellerSlider';
 import PopularDiaryCard from '../components/component/Home/PopularDiaryCard';
 import PopularDiaryCardSkeleton from '../components/component/Home/PopularDiaryCardSkeleton';
-import SignUpModal from '../components/common/SignUpModal';
-
-const slides = [
-  {
-    title: 'BOOK\nCLUB',
-    description: '함께 읽고 이야기하며\n새로운 관점을 만나보세요',
-    imgSrc: home_main_banner1,
-    bgColor: '#FDFF98',
-    boxClassName: 'flex justify-end mt-auto mr-[25px]',
-    className: 'flex w-[355px] h-auto object-contain',
-  },
-  {
-    title: 'READ\nDIARY',
-    description: '읽고 쓰고 나누며,\n이야기의 숲을 가꿔보세요',
-    imgSrc: home_main_banner2,
-    bgColor: '#D2EAFF',
-    boxClassName: 'flex justify-end mt-auto mr-[30px]',
-    className: 'w-[440px] h-auto object-contain',
-  },
-  {
-    title: 'BOOK\nCOMMUNITY',
-    description: '새로운 생각의 싹,\n북적북적과 함께 틔워보세요',
-    imgSrc: home_main_banner3,
-    bgColor: '#FFE8B2',
-    boxClassName: 'flex justify-center mt-auto mr-[25px]',
-    className: 'w-[280px] h-auto object-contain',
-  },
-  {
-    title: 'BOOK\nDIARY',
-    description: '북적북적에서,\n나만의 이야기꽃을 피워보세요',
-    imgSrc: home_main_banner4,
-    bgColor: '#CCE9FF',
-    boxClassName: 'flex justify-end mt-auto',
-    className: 'flex justify-end w-[345px] h-auto object-contain',
-  },
-];
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
@@ -69,11 +30,11 @@ export default function Home() {
   const isLogin = useAuthStore((state) => state.isLogin);
 
   const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
+    setCurrentSlide((prev) => (prev + 1) % mainBannerSlides.length);
   };
 
   const prevSlide = () => {
-    setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+    setCurrentSlide((prev) => (prev === 0 ? mainBannerSlides.length - 1 : prev - 1));
   };
 
   // 금주의 인기 다이어리 api 호출
@@ -106,7 +67,7 @@ export default function Home() {
         <div className="h-fit w-full">
           <div
             className="flex h-[650px] w-[590px] flex-col rounded-[20px] pt-[37px] pl-[37px]"
-            style={{ backgroundColor: slides[currentSlide].bgColor }}
+            style={{ backgroundColor: mainBannerSlides[currentSlide].bgColor }}
           >
             <div className="flex flex-col gap-y-[20px]">
               <img
@@ -115,18 +76,18 @@ export default function Home() {
                 className="h-auto w-[39px]"
               />
               <h1 className="text-[36px] font-semibold whitespace-pre-line">
-                {slides[currentSlide].title}
+                {mainBannerSlides[currentSlide].title}
               </h1>
               <h2 className="text-[24px] font-medium whitespace-pre-line">
-                {slides[currentSlide].description}
+                {mainBannerSlides[currentSlide].description}
               </h2>
             </div>
 
-            <div className={slides[currentSlide].boxClassName}>
+            <div className={mainBannerSlides[currentSlide].boxClassName}>
               <img
-                src={slides[currentSlide].imgSrc}
+                src={mainBannerSlides[currentSlide].imgSrc}
                 alt="main_banner"
-                className={slides[currentSlide].className}
+                className={mainBannerSlides[currentSlide].className}
               />
             </div>
           </div>
@@ -140,7 +101,7 @@ export default function Home() {
                 <MdArrowBackIosNew className="w-[16px]" />
               </button>
               <h3 className="text-[20px] font-medium">
-                {currentSlide + 1} / {slides.length}
+                {currentSlide + 1} / {mainBannerSlides.length}
               </h3>
               <button
                 onClick={nextSlide}

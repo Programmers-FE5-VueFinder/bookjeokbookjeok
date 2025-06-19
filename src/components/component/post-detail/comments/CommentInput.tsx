@@ -20,13 +20,14 @@ export default function CommentInput({
 
   const writeComment = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!comment.trim()) {
-      toast.warning('댓글을 입력해 주세요.');
+
+    if (!userId) {
+      toast.warning('로그인 후 댓글을 작성할 수 있습니다..');
       return;
     }
 
-    if (!userId) {
-      alert('로그인이 필요합니다.');
+    if (!comment.trim()) {
+      toast.warning('댓글을 입력해 주세요.');
       return;
     }
 
