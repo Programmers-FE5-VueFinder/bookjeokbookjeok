@@ -19,6 +19,8 @@ import { IoMdHeartEmpty } from 'react-icons/io';
 import { getLikeCount } from '../apis/like';
 import DiarySelectBook from '../components/component/post-detail/DiarySelectBook';
 import { isFollowing } from '../apis/follow';
+import { searchBooks } from '../apis/book-search';
+import BookPage from '../components/component/book-detail/BookPage';
 import Toastfy from '../components/common/Toastfy';
 import { useAuthStore } from '../store/authStore';
 
@@ -27,14 +29,17 @@ export default function PostDetail() {
   const [content, setContent] = useState<PostDetail | undefined>(undefined);
   const [postLoading, setPostLoading] = useState(false);
   const [applyState, setApplyState] = useState('');
+  const [followToggle, setFollowToggle] = useState(true);
+  const [bookToggle, setBookToggle] = useState(false);
+
   const [modalShow, setModalShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [comments, setComments] = useState<CommentTypeBase[]>([]);
   const [likeCount, setLikeCount] = useState(0);
+  const [bookInfo, setBookInfo] = useState(null);
   const isLogIn = useAuthStore((state) => state.isLogin);
   const session = useAuthStore((state) => state.session);
-  const [followToggle, setFollowToggle] = useState(true);
 
   const handleApplyBookclub = async () => {
     if (isLogIn) {
@@ -67,26 +72,34 @@ export default function PostDetail() {
   }, [postId]);
 
   useEffect(() => {
-    const response = async () => {
-      const response = await isFollowing(content!.id, '');
-      setFollowToggle(response);
-      return;
-    };
-    response();
-  }, []);
-
-  useEffect(() => {
     if (!postId) navigate(-1);
     async function postDetail() {
-      const response = await fetchPostDetail(postId as string);
-      setContent(response);
-      if (postId) {
-        const count = await getLikeCount(postId);
-        setLikeCount(count);
+      try {
+        const response = await fetchPostDetail(postId as string);
+        setContent(response);
+        if (isLogIn && response) {
+          const following = await isFollowing(
+            response.profile.id,
+            session?.user.id as string,
+          );
+          console.log('팔로우 상태:', following);
+          setFollowToggle(following);
+        }
+        console.log(response);
+        setLoading(true);
+        if (response?.book?.title) {
+          const books = await searchBooks(response.book.title);
+          setBookInfo(books[0]);
+        }
+        if (postId) {
+          const count = await getLikeCount(postId);
+          setLikeCount(count);
+        }
+        await fetchComments();
+        setPostLoading(true);
+      } catch (e) {
+        console.log(e);
       }
-      setLoading(true);
-      await fetchComments();
-      setPostLoading(true);
     }
     postDetail();
   }, [postId, fetchComments, navigate, fetchLikeCount]);
@@ -100,11 +113,21 @@ export default function PostDetail() {
       fetchApplyState();
     }
   }, [content, postLoading]);
-  console.log(content);
+
+  useEffect(() => {
+    console.log('loading 상태가 바뀜:', loading);
+  }, [loading]);
 
   return (
     loading && (
       <main className="relative flex flex-col items-center">
+        {bookToggle && (
+          <BookPage
+            isOpen={bookToggle}
+            closeModal={() => setBookToggle(false)}
+            bookDetail={bookInfo!}
+          />
+        )}
         {modalShow && (
           <CheckModal
             message="게시물을 삭제 하시겠습니까?"
@@ -126,7 +149,8 @@ export default function PostDetail() {
         />
         {content?.book ? (
           <DiarySelectBook
-            imageSrc={content?.book?.cover}
+            onClick={setBookToggle}
+            imageSrc={content?.image ? content.image : content.book.cover}
             title={content?.book?.title}
             author={content?.book?.author}
           />

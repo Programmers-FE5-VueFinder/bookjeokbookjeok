@@ -15,6 +15,7 @@ import { toast } from 'react-toastify';
 import { OneLineReview } from './review/OneLineReview';
 import { BookPost } from './post/BookPost';
 import { RelatedContents } from './content/RelatedContents';
+import { useAuthStore } from '../../../store/authStore';
 
 type BookPagesProps = {
   isOpen: boolean;
@@ -36,7 +37,13 @@ export default function BookPage({
   const [averageStar, setAverageStar] = useState<number>(0);
   const [isBookmarking, setIsBookmarking] = useState(false);
 
+  const session = useAuthStore((state) => state.session);
+
   const handleAddBookmark = async () => {
+    if (!session) {
+      toast.warn('로그인 후 이용 가능합니다.');
+      return;
+    }
     if (isBookmarking) return;
 
     setIsBookmarking(true);
@@ -53,6 +60,10 @@ export default function BookPage({
   };
 
   const handleRemoveBookmark = async () => {
+    if (!session) {
+      toast.warn('로그인 후 이용 가능합니다.');
+      return;
+    }
     if (isBookmarking) return;
 
     setIsBookmarking(true);

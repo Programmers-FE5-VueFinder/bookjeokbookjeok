@@ -18,6 +18,8 @@ export default function BookCard({
   book_id,
   category,
   post_id,
+  comments,
+  likes,
 }: BookCardProps) {
   const [img, setImg] = useState<string | null>(null);
   const [likeCount, setLikeCount] = useState<number>(0);
@@ -47,16 +49,24 @@ export default function BookCard({
       }
     };
     getBookData();
-    const getBookComment = async () => {
-      const comments = await getCommentCount(post_id!);
-      setCommentCount(comments);
-    };
-    getBookComment();
-    const getBookLike = async () => {
-      const likes = await getLikeCount(post_id!);
-      setLikeCount(likes);
-    };
-    getBookLike();
+    if (comments === undefined) {
+      const getBookComment = async () => {
+        const comment = await getCommentCount(post_id!);
+        setCommentCount(comment);
+      };
+      getBookComment();
+    } else {
+      setCommentCount(comments!);
+    }
+    if (likes === undefined) {
+      const getBookLike = async () => {
+        const liked = await getLikeCount(post_id!);
+        setLikeCount(liked);
+      };
+      getBookLike();
+    } else {
+      setLikeCount(likes!);
+    }
   }, [book_id, post_id]);
 
   return (
@@ -76,7 +86,7 @@ export default function BookCard({
                   src={img}
                   className="absolute top-[13%] left-[30%] h-[166px] w-[113px] rounded-[3px]"
                   style={{
-                    boxShadow: '0px 0px 8px 2px rgba(0, 0, 0, 0.3)'
+                    boxShadow: '0px 0px 8px 2px rgba(0, 0, 0, 0.3)',
                   }}
                 />
               </div>

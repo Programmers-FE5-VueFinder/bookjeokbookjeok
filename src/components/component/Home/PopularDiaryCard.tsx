@@ -1,31 +1,12 @@
 import { Link } from 'react-router';
 import type { PopularDiaryCardProps } from '../../../types/type';
+import { genreImageList } from '../../../constants/genreImageList';
 
-const genreImageList = [
-  {
-    match: (genre: string) => genre.includes('인문'),
-    image: '/images/home_humanities_illust.png',
-    label: '인문',
-  },
-  {
-    match: (genre: string) => genre.includes('소설'),
-    image: '/images/home_novel_illust.png',
-    label: '소설',
-  },
-  {
-    match: (genre: string) => genre.includes('교육'),
-    image: '/images/home_edu_illust.png',
-    label: '교육',
-  },
-  {
-    match: (genre: string) =>
-      genre.includes('자기개발') ||
-      genre.includes('자기계발') ||
-      genre.includes('개발'),
-    image: '/images/home_dev_illust.png',
-    label: '자기 개발',
-  },
-];
+function decodeHtmlEntities(str: string) {
+  const parser = new DOMParser();
+  const decodedString = parser.parseFromString(str, 'text/html').body.textContent;
+  return decodedString || '';
+}
 
 export default function PopularDiaryCard({
   genre,
@@ -42,7 +23,7 @@ export default function PopularDiaryCard({
   if (!genreData) return null;
 
   return (
-    <Link to={`channel/diary/post/${id}`}>
+    <Link to={`/post/${id}`}>
       <div
         className="flex h-[150px] w-[590px] rounded-[20px] px-[8px] py-[10px]"
         style={{
@@ -59,8 +40,14 @@ export default function PopularDiaryCard({
           <h2 className="text-[16px] font-semibold text-[#06BE00]">
             {genreData.label}
           </h2>
-          <h2 className="text-[16px] font-semibold">{content}</h2>
-          <h1 className="font-semibold text-[20[px]">{title}</h1>
+          <div>
+            <h2 className="line-clamp-2 text-[16px] font-semibold">
+              {decodeHtmlEntities(content)}
+            </h2>
+          </div>
+          <div>
+            <h1 className="line-clamp-1 font-semibold text-[20[px]">{decodeHtmlEntities(title)}</h1>
+          </div>
         </div>
       </div>
     </Link>

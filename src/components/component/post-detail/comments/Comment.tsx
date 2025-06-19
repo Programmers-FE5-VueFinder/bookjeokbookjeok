@@ -48,11 +48,15 @@ export default function Comment({ comments, fetchComments }: Props) {
 
   const handleReplySubmit = async (e: React.FormEvent, parentId: string) => {
     e.preventDefault();
+
+    if (!userId) {
+      toast.warning('로그인 후 답글을 작성할 수 있습니다.');
+      return;
+    }
     if (!replyBody.trim()) {
       toast.warning('답글 내용을 입력해주세요.');
       return;
     }
-    if (!userId) return;
 
     try {
       await addComment(postId!, userId, replyBody, parentId);

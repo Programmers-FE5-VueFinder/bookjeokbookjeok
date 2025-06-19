@@ -51,41 +51,6 @@ export async function fetchPostDetail(id: string) {
   return post.data;
 }
 
-/* 게시물 생성 */
-// export async function createPost(
-//   title: string,
-//   body: string,
-//   image: string | null = null,
-//   category: 'diary' | 'community',
-//   book_id: string,
-//   book:string,
-//   book_club_id?: string,
-// ) {
-//   const post = await supabase
-//     .from('post')
-//     .insert({
-//       title: title,
-//       body: body,
-//       image: image,
-//       category: category,
-//       book_id: book_id,
-//       book_club_id: book_club_id,
-//     })
-//     .select()
-//     .single();
-
-//   if (book) {
-//     await supabase.from('book_tag').insert({
-//       book_id: book.id,
-//       star: book.star,
-//       reference_category: 'newPost.data!.category',
-//       reference_id: 'newPost.data!.id',< 여기가 포스트 아이디
-//     });
-//   }
-
-//   return post.data!.id;
-// }
-
 export async function createPost(
   userId: string,
   title: string,
@@ -123,6 +88,22 @@ export async function createPost(
   }
 
   return post.data!.id;
+}
+
+export async function checkBook(bookId: string): Promise<boolean> {
+  const { data, error } = await supabase
+    .from('book_tag')
+    .select('id')
+    .eq('book_id', bookId)
+    .limit(1)
+    .maybeSingle();
+
+  if (error) {
+    console.error('조회 실패 : ', error.message);
+    return false;
+  }
+
+  return data !== null;
 }
 
 /* 게시물 수정 */
@@ -176,12 +157,34 @@ export async function fetchPopularDiaries(): Promise<APIDiaryPost[]> {
     return [];
   }
 
-  // 1. book이 null인 데이터 제거 + 배열일 경우 첫 요소만 추출
+  // 카테고리명 클린업 함수
+  const cleanCategoryName = (categoryName: string) => {
+    const parts = categoryName.split('>');
+    const lastPart = parts[parts.length - 1];
+  
+    if (categoryName.includes('소설')) return '소설';
+    if (categoryName.includes('인문')) return '인문';
+    if (categoryName.includes('교육')) return '교육';
+  
+    if (
+      categoryName.includes('자기개발') ||
+      categoryName.includes('자기계발') ||
+      categoryName.includes('개발')
+    )
+      return '자기 개발';
+  
+    return lastPart;
+  };
+  
+  // 1. book이 null인 데이터 제거 + 카테고리면 클린업
   const adapted = data
     .filter((post) => post.book !== null)
     .map((post) => ({
       ...post,
-      book: Array.isArray(post.book) ? post.book[0] : post.book,
+      book: {
+        ...post.book,
+        categoryName: cleanCategoryName(post.book?.categoryName ?? 'Unknown'),
+      },
     })) as APIDiaryPost[];
 
   // 2. categoryName별로 like 수가 가장 높은 post만 추출
@@ -200,9 +203,7 @@ export async function fetchPopularDiaries(): Promise<APIDiaryPost[]> {
   });
 
   const topPosts = Array.from(topPostsMap.values());
-
   console.log('categoryName별 좋아요 최고 다이어리:', topPosts);
-
   return topPosts;
 }
 
@@ -232,7 +233,6 @@ export async function getBookPost(bookId: string, from: number, to: number) {
   }
   return data;
 }
-
 
 // 내가 가입한 북클럽 글 가져오기 API
 export const fetchMyBookClubPosts = async (userId: string) => {
@@ -266,7 +266,7 @@ export const fetchMyBookClubPosts = async (userId: string) => {
     throw postError;
   }
 
-  console.log('내가 가입한 북클럽의 게시물:',posts);
+  console.log('내가 가입한 북클럽의 게시물:', posts);
 
   return posts;
 };
